@@ -1,0 +1,296 @@
+{
+ "id": "i1-g4",
+ "istasyon": "i1",
+ "baslik": "Elektrik kesintisi",
+ "arayuz": "kesinti",
+ "kazanimlar": [
+  "B2"
+ ],
+ "sure_hedef": 300,
+ "ipucu_cezasi": 5,
+ "senaryo": "İdari büroya 1000 VA / 600 W UPS geldi. Bilgisayar, monitör, modem ve lazer yazıcıyı doğru prizlere bağla, sonra çalışmaya başla. Elektrik kesilirse veri kaybı olmadan çalışmayı bitir.",
+ "ogren": [
+  "UPS'in arkasında iki tür çıkış vardır: 'akü + koruma' çıkışları kesintide aküden güç verir; 'yalnız koruma' çıkışları kesintide güç vermez.",
+  "Bilgisayar ve monitör akü çıkışlarına bağlanır. Lazer yazıcı gibi çok güç çeken cihazlar akü çıkışına bağlanmaz; yoksa UPS aşırı yüklenip kapanır.",
+  "Elektrik kesildiğinde UPS uyarı sesi verir. Akü yalnızca birkaç dakika yeter: hemen açık belgeler kaydedilir ve bilgisayar güvenli şekilde kapatılır."
+ ],
+ "ipuclari": [
+  "Lazer yazıcı ısınırken 600 W'tan fazla çekebilir; UPS'in akü çıkışına bağlanırsa ne olur?",
+  "Kesinti olunca önce belgeyi kaydet, sonra Başlat menüsünden kapat."
+ ],
+ "veri": {
+  "cihazlar": [
+   {
+    "id": "pc",
+    "ad": "Bilgisayar",
+    "watt": 350,
+    "gorsel": "kasa-on"
+   },
+   {
+    "id": "monitor",
+    "ad": "Monitör",
+    "watt": 30,
+    "gorsel": "monitor"
+   },
+   {
+    "id": "modem",
+    "ad": "Modem",
+    "watt": 15,
+    "gorsel": "modem"
+   },
+   {
+    "id": "yazici",
+    "ad": "Lazer yazıcı",
+    "watt": 600,
+    "gorsel": "yazici-lazer"
+   }
+  ],
+  "prizler": [
+   {
+    "id": "aku-1",
+    "tur": "aku",
+    "ad": "UPS akü+koruma çıkışı 1"
+   },
+   {
+    "id": "aku-2",
+    "tur": "aku",
+    "ad": "UPS akü+koruma çıkışı 2"
+   },
+   {
+    "id": "aku-3",
+    "tur": "aku",
+    "ad": "UPS akü+koruma çıkışı 3"
+   },
+   {
+    "id": "aku-4",
+    "tur": "aku",
+    "ad": "UPS akü+koruma çıkışı 4"
+   },
+   {
+    "id": "surge-1",
+    "tur": "surge",
+    "ad": "UPS yalnız koruma çıkışı 1"
+   },
+   {
+    "id": "surge-2",
+    "tur": "surge",
+    "ad": "UPS yalnız koruma çıkışı 2"
+   },
+   {
+    "id": "duvar",
+    "tur": "duvar",
+    "ad": "Duvar prizi"
+   }
+  ],
+  "kapasiteW": 600,
+  "sorular": [
+   {
+    "id": "surge",
+    "soru": "UPS'in arkasındaki 'yalnız koruma (surge only)' çıkışları için hangisi doğrudur?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "koruma",
+      "metin": "Ani gerilime karşı korur ama elektrik kesilince güç vermez",
+      "dogru": true
+     },
+     {
+      "id": "aku",
+      "metin": "Elektrik kesilince aküden güç verir",
+      "dogru": false,
+      "aciklama": "Bu, 'akü + koruma' çıkışlarının özelliğidir."
+     },
+     {
+      "id": "hic",
+      "metin": "Hiçbir koruma sağlamaz",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "pc",
+   "aciklama": "Bilgisayar akü çıkışına bağlandı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "baglanti.pc",
+    "in": [
+     "aku-1",
+     "aku-2",
+     "aku-3",
+     "aku-4"
+    ]
+   }
+  },
+  {
+   "id": "monitor",
+   "aciklama": "Monitör akü çıkışına bağlandı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "baglanti.monitor",
+    "in": [
+     "aku-1",
+     "aku-2",
+     "aku-3",
+     "aku-4"
+    ]
+   }
+  },
+  {
+   "id": "yazici",
+   "aciklama": "Lazer yazıcı akü çıkışına bağlanmadı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "baglanti.yazici",
+      "exists": true
+     },
+     {
+      "not": {
+       "path": "baglanti.yazici",
+       "in": [
+        "aku-1",
+        "aku-2",
+        "aku-3",
+        "aku-4"
+       ]
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "kaydet",
+   "aciklama": "Kesintide belge kaydedildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "belge.kaydedildi",
+    "eq": true
+   }
+  },
+  {
+   "id": "kapat",
+   "aciklama": "Bilgisayar akü bitmeden güvenli kapatıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "pc.kapatildi",
+    "eq": "guvenli"
+   }
+  },
+  {
+   "id": "veri",
+   "aciklama": "Veri kaybı olmadı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "asama",
+      "eq": "bitti"
+     },
+     {
+      "path": "veriKaybi",
+      "eq": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "sira",
+   "aciklama": "Önce kaydedildi, sonra kapatıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "before": [
+     "belge.kaydet",
+     "pc.kapat"
+    ]
+   }
+  },
+  {
+   "id": "q-surge",
+   "aciklama": "Soru: UPS'in arkasındaki 'yalnız koruma (surge only)' çıkışları için hangisi doğrudur?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "cevaplar.surge",
+    "eq": "koruma"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "asiri",
+   "aciklama": "UPS aşırı yüklendi ve kapandı",
+   "ceza": 30,
+   "kural": {
+    "path": "asiriYuk",
+    "eq": true
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "baglanti": {
+    "pc": "aku-1",
+    "monitor": "aku-2",
+    "modem": "aku-3",
+    "yazici": "surge-1"
+   },
+   "asama": "bitti",
+   "belge": {
+    "kaydedildi": true
+   },
+   "pc": {
+    "kapatildi": "guvenli"
+   },
+   "veriKaybi": false,
+   "asiriYuk": false,
+   "cevaplar": {
+    "surge": "koruma"
+   }
+  },
+  "events": [
+   {
+    "type": "calisma.basla",
+    "t": 1000
+   },
+   {
+    "type": "elektrik.kesildi",
+    "t": 7000
+   },
+   {
+    "type": "belge.kaydet",
+    "t": 9000
+   },
+   {
+    "type": "pc.kapat",
+    "t": 12000
+   }
+  ]
+ }
+}

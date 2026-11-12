@@ -8,13 +8,17 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - Okul portalı (portal.mkcaglar.com) entegrasyonu: [docs/PORTAL.md](docs/PORTAL.md)
 - Görsel üretim listesi: [docs/GORSEL_PROMPTLARI.md](docs/GORSEL_PROMPTLARI.md)
 
-## Neler var? (F1)
+## Neler var? (F1 + F2)
 
 **Öğrenci**
 - Okul portalından otomatik giriş ya da kullanıcı adı + şifre ile giriş
 - 9 istasyonlu laboratuvar ana sayfası; görevler **Öğren / Uygula / Değerlendir** modlarında
-- İlk görev: **İ1 · Kurulum öncesi hazırlık** (Y1, B6) — yapılacaklar panosu, Windows 11 "Hakkında" penceresi,
-  gereksinim belgesi ve karar
+- **İ1 Donanım masası** (B1, B2, Y1): klavye/fare seçimi, kasa arka paneline kablo takma (harici ekran kartı,
+  PS/2 renkleri, ses jakları), UPS güç/VA hesabı ve model seçimi, elektrik kesintisinde güvenli kapatma,
+  kurulum öncesi hazırlık
+- **İ2 POST ve BIOS/UEFI** (B3, S1, S2, B9, S8): açılış zinciri, zamanlı tuşla Setup'a giriş, Aptio benzeri BIOS Setup
+  (önyükleme sırası, sanallaştırma, SATA modu, Secure Boot, TPM, yönetici parolası, USB önyükleme, tarih/saat),
+  görsel bip kodu teşhisi, CMOS pili arızası. Yanlış ayarların gerçekçi sonuçları vardır (ör. SATA modu değişince mavi ekran).
 - Yarım kalan çalışma sunucuya kaydedilir; başka bilgisayardan kaldığı yerden devam edilir
 - Görev sonunda puan, kriterler, hatalar ve kazanım düzeyleri
 

@@ -1,0 +1,295 @@
+{
+ "id": "i1-g2",
+ "istasyon": "i1",
+ "baslik": "Kabloları bağlama",
+ "arayuz": "arka-panel",
+ "kazanimlar": [
+  "B1",
+  "Y1"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Yeni gelen bilgisayar masaya yerleştirildi. Güç, monitör, klavye, fare, ağ ve hoparlör kablolarını kasanın arkasındaki doğru portlara tak; sonra bilgisayarı açıp her şeyin çalıştığını dene.",
+ "ogren": [
+  "Her kablonun fişi belli bir porta uyar: USB, PS/2, HDMI, DisplayPort, VGA, RJ45 (ağ), 3,5 mm ses jakı ve güç girişi.",
+  "PS/2 portlarında mor klavye, yeşil fare içindir. Ses jaklarında yeşil hoparlör (Line-out), pembe mikrofon, mavi Line-in'dir.",
+  "Bilgisayarda ayrı bir ekran kartı varsa monitör o kartın çıkışına bağlanır; anakarttaki çıkışlar genellikle çalışmaz.",
+  "Güç kablosu en son takılır ve bağlantılar bilgisayar kapalıyken yapılır."
+ ],
+ "ipuclari": [
+  "Kasanın alt kısmındaki genişleme yuvasında ayrı bir ekran kartı var.",
+  "Klavye fişinin rengine bak: mor.",
+  "Hoparlör için ses jaklarının rengi önemli."
+ ],
+ "veri": {
+  "kablolar": [
+   {
+    "id": "guc",
+    "ad": "Güç kablosu",
+    "tur": "guc",
+    "renk": "#111827",
+    "dogru": [
+     "psu"
+    ],
+    "yanlisMesaj": ""
+   },
+   {
+    "id": "monitor",
+    "ad": "Monitör kablosu (HDMI)",
+    "tur": "hdmi",
+    "renk": "#64748b",
+    "dogru": [
+     "gpu-hdmi"
+    ],
+    "yanlisMesaj": "Bu bilgisayarda ayrı (harici) ekran kartı var. Harici ekran kartı takılıyken anakartın görüntü çıkışları genellikle çalışmaz."
+   },
+   {
+    "id": "klavye",
+    "ad": "Klavye (PS/2)",
+    "tur": "ps2",
+    "renk": "#7c3aed",
+    "dogru": [
+     "ps2-mor"
+    ],
+    "yanlisMesaj": "PS/2 girişlerinde renk önemlidir: mor klavye, yeşil fare."
+   },
+   {
+    "id": "fare",
+    "ad": "Fare (USB)",
+    "tur": "usb",
+    "renk": "#334155",
+    "dogru": [
+     "usb-1",
+     "usb-2",
+     "usb-3",
+     "usb-4",
+     "usb-5",
+     "usb-6"
+    ],
+    "yanlisMesaj": ""
+   },
+   {
+    "id": "ag",
+    "ad": "Ağ kablosu (RJ45)",
+    "tur": "rj45",
+    "renk": "#2563eb",
+    "dogru": [
+     "lan"
+    ],
+    "yanlisMesaj": ""
+   },
+   {
+    "id": "hoparlor",
+    "ad": "Hoparlör (3,5 mm jak)",
+    "tur": "jak",
+    "renk": "#15803d",
+    "dogru": [
+     "ses-yesil"
+    ],
+    "yanlisMesaj": "Hoparlör yeşil (Line-out) çıkışa takılır. Pembe mikrofon, mavi Line-in girişidir."
+   }
+  ],
+  "sorular": [
+   {
+    "id": "gpu",
+    "soru": "Harici ekran kartı takılı bir bilgisayarda monitör kablosu nereye takılmalıdır?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "gpu",
+      "metin": "Ekran kartının çıkışına",
+      "dogru": true
+     },
+     {
+      "id": "anakart",
+      "metin": "Anakartın HDMI/VGA çıkışına",
+      "dogru": false,
+      "aciklama": "Harici ekran kartı varken anakart çıkışları genellikle devre dışıdır."
+     },
+     {
+      "id": "fark",
+      "metin": "Fark etmez",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "guvenlik",
+    "soru": "Kabloları takarken hangisi doğrudur?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kapali",
+      "metin": "Güç kablosu en son takılır; kablolar bilgisayar kapalıyken takılır",
+      "dogru": true
+     },
+     {
+      "id": "acik",
+      "metin": "Önce bilgisayar açılır, sonra kablolar takılır",
+      "dogru": false,
+      "aciklama": "PS/2 gibi bazı bağlantılar bilgisayar açıkken takılırsa çalışmaz ya da zarar görebilir."
+     },
+     {
+      "id": "zorla",
+      "metin": "Fiş girmiyorsa bastırarak takılır",
+      "dogru": false,
+      "aciklama": "Fiş tipi uymuyorsa zorlamak portu kırar."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "guc",
+   "aciklama": "Güç kablosu güç kaynağına takıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "baglanti.guc",
+    "eq": "psu"
+   }
+  },
+  {
+   "id": "monitor",
+   "aciklama": "Monitör ekran kartına bağlandı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B1",
+    "Y1"
+   ],
+   "kural": {
+    "path": "baglanti.monitor",
+    "eq": "gpu-hdmi"
+   }
+  },
+  {
+   "id": "klavye",
+   "aciklama": "PS/2 klavye mor porta takıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "baglanti.klavye",
+    "eq": "ps2-mor"
+   }
+  },
+  {
+   "id": "fare",
+   "aciklama": "USB fare bir USB portuna takıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "baglanti.fare",
+    "in": [
+     "usb-1",
+     "usb-2",
+     "usb-3",
+     "usb-4",
+     "usb-5",
+     "usb-6"
+    ]
+   }
+  },
+  {
+   "id": "ag",
+   "aciklama": "Ağ kablosu RJ45 portuna takıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "baglanti.ag",
+    "eq": "lan"
+   }
+  },
+  {
+   "id": "hoparlor",
+   "aciklama": "Hoparlör yeşil çıkışa takıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "baglanti.hoparlor",
+    "eq": "ses-yesil"
+   }
+  },
+  {
+   "id": "test",
+   "aciklama": "Bilgisayar açılarak bağlantılar denendi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "event": "pc.test"
+   }
+  },
+  {
+   "id": "q-gpu",
+   "aciklama": "Soru: Harici ekran kartı takılı bir bilgisayarda monitör kablosu nereye takılmalıdır?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "cevaplar.gpu",
+    "eq": "gpu"
+   }
+  },
+  {
+   "id": "q-guvenlik",
+   "aciklama": "Soru: Kabloları takarken hangisi doğrudur?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "cevaplar.guvenlik",
+    "eq": "kapali"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "uyumsuz",
+   "aciklama": "Fişler uymayan portlara çok kez takılmaya çalışıldı",
+   "ceza": 10,
+   "kural": {
+    "event": "baglanti.uyumsuz",
+    "count": {
+     "gte": 4
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "baglanti": {
+    "guc": "psu",
+    "monitor": "gpu-hdmi",
+    "klavye": "ps2-mor",
+    "fare": "usb-3",
+    "ag": "lan",
+    "hoparlor": "ses-yesil"
+   },
+   "test": {},
+   "cevaplar": {
+    "gpu": "gpu",
+    "guvenlik": "kapali"
+   }
+  },
+  "events": [
+   {
+    "type": "pc.test",
+    "t": 5000
+   }
+  ]
+ }
+}

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { api, setCsrf, type User } from '../api';
 import { useAuth, isStaff } from '../App';
 import { go } from '../router';
+import { photoUrl } from '../components/Photo';
 
 interface PublicConfig {
   portal_url: string;
@@ -38,7 +39,7 @@ export default function Login() {
   }
 
   return (
-    <div className="login-page" style={{ backgroundImage: 'url(gorseller/ortam-servis-masasi.webp)' }}>
+    <div className="login-page" style={photoUrl('ortam-servis-masasi') ? { backgroundImage: `url(${photoUrl('ortam-servis-masasi')})` } : undefined}>
       <div className="login-card">
         <div className="login-head">
           <span className="brand-logo big" aria-hidden>

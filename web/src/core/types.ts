@@ -35,6 +35,8 @@ export interface TaskDef {
   agirliklar?: { basari?: number; surec?: number; sure?: number };
   kriterler: TaskCriterion[];
   hatalar?: TaskMistake[];
+  /** Testler için örnek tam puanlı çözüm (arayüzde kullanılmaz) */
+  test_cozum?: { state: Json; events: import('./rules').SimEvent[] };
   /** "ileri düzey" görevler isteğe bağlıdır */
   ileri?: boolean;
 }
