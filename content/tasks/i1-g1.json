@@ -1,0 +1,450 @@
+{
+ "id": "i1-g1",
+ "istasyon": "i1",
+ "baslik": "Klavye ve fare seçimi",
+ "arayuz": "cevre-birimi",
+ "kazanimlar": [
+  "B1"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Okulun bilişim servisine dört istek geldi. Her kişinin ihtiyacını oku ve katalogdan en uygun klavye ve fareyi seç.",
+ "ogren": [
+  "Klavye ve fareler bağlantı türüne göre ayrılır: USB, PS/2 (eski bilgisayarlar; mor klavye, yeşil fare) ve kablosuz (2,4 GHz alıcı ya da Bluetooth).",
+  "Fare hassasiyeti DPI ile ölçülür. Grafik ve tasarım işlerinde DPI'ı ayarlanabilen hassas fareler tercih edilir.",
+  "Uzun süre klavye ve fare kullanan kişilerde bilek ağrısı görülebilir. Ergonomik (bölünmüş) klavyeler ve dikey fareler bileği daha doğal bir açıda tutar.",
+  "Kablosuz cihazlar kablo karmaşasını önler ama pil gerektirir ve sinyal kesilebilir."
+ ],
+ "ipuclari": [
+  "Eski bilgisayarda yalnızca mor ve yeşil girişler çalışıyor. Bu girişlerin adı nedir?",
+  "Bileği ağrıyan biri için hem klavyede hem farede ‘ergonomik’ ürünlere bak.",
+  "Toplantı odasında kablo istenmiyor."
+ ],
+ "veri": {
+  "katalog": [
+   {
+    "id": "klavye-membran-usb",
+    "tur": "klavye",
+    "ad": "Standart klavye",
+    "ozellikler": [
+     "USB",
+     "Membran tuşlar",
+     "Türkçe Q"
+    ]
+   },
+   {
+    "id": "klavye-mekanik",
+    "tur": "klavye",
+    "ad": "Mekanik oyuncu klavyesi",
+    "ozellikler": [
+     "USB",
+     "Mekanik anahtarlar",
+     "Işıklı tuşlar"
+    ]
+   },
+   {
+    "id": "klavye-kablosuz",
+    "tur": "klavye",
+    "ad": "İnce kablosuz klavye",
+    "ozellikler": [
+     "2,4 GHz USB alıcı",
+     "10 m kapsama",
+     "2 × AAA pil"
+    ]
+   },
+   {
+    "id": "klavye-ergonomik",
+    "tur": "klavye",
+    "ad": "Ergonomik bölünmüş klavye",
+    "ozellikler": [
+     "USB",
+     "Bölünmüş tuş yerleşimi",
+     "Bilek desteği"
+    ]
+   },
+   {
+    "id": "klavye-ps2",
+    "tur": "klavye",
+    "ad": "Ofis klavyesi (PS/2)",
+    "ozellikler": [
+     "PS/2 (mor konnektör)",
+     "Membran tuşlar"
+    ]
+   },
+   {
+    "id": "fare-optik-usb",
+    "tur": "fare",
+    "ad": "Optik fare",
+    "ozellikler": [
+     "USB",
+     "1000 DPI",
+     "3 tuş"
+    ]
+   },
+   {
+    "id": "fare-kablosuz",
+    "tur": "fare",
+    "ad": "Kablosuz fare",
+    "ozellikler": [
+     "2,4 GHz USB alıcı",
+     "1600 DPI",
+     "1 × AA pil"
+    ]
+   },
+   {
+    "id": "fare-oyuncu",
+    "tur": "fare",
+    "ad": "Hassas fare",
+    "ozellikler": [
+     "USB",
+     "100–16000 DPI ayarlanabilir",
+     "Ek tuşlar"
+    ]
+   },
+   {
+    "id": "fare-dikey-ergonomik",
+    "tur": "fare",
+    "ad": "Dikey ergonomik fare",
+    "ozellikler": [
+     "USB",
+     "El sıkışma tutuşu",
+     "1600 DPI"
+    ]
+   },
+   {
+    "id": "fare-ps2",
+    "tur": "fare",
+    "ad": "Ofis faresi (PS/2)",
+    "ozellikler": [
+     "PS/2 (yeşil konnektör)",
+     "800 DPI"
+    ]
+   }
+  ],
+  "musteriler": [
+   {
+    "id": "grafiker",
+    "kisi": "Ece Hanım — grafik tasarımcı",
+    "gorsel": "kisi-grafiker",
+    "ihtiyac": "Photoshop'ta piksel hassasiyetinde çizim yapıyor; farenin hızını işe göre değiştirebilmek istiyor.",
+    "istenen": [
+     "fare"
+    ],
+    "dogru": {
+     "fare": "fare-oyuncu"
+    }
+   },
+   {
+    "id": "muhasebeci",
+    "kisi": "Hasan Bey — muhasebeci",
+    "gorsel": "kisi-muhasebeci",
+    "ihtiyac": "Günde 8 saat sayı giriyor; iki bileğinde de ağrı var.",
+    "istenen": [
+     "klavye",
+     "fare"
+    ],
+    "dogru": {
+     "klavye": "klavye-ergonomik",
+     "fare": "fare-dikey-ergonomik"
+    }
+   },
+   {
+    "id": "eski-pc",
+    "kisi": "Atölyedeki eski bilgisayar",
+    "ihtiyac": "USB portlarının hepsi bozuk; yalnızca kasanın arkasındaki mor ve yeşil yuvarlak girişler çalışıyor.",
+    "istenen": [
+     "klavye",
+     "fare"
+    ],
+    "dogru": {
+     "klavye": "klavye-ps2",
+     "fare": "fare-ps2"
+    }
+   },
+   {
+    "id": "toplanti",
+    "kisi": "Toplantı odası",
+    "ihtiyac": "Bilgisayar duvardaki ekrana bağlı; klavye ve fare 3 metre uzaktaki masada, kablo istenmiyor.",
+    "istenen": [
+     "klavye",
+     "fare"
+    ],
+    "dogru": {
+     "klavye": "klavye-kablosuz",
+     "fare": "fare-kablosuz"
+    }
+   }
+  ],
+  "sorular": [
+   {
+    "id": "dpi",
+    "soru": "Farenin hassasiyetini (imlecin ne kadar ince hareket ettiğini) gösteren birim hangisidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "dpi",
+      "metin": "DPI (inç başına nokta)",
+      "dogru": true,
+      "aciklama": "DPI arttıkça fare küçük el hareketleriyle daha uzağa ve daha hassas gider."
+     },
+     {
+      "id": "hz",
+      "metin": "Hz (hertz)",
+      "dogru": false,
+      "aciklama": "Hz, ekran yenileme ya da tarama sıklığıdır."
+     },
+     {
+      "id": "gb",
+      "metin": "GB (gigabayt)",
+      "dogru": false,
+      "aciklama": "GB, depolama birimidir."
+     },
+     {
+      "id": "rpm",
+      "metin": "RPM (devir/dakika)",
+      "dogru": false,
+      "aciklama": "RPM, fan ya da disk hızıdır."
+     }
+    ]
+   },
+   {
+    "id": "ps2",
+    "soru": "PS/2 girişlerindeki renkler neyi gösterir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "mor-yesil",
+      "metin": "Mor: klavye, yeşil: fare",
+      "dogru": true
+     },
+     {
+      "id": "yesil-mor",
+      "metin": "Yeşil: klavye, mor: fare",
+      "dogru": false
+     },
+     {
+      "id": "ses",
+      "metin": "Mor: mikrofon, yeşil: hoparlör",
+      "dogru": false,
+      "aciklama": "Ses girişleri 3,5 mm jaktır, PS/2 değildir."
+     },
+     {
+      "id": "hiz",
+      "metin": "Renkler hızı gösterir",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "kablosuz",
+    "soru": "Kablosuz klavye ve farelerin dezavantajları hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "pil",
+      "metin": "Pil biter ya da şarj gerekir",
+      "dogru": true
+     },
+     {
+      "id": "parazit",
+      "metin": "Sinyal kesilebilir, başka cihazlardan parazit alabilir",
+      "dogru": true
+     },
+     {
+      "id": "kablo",
+      "metin": "Masada kablo karmaşası yaratır",
+      "dogru": false,
+      "aciklama": "Kablosuzun avantajı tam da kablo karmaşası olmamasıdır."
+     },
+     {
+      "id": "dpi",
+      "metin": "DPI değeri yoktur",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "grafiker-fare",
+   "aciklama": "Grafik tasarımcı için doğru fare",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "secim.grafiker.fare",
+    "eq": "fare-oyuncu"
+   }
+  },
+  {
+   "id": "muhasebeci-klavye",
+   "aciklama": "Muhasebeci için doğru klavye",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "secim.muhasebeci.klavye",
+    "eq": "klavye-ergonomik"
+   }
+  },
+  {
+   "id": "muhasebeci-fare",
+   "aciklama": "Muhasebeci için doğru fare",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "secim.muhasebeci.fare",
+    "eq": "fare-dikey-ergonomik"
+   }
+  },
+  {
+   "id": "eski-pc-klavye",
+   "aciklama": "Eski bilgisayar için doğru klavye",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "secim.eski-pc.klavye",
+    "eq": "klavye-ps2"
+   }
+  },
+  {
+   "id": "eski-pc-fare",
+   "aciklama": "Eski bilgisayar için doğru fare",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "secim.eski-pc.fare",
+    "eq": "fare-ps2"
+   }
+  },
+  {
+   "id": "toplanti-klavye",
+   "aciklama": "Toplantı odası için doğru klavye",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "secim.toplanti.klavye",
+    "eq": "klavye-kablosuz"
+   }
+  },
+  {
+   "id": "toplanti-fare",
+   "aciklama": "Toplantı odası için doğru fare",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "secim.toplanti.fare",
+    "eq": "fare-kablosuz"
+   }
+  },
+  {
+   "id": "q-dpi",
+   "aciklama": "Soru: Farenin hassasiyetini (imlecin ne kadar ince hareket ettiğini) gösteren birim hangisidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "cevaplar.dpi",
+    "eq": "dpi"
+   }
+  },
+  {
+   "id": "q-ps2",
+   "aciklama": "Soru: PS/2 girişlerindeki renkler neyi gösterir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "path": "cevaplar.ps2",
+    "eq": "mor-yesil"
+   }
+  },
+  {
+   "id": "q-kablosuz",
+   "aciklama": "Soru: Kablosuz klavye ve farelerin dezavantajları hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B1"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.kablosuz",
+      "includes": "pil"
+     },
+     {
+      "path": "cevaplar.kablosuz",
+      "includes": "parazit"
+     },
+     {
+      "path": "cevaplar.kablosuz",
+      "len_eq": 2
+     }
+    ]
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "deneme",
+   "aciklama": "Çok fazla deneme-yanılma yapıldı",
+   "ceza": 10,
+   "kural": {
+    "event": "secim.ata",
+    "count": {
+     "gte": 20
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "secim": {
+    "grafiker": {
+     "fare": "fare-oyuncu"
+    },
+    "muhasebeci": {
+     "klavye": "klavye-ergonomik",
+     "fare": "fare-dikey-ergonomik"
+    },
+    "eski-pc": {
+     "klavye": "klavye-ps2",
+     "fare": "fare-ps2"
+    },
+    "toplanti": {
+     "klavye": "klavye-kablosuz",
+     "fare": "fare-kablosuz"
+    }
+   },
+   "cevaplar": {
+    "dpi": "dpi",
+    "ps2": "mor-yesil",
+    "kablosuz": [
+     "pil",
+     "parazit"
+    ]
+   }
+  },
+  "events": [
+   {
+    "type": "secim.ata",
+    "t": 1000
+   }
+  ]
+ }
+}

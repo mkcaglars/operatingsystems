@@ -42,6 +42,14 @@ describe('TS ve PHP aynı sonucu verir', () => {
   it('kurallar', () => {
     expect(php.kurallar).toEqual(fx.kurallar.map((c: { kural: Rule }) => evaluate(c.kural, ctx)));
   });
+  it('görevlerin örnek çözümleri', () => {
+    const dir = new URL('../content/tasks/', import.meta.url);
+    const ts = readdirSync(dir)
+      .sort()
+      .map((f) => JSON.parse(readFileSync(new URL(f, dir), 'utf8')) as TaskDef)
+      .map((t) => [scoreTask(t, t.test_cozum!, 0, 0), scoreTask(t, { state: {}, events: [] }, 0, 0)]);
+    expect(php.gorevler).toEqual(ts);
+  });
   it('puanlama', () => {
     const ts = fx.puanlama.map((p: { sure: number; ipucu: number }) => scoreTask(fx.gorev as TaskDef, ctx, p.sure, p.ipucu));
     expect(php.puanlama).toEqual(ts);
@@ -57,8 +65,15 @@ describe('içerik dosyaları', () => {
       expect(f).toBe(t.id + '.json');
       for (const k of t.kazanimlar) expect(kazanimlar.has(k)).toBe(true);
       for (const k of t.kriterler) for (const kk of k.kazanimlar ?? []) expect(t.kazanimlar).toContain(kk);
-      // Kurallar hata vermeden değerlendirilebilmeli
-      expect(() => scoreTask(t, { state: {}, events: [] }, 0, 0)).not.toThrow();
+      // Hiçbir şey yapmayan öğrenci düşük başarı almalı (kurallar kendiliğinden geçmemeli)
+      const bos = scoreTask(t, { state: {}, events: [] }, 0, 0);
+      expect(bos.basari).toBeLessThan(20);
+      // Örnek çözüm tam başarı almalı ve hiçbir hata kuralına takılmamalı
+      expect(t.test_cozum, 'test_cozum eksik').toBeTruthy();
+      const r = scoreTask(t, t.test_cozum!, 0, 0);
+      expect(r.kriterler.filter((k) => !k.gecti).map((k) => k.id)).toEqual([]);
+      expect(r.hatalar).toEqual([]);
+      expect(r.puan).toBe(100);
     });
   }
 });

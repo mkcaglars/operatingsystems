@@ -1,0 +1,302 @@
+{
+ "id": "i2-g1",
+ "istasyon": "i2",
+ "baslik": "Bilgisayar nasıl açılır?",
+ "arayuz": "siralama",
+ "kazanimlar": [
+  "B3"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Güç düğmesine bastığın andan Windows masaüstü gelene kadar bilgisayarın içinde neler oluyor? Adımları doğru sıraya koy ve BIOS'la ilgili soruları yanıtla.",
+ "ogren": [
+  "BIOS (yeni bilgisayarlarda UEFI), anakarttaki bir yongada bulunan ve bilgisayar açılınca ilk çalışan yazılımdır.",
+  "POST (Power-On Self Test — açılışta kendini sınama): işlemci, bellek, ekran kartı ve klavye sınanır. Sorun varsa bip sesleri ya da hata mesajı verilir.",
+  "BIOS ayarları, anakarttaki düğme pil (CR2032) ile beslenen CMOS/NVRAM belleğinde saklanır.",
+  "POST'tan sonra BIOS, önyükleme sırasındaki aygıtları dener ve bulduğu önyükleyiciyi başlatır; önyükleyici de işletim sistemini yükler."
+ ],
+ "ipuclari": [
+  "İlk adım her zaman güç düğmesidir; son adım işletim sisteminin yüklenmesidir.",
+  "Donanım sınanmadan (POST) önyükleme aygıtı aranmaz."
+ ],
+ "veri": {
+  "siralama": {
+   "baslik": "Açılış adımlarını sırala",
+   "aciklama": "▲ ▼ düğmeleriyle adımları yukarı-aşağı taşı.",
+   "ogeler": [
+    {
+     "id": "aygit",
+     "metin": "Önyükleme sırasına göre işletim sistemi bulunan aygıt aranır."
+    },
+    {
+     "id": "post",
+     "metin": "POST: işlemci, bellek (RAM), ekran kartı ve klavye sınanır."
+    },
+    {
+     "id": "isletim",
+     "metin": "İşletim sistemi belleğe yüklenir ve bilgisayarın denetimini alır."
+    },
+    {
+     "id": "guc",
+     "metin": "Güç düğmesine basılır; güç kaynağı anakarta enerji verir."
+    },
+    {
+     "id": "onyukleyici",
+     "metin": "Diskteki önyükleyici (ör. Windows Boot Manager, GRUB) başlatılır."
+    },
+    {
+     "id": "bios",
+     "metin": "İşlemci, BIOS/UEFI yongasındaki programı çalıştırmaya başlar."
+    }
+   ],
+   "dogruSira": [
+    "guc",
+    "bios",
+    "post",
+    "aygit",
+    "onyukleyici",
+    "isletim"
+   ]
+  },
+  "sorular": [
+   {
+    "id": "gorev",
+    "soru": "BIOS/UEFI'nin görevleri hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "post",
+      "metin": "Açılışta donanımı sınar (POST)",
+      "dogru": true
+     },
+     {
+      "id": "onyukleme",
+      "metin": "İşletim sistemini başlatacak aygıtı bulur",
+      "dogru": true
+     },
+     {
+      "id": "ayar",
+      "metin": "Tarih, saat, önyükleme sırası gibi temel donanım ayarlarını saklar",
+      "dogru": true
+     },
+     {
+      "id": "yazdir",
+      "metin": "Belgeleri yazdırır",
+      "dogru": false
+     },
+     {
+      "id": "virus",
+      "metin": "Virüs taraması yapar",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "cmos",
+    "soru": "BIOS ayarları bilgisayar kapatılınca neden silinmez?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "pil",
+      "metin": "Anakarttaki pil ile beslenen CMOS/NVRAM belleğinde saklandığı için",
+      "dogru": true
+     },
+     {
+      "id": "disk",
+      "metin": "Sabit diskte saklandığı için",
+      "dogru": false
+     },
+     {
+      "id": "ram",
+      "metin": "RAM'de saklandığı için",
+      "dogru": false,
+      "aciklama": "RAM'deki bilgiler bilgisayar kapanınca silinir."
+     }
+    ]
+   },
+   {
+    "id": "uefi",
+    "soru": "UEFI'nin eski (Legacy) BIOS'a göre üstünlükleri hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "gpt",
+      "metin": "2 TB'tan büyük diskleri (GPT) destekler",
+      "dogru": true
+     },
+     {
+      "id": "secure",
+      "metin": "Güvenli Önyükleme (Secure Boot) sağlar",
+      "dogru": true
+     },
+     {
+      "id": "fare",
+      "metin": "Fareyle kullanılabilen grafik arayüzü olabilir",
+      "dogru": true
+     },
+     {
+      "id": "os",
+      "metin": "İşletim sistemine gerek bırakmaz",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "sira",
+   "aciklama": "Açılış adımlarının tamamı doğru sırada",
+   "agirlik": 3,
+   "kazanimlar": [
+    "B3"
+   ],
+   "kural": {
+    "path": "sira",
+    "eq": [
+     "guc",
+     "bios",
+     "post",
+     "aygit",
+     "onyukleyici",
+     "isletim"
+    ]
+   }
+  },
+  {
+   "id": "bas",
+   "aciklama": "İlk iki adım doğru",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "sira[0]",
+      "eq": "guc"
+     },
+     {
+      "path": "sira[1]",
+      "eq": "bios"
+     }
+    ]
+   }
+  },
+  {
+   "id": "son",
+   "aciklama": "Son iki adım doğru",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "sira[4]",
+      "eq": "onyukleyici"
+     },
+     {
+      "path": "sira[5]",
+      "eq": "isletim"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-gorev",
+   "aciklama": "Soru: BIOS/UEFI'nin görevleri hangileridir?",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.gorev",
+      "includes": "post"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "includes": "onyukleme"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "includes": "ayar"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "len_eq": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-cmos",
+   "aciklama": "Soru: BIOS ayarları bilgisayar kapatılınca neden silinmez?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B3"
+   ],
+   "kural": {
+    "path": "cevaplar.cmos",
+    "eq": "pil"
+   }
+  },
+  {
+   "id": "q-uefi",
+   "aciklama": "Soru: UEFI'nin eski (Legacy) BIOS'a göre üstünlükleri hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.uefi",
+      "includes": "gpt"
+     },
+     {
+      "path": "cevaplar.uefi",
+      "includes": "secure"
+     },
+     {
+      "path": "cevaplar.uefi",
+      "includes": "fare"
+     },
+     {
+      "path": "cevaplar.uefi",
+      "len_eq": 3
+     }
+    ]
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "sira": [
+    "guc",
+    "bios",
+    "post",
+    "aygit",
+    "onyukleyici",
+    "isletim"
+   ],
+   "cevaplar": {
+    "gorev": [
+     "post",
+     "onyukleme",
+     "ayar"
+    ],
+    "cmos": "pil",
+    "uefi": [
+     "gpt",
+     "secure",
+     "fare"
+    ]
+   }
+  },
+  "events": []
+ }
+}

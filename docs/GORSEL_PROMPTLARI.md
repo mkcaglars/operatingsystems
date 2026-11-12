@@ -103,6 +103,7 @@ fiziksel nesneler ve ortamlar var.
 | 44 | `yazilim-kutusu.png` | 3:4 | A retail software box standing upright, **completely plain white front with no design or text** (the label will be added later). **[ÖNDEN] [DEKUPE]** |
 | 45 | `lisans-etiketi.png` | 3:1 | A blank rectangular product key sticker label with a holographic strip on the left, empty white area for text. **[ÖNDEN] [DEKUPE]** |
 | 46 | `harici-disk.png` | 1:1 | A portable external hard drive with a USB cable, for backups. **[DEKUPE]** |
+| 46b | `modem.png` | 1:1 | A small white home/office Wi-Fi router modem with two antennas and status LEDs, front three-quarter view. **[DEKUPE]** |
 
 ## 8. Arıza biletleri için kullanıcı profilleri (İ9, kampanyalar)
 
@@ -122,6 +123,8 @@ fiziksel nesneler ve ortamlar var.
 | 53 | `duvar-kagidi-3.webp` | 16:9 | Abstract soft gradient waves in deep blue and purple, minimal desktop wallpaper, no text |
 
 ---
+
+**Not:** Görsel eklemek için dosyayı `assets/gorseller/` klasörüne listedeki adla koymak yeterli; sitede görsel olmayan yerlerde yedek çizim görünür, görsel gelince kendiliğinden fotoğraf kullanılır. (İstisna: kasa arka paneli görevindeki portlar tıklanabilir çizim olarak kalır.)
 
 **Öncelik:** İlk deneme sürümü (F2: İ1 Donanım + İ2 POST/BIOS) için önce **1, 3–10, 15, 17, 18, 20–41** gerekir. Diğerleri sonraki
 fazlarda kullanılacak.
