@@ -23,7 +23,7 @@
  */
 
 // Laboratuvarın adresi (sonunda / olmadan)
-const ISLETIMSISTEMI_ADRES = 'https://isletimsistemi.mkcaglar.com';
+const ISLETIMSISTEMI_ADRES = 'https://isistem.mkcaglar.com';
 
 // Laboratuvarın ayar dosyasındaki 'jwt_secret' ile AYNI olmalı. Kimseyle paylaşmayın.
 // C# Form Stüdyosu'nun anahtarından FARKLI olmalı.

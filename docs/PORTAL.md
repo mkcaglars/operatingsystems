@@ -4,7 +4,7 @@
 
 1. **Okul portalından otomatik giriş** (şifresiz): portal, kullanıcının bilgilerini gizli bir anahtarla imzalar;
    laboratuvar imzayı doğrular. URL'deki ad veya rol değiştirilerek başka birinin hesabına girilemez.
-2. **Portal dışından kullanıcı adı + şifre**: öğretmenin panelden verdiği bilgilerle `isletimsistemi.mkcaglar.com` adresinden.
+2. **Portal dışından kullanıcı adı + şifre**: öğretmenin panelden verdiği bilgilerle `isistem.mkcaglar.com` adresinden.
 
 Sistem, C# Form Stüdyosu'ndaki token sisteminin aynısıdır.
 
@@ -12,7 +12,7 @@ Sistem, C# Form Stüdyosu'ndaki token sisteminin aynısıdır.
 
 ```
 Öğrenci portalda "İşletim Sistemleri"ne tıklar
-   → Portal imzalı bağlantı üretir:  https://isletimsistemi.mkcaglar.com/giris.php?token=eyJhbGciOi...
+   → Portal imzalı bağlantı üretir:  https://isistem.mkcaglar.com/giris.php?token=eyJhbGciOi...
    → giris.php imzayı, süreyi ve tek kullanımlığı denetler
    → Kullanıcı ilk girişte otomatik oluşturulur; ad ve rol her girişte güncellenir
    → Öğrenci, "sinif" alanındaki sınıfa otomatik eklenir (sınıf yoksa oluşturulur)

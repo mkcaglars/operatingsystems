@@ -1,7 +1,7 @@
 # İşletim Sistemleri Sanal Laboratuvarı — Tasarım Dokümanı
 
 > Durum: **v0.4 — onaylandı.** F1 (iskelet) tamamlandı; sıradaki faz F2.
-> Yayın adresi: **https://isletimsistemi.mkcaglar.com** (Hostinger). Hedef: **9. sınıf Bilişim Teknolojileri**.
+> Yayın adresi: **https://isistem.mkcaglar.com** (Hostinger). Hedef: **9. sınıf Bilişim Teknolojileri**.
 > Son bölümdeki **Açık Sorular** karara bağlanmalıdır.
 
 ---
@@ -521,7 +521,7 @@ Roller: **Yönetici** (öğretmen hesaplarını yönetir), **Öğretmen**, **Ö�
 
 ## 8. Teknik Mimari
 
-**Barındırma:** Hostinger paylaşımlı hosting (Web/Premium/Business), alan adı **isletimsistemi.mkcaglar.com**
+**Barındırma:** Hostinger paylaşımlı hosting (Web/Premium/Business), alan adı **isistem.mkcaglar.com**
 (alt alan adı; hPanel'den SSL). Paylaşımlı hostingte Node.js süreci ve WebSocket çalıştırılamadığı için mimari buna göre
 seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP API + MySQL**.
 
@@ -536,7 +536,7 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
 └───────────────▲───────────────────────────────────────────────────────┘
        HTTPS    │ REST/JSON  (canlı izleme ve arıza gönderme: 3–5 sn'de bir yoklama)
 ┌───────────────┴───────────────────────────────────────────────────────┐
-│ Hostinger: public_html/ (isletimsistemi.mkcaglar.com)                  │
+│ Hostinger: public_html/ (isistem.mkcaglar.com)                  │
 │  ├─ index.html + assets/  (derlenmiş arayüz)                           │
 │  └─ api/  PHP 8.x (çerçevesiz, küçük yönlendirici; PDO)                │
 │       ├─ Kimlik doğrulama (PHP oturumu, HttpOnly çerez, CSRF koruması) │
@@ -602,7 +602,7 @@ Portal adresi: **https://portal.mkcaglar.com**. C# Form Stüdyosu'ndaki (`mkcagl
 
 ```
 Kullanıcı portalda "İşletim Sistemleri" bağlantısına tıklar
-  → Portal imzalı bağlantı üretir: https://isletimsistemi.mkcaglar.com/giris.php?token=eyJ...
+  → Portal imzalı bağlantı üretir: https://isistem.mkcaglar.com/giris.php?token=eyJ...
   → giris.php: imza (HS256), süre (en çok 5 dk) ve tek kullanımlık (jti) denetimi
   → Kullanıcı ilk girişte otomatik oluşturulur / ad, rol, sınıf her girişte güncellenir
   → Oturum açılır (varsayılan 10 saat) → öğrenci kendi görevlerine, öğretmen paneline yönlenir
@@ -633,7 +633,7 @@ Kullanıcı portalda "İşletim Sistemleri" bağlantısına tıklar
 | Faz | İçerik | Çıktı |
 |---|---|---|
 | F0 | Bu dokümanın onayı; görsellerin üretilmesi | Onaylı tasarım |
-| F1 ✅ | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş (portal token + kullanıcı adı/şifre), çoklu öğretmen, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
+| F1 ✅ | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş (portal token + kullanıcı adı/şifre), çoklu öğretmen, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isistem.mkcaglar.com'da çalışan iskelet |
 | F2 | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
 | F3 | İ3 Seçim + İ4 Windows 11 kurulumu + İ5 Ubuntu kurulumu (terminal) | Kurulum modülleri |
 | F4 | İ6 Ayarlar + İ7 Sürücü & Windows Güvenliği + İ8 Uygulama Yazılımları (Office, Chrome, isteğe bağlı WinRAR/Acrobat/Photoshop) + Windows 11/Ubuntu masaüstü | Gelişmiş özellikler |
@@ -667,7 +667,7 @@ tarafından değiştirilebilir.
 
 | # | Konu | Karar |
 |---|---|---|
-| 1 | Barındırma | Hostinger paylaşımlı hosting, **isletimsistemi.mkcaglar.com**; PHP 8 + MySQL API, simülasyon tarayıcıda |
+| 1 | Barındırma | Hostinger paylaşımlı hosting, **isistem.mkcaglar.com**; PHP 8 + MySQL API, simülasyon tarayıcıda |
 | 2 | Giriş | İki yol: **okul portalından otomatik giriş** (C# Form Stüdyosu ile aynı token sistemi) **ve** portal dışından **kullanıcı adı + şifre**; hesapları öğretmen panelden ekler/düzenler/sıfırlar |
 | 3 | Hedef kitle | **9. sınıf Bilişim Teknolojileri**, haftada **2 ders saati** |
 | 4 | Kapalı kaynak işletim sistemi | **Windows 11** |
