@@ -57,7 +57,7 @@ export function splitPath(path: string): string[] {
 export function getPath(obj: Json, path: string): Value {
   let cur: Value = obj;
   for (const key of splitPath(path)) {
-    if (cur === MISSING || cur === null || typeof cur !== 'object') return MISSING;
+    if (cur === null || typeof cur !== 'object') return MISSING;
     if (Array.isArray(cur)) {
       if (!/^\d+$/.test(key)) return MISSING;
       const i = Number(key);

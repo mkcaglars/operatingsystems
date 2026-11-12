@@ -1,6 +1,6 @@
 # İşletim Sistemleri Sanal Laboratuvarı — Tasarım Dokümanı
 
-> Durum: **Taslak v0.4 — onay bekliyor.** Kod yazımına bu doküman onaylandıktan sonra başlanacaktır.
+> Durum: **v0.4 — onaylandı.** F1 (iskelet) tamamlandı; sıradaki faz F2.
 > Yayın adresi: **https://isletimsistemi.mkcaglar.com** (Hostinger). Hedef: **9. sınıf Bilişim Teknolojileri**.
 > Son bölümdeki **Açık Sorular** karara bağlanmalıdır.
 
@@ -633,7 +633,7 @@ Kullanıcı portalda "İşletim Sistemleri" bağlantısına tıklar
 | Faz | İçerik | Çıktı |
 |---|---|---|
 | F0 | Bu dokümanın onayı; görsellerin üretilmesi | Onaylı tasarım |
-| F1 | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş (portal token + kullanıcı adı/şifre), çoklu öğretmen, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
+| F1 ✅ | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş (portal token + kullanıcı adı/şifre), çoklu öğretmen, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
 | F2 | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
 | F3 | İ3 Seçim + İ4 Windows 11 kurulumu + İ5 Ubuntu kurulumu (terminal) | Kurulum modülleri |
 | F4 | İ6 Ayarlar + İ7 Sürücü & Windows Güvenliği + İ8 Uygulama Yazılımları (Office, Chrome, isteğe bağlı WinRAR/Acrobat/Photoshop) + Windows 11/Ubuntu masaüstü | Gelişmiş özellikler |

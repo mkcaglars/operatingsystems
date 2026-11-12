@@ -5,16 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "dev:php": "php -S 127.0.0.1:8081 -t server",
+    "build": "tsc && vite build && node scripts/postbuild.mjs",
     "test": "vitest run",
     "test:php": "php tests/php/rules_test.php",
-    "test:api": "node tests/api/smoke.mjs"
+    "test:api": "node tests/api/smoke.mjs",
+    "test:all": "npm run test && npm run test:php && npm run test:api"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
