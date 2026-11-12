@@ -2341,3 +2341,935 @@ select.mini {
   margin: 0 0 4px;
   padding-left: 20px;
 }
+
+/* ===================== F3 ===================== */
+/* Bilgi kartları */
+.sr-cards {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.sr-card {
+  transform: none;
+}
+.sr-card table th {
+  width: 38%;
+}
+.sr-img {
+  width: 100%;
+  max-height: 120px;
+  object-fit: contain;
+}
+
+/* Sınıflandırma */
+.es {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.es-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 12px;
+}
+.es-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.es-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.es-head small {
+  display: block;
+  color: var(--muted);
+}
+.es-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: contain;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.es-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.es-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.seg.small button {
+  padding: 4px 9px;
+  font-size: 0.85rem;
+}
+.seg button.good {
+  background: var(--ok);
+  color: #fff;
+}
+.seg button.bad {
+  background: var(--err);
+  color: #fff;
+}
+
+/* Terminal (GNOME benzeri) */
+.term {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  font-family: 'Ubuntu Mono', 'DejaVu Sans Mono', Consolas, monospace;
+}
+.term-title {
+  background: #2b2b2b;
+  color: #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0 0 12px;
+  height: 34px;
+  font: 600 0.85rem 'Ubuntu', system-ui, sans-serif;
+}
+.term-ctrl {
+  display: flex;
+  gap: 6px;
+  padding-right: 8px;
+}
+.term-ctrl i {
+  font-style: normal;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #3c3c3c;
+  font-size: 0.65rem;
+}
+.term-ctrl i.x {
+  background: #e95420;
+  color: #fff;
+}
+.term-body {
+  background: #300a24;
+  color: #f2f2f2;
+  padding: 8px 10px;
+  overflow-y: auto;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  cursor: text;
+}
+.t-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.t-prompt {
+  color: #8ae234;
+  font-weight: 700;
+}
+.t-err {
+  color: #ffb4a8;
+}
+.t-dir {
+  color: #729fcf;
+}
+.t-input {
+  display: flex;
+}
+.t-input input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  color: #f2f2f2;
+  font: inherit;
+  padding: 0;
+  outline: none;
+  min-width: 40px;
+}
+
+/* Ubuntu masaüstü */
+.ut {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 16px;
+  align-items: start;
+}
+.ubuntu-desktop {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 70% 30%, #e95420 0%, #a2193b 35%, #4a0d36 70%, #2c0721 100%);
+  min-height: 480px;
+  padding: 40px 18px 18px 74px;
+}
+.ub-top {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 28px;
+  background: #111;
+  color: #eee;
+  font: 600 0.8rem 'Ubuntu', system-ui, sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+}
+.ub-dock {
+  position: absolute;
+  left: 8px;
+  top: 38px;
+  bottom: 10px;
+  width: 52px;
+  background: rgba(20, 20, 20, 0.72);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+.ub-app {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font: 700 0.85rem 'Ubuntu Mono', monospace;
+  position: relative;
+}
+.ub-app.on::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #e95420;
+}
+.ub-grid {
+  margin-top: auto;
+  color: #ddd;
+  font-size: 0.7rem;
+  letter-spacing: -1px;
+}
+.ub-live {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+.ut-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cmd-card {
+  width: 100%;
+  border-collapse: collapse;
+}
+.cmd-card td {
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.cmd-card code {
+  white-space: nowrap;
+}
+
+/* Rufus */
+.ma {
+  display: grid;
+  grid-template-columns: minmax(320px, 440px) 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.rufus {
+  position: relative;
+  background: #f0f0f0;
+  border: 1px solid #9aa4b2;
+  border-radius: 8px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.88rem;
+  overflow: hidden;
+}
+.rf-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  height: 32px;
+  padding-left: 10px;
+  border-bottom: 1px solid #ddd;
+}
+.rf-body {
+  padding: 10px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rf-sec {
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-bottom: 1px solid #c8c8c8;
+  margin-top: 6px;
+}
+.rf-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.rufus select,
+.rufus input {
+  padding: 4px 6px;
+  border-radius: 3px;
+  font-size: 0.88rem;
+}
+.rf-status {
+  position: relative;
+  height: 26px;
+  background: #e6e6e6;
+  border: 1px solid #bcbcbc;
+}
+.rf-status i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: #06b025;
+}
+.rf-status span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+}
+.rf-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.rf-btns .btn {
+  border-radius: 3px;
+  padding: 4px 18px;
+}
+.rf-dialog {
+  position: absolute;
+  inset: 25% 8% auto 8%;
+  background: #fff;
+  border: 1px solid #888;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ma-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Windows kurulumu */
+.ws {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
+  gap: 16px;
+  align-items: start;
+}
+.ws-main .monitor-css {
+  width: 100%;
+  max-width: calc((100vh - 250px) * 1.6 + 28px);
+  min-width: min(100%, 520px);
+}
+.ws-screen {
+  background: linear-gradient(135deg, #3a1a6b, #1b3f8f) !important;
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  color: #1b1b1b;
+}
+/* cqi birimi kapsayıcının (ekranın) içindeki öğelerde geçerlidir */
+.ws-screen > * {
+  font-size: max(10px, 1.5cqi);
+}
+.ws-screen > .ws-dlg,
+.ws-modal .ws-dlg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 62%;
+  max-height: 88%;
+  overflow: auto;
+  background: #f3f3f3;
+  border-radius: 6px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  padding: 1.4em 1.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+.ws-screen > .ws-dlg.wide {
+  width: 78%;
+}
+.ws-h {
+  font-size: 1.45em;
+  font-weight: 600;
+  margin-bottom: 0.3em;
+}
+.ws-dlg label {
+  font-size: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+.ws-dlg select,
+.ws-dlg input {
+  font-size: 1em;
+  padding: 0.3em 0.5em;
+  border-radius: 4px;
+}
+.ws-radio {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.6em !important;
+}
+.ws-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6em;
+  margin-top: 0.6em;
+  align-items: center;
+}
+.ws-foot .ws-link {
+  margin-right: auto;
+}
+.ws-btn {
+  font: inherit;
+  border: 1px solid #c4c4c4;
+  background: #fbfbfb;
+  border-radius: 4px;
+  padding: 0.35em 1.6em;
+}
+.ws-btn.primary {
+  background: #0067c0;
+  border-color: #0067c0;
+  color: #fff;
+}
+.ws-btn:disabled {
+  opacity: 0.5;
+}
+.ws-link {
+  font: inherit;
+  border: 0;
+  background: none;
+  color: #0067c0;
+  padding: 0.2em 0.4em;
+}
+.ws-link:disabled {
+  color: #9aa4b2;
+}
+.ws-key {
+  font-family: Consolas, monospace !important;
+  letter-spacing: 0.06em;
+}
+.ws-scroll {
+  max-height: 8em;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 0.6em;
+  font-size: 0.9em;
+}
+.ws-disks {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #ddd;
+  font-size: 0.95em;
+}
+.ws-disks th {
+  text-align: left;
+  font-weight: 600;
+  background: #f7f7f7;
+  padding: 0.3em 0.5em;
+}
+.ws-disks td {
+  padding: 0.3em 0.5em;
+  border-top: 1px solid #eee;
+  cursor: pointer;
+}
+.ws-disks td small {
+  color: #6b7280;
+}
+.ws-disks tr.on td {
+  background: #cce4f7;
+}
+.ws-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+}
+.ws-step {
+  color: #6b7280;
+}
+.ws-step.done {
+  color: #1b1b1b;
+}
+.ws-step.cur {
+  color: #0067c0;
+  font-weight: 600;
+}
+.ws-bar {
+  height: 0.5em;
+  min-height: 5px;
+  background: #ddd;
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 0.4em;
+}
+.ws-bar i {
+  display: block;
+  height: 100%;
+  background: #0067c0;
+}
+.ws-bar.ub i {
+  background: #e95420;
+}
+.ws-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+.ws-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sticker {
+  position: relative;
+}
+.sticker-img {
+  width: 100%;
+  min-height: 90px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #c7d2fe 0 14%, #fff 14%);
+  border: 1px solid #d1d5db;
+}
+.sticker-text {
+  position: absolute;
+  left: 22%;
+  top: 18px;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.82rem;
+}
+.sticker-text code {
+  background: none;
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  color: #111;
+}
+.oobe {
+  position: absolute;
+  inset: 3%;
+  background: #f3f3f3;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+}
+.oobe-art {
+  background: linear-gradient(160deg, #cfe3ff, #9ec5ff 60%, #6aa3f7);
+  display: grid;
+  place-items: center;
+}
+.win-logo.big {
+  width: 5em;
+  height: 5em;
+}
+.oobe-panel {
+  padding: 2em 2em 1.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  overflow: auto;
+}
+.oobe-panel h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0 0 0.4em;
+}
+.oobe-panel input {
+  font-size: 1em;
+  padding: 0.35em 0.5em;
+  border-radius: 4px;
+}
+.oobe-panel .ws-btn {
+  align-self: flex-end;
+  margin-top: 0.5em;
+}
+.oobe-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.oobe-item {
+  font: inherit;
+  text-align: left;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  padding: 0.55em 0.9em;
+}
+.oobe-item:hover {
+  background: #e8f1fb;
+}
+.oobe-priv {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+}
+.oobe-toggle {
+  display: grid !important;
+  grid-template-columns: 1fr auto 5em;
+  align-items: center;
+  gap: 0.6em;
+  background: #fff;
+  border-radius: 4px;
+  padding: 0.35em 0.6em;
+  font-size: 0.95em;
+}
+.oobe-toggle input {
+  width: 2.4em;
+  height: 1.2em;
+  accent-color: #0067c0;
+}
+.w11-desktop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 40% 60%, #4a8df5, #1c4fa8 55%, #0d2a63);
+}
+.w11-desktop .taskbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: max(10px, 1.6cqi);
+}
+
+/* Ubuntu kurulumu */
+.ubk {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
+  gap: 16px;
+  align-items: start;
+}
+.ubk-main .monitor-css {
+  width: 100%;
+  max-width: calc((100vh - 250px) * 1.6 + 28px);
+  min-width: min(100%, 520px);
+}
+.ui-installer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 30%, #e95420 0%, #a2193b 35%, #4a0d36 70%, #2c0721 100%);
+  font-family: 'Ubuntu', 'Segoe UI', system-ui, sans-serif;
+  font-size: max(10px, 1.5cqi);
+}
+.ui-top {
+  position: absolute;
+  inset: 4% 8% auto 8%;
+  height: 2.2em;
+  background: #ebebeb;
+  border-radius: 10px 10px 0 0;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #333;
+}
+.ui-page {
+  position: absolute;
+  inset: calc(4% + 2.2em) 8% 4% 8%;
+  background: #fafafa;
+  border-radius: 0 0 10px 10px;
+  padding: 1.2em 2em;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  color: #333;
+}
+.ui-page h2 {
+  font-size: 1.5em;
+  font-weight: 300;
+  margin: 0 0 0.3em;
+  text-align: center;
+}
+.ui-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 24em;
+  align-self: center;
+  width: 100%;
+}
+.ui-item {
+  font: inherit;
+  text-align: left;
+  background: #fff;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  padding: 0.45em 0.9em;
+}
+.ui-item.on {
+  background: #e95420;
+  color: #fff;
+}
+.ui-radio,
+.ui-check {
+  display: flex !important;
+  gap: 0.6em;
+  align-items: flex-start;
+  padding: 0.5em 0.7em;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+}
+.ui-radio.on {
+  border-color: #e95420;
+}
+.ui-radio span,
+.ui-check span {
+  display: flex;
+  flex-direction: column;
+}
+.ui-radio small,
+.ui-check small {
+  color: #666;
+}
+.ui-radio input,
+.ui-check input {
+  accent-color: #e95420;
+  margin-top: 0.25em;
+}
+.ui-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.6em;
+}
+.ui-btn {
+  font: inherit;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 6px;
+  padding: 0.35em 1.4em;
+}
+.ui-btn.primary {
+  background: #0e8420;
+  border-color: #0e8420;
+  color: #fff;
+}
+.ui-btn:disabled {
+  opacity: 0.5;
+}
+.ui-test,
+.ui-form input,
+.ui-page select {
+  font-size: 1em;
+  padding: 0.35em 0.6em;
+  border-radius: 6px;
+}
+.ui-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  max-width: 26em;
+  align-self: center;
+  width: 100%;
+}
+.ui-diskbar {
+  display: flex;
+  height: 1.4em;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+.ui-parts {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 0.92em;
+}
+.ui-parts th {
+  text-align: left;
+  background: #f0f0f0;
+  padding: 0.25em 0.5em;
+  font-weight: 600;
+}
+.ui-parts td {
+  padding: 0.25em 0.5em;
+  border-top: 1px solid #eee;
+  cursor: pointer;
+}
+.ui-parts tr.on td {
+  background: #fbd9cb;
+}
+.ui-parts tr.disk-row td {
+  background: #f7f7f7;
+  cursor: default;
+}
+.ui-tools {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
+}
+.ui-newpart {
+  border: 1px solid #e95420;
+  border-radius: 8px;
+  padding: 0.6em 0.9em;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5em;
+  background: #fff;
+}
+.ui-newpart b,
+.ui-newpart .row {
+  grid-column: 1 / -1;
+}
+.ui-newpart label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95em;
+}
+.ui-newpart input,
+.ui-newpart select {
+  font-size: 1em;
+  padding: 0.25em 0.4em;
+}
+.ui-split {
+  display: flex;
+  height: 2.6em;
+  border-radius: 6px;
+  overflow: hidden;
+  color: #fff;
+  font-weight: 600;
+}
+.ui-split .w {
+  background: #0ea5e9;
+  display: grid;
+  place-items: center;
+}
+.ui-split .u {
+  background: #e95420;
+  display: grid;
+  place-items: center;
+}
+.grub {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  color: #ccc;
+  font: max(10px, 1.7cqi) / 1.5 'DejaVu Sans Mono', Consolas, monospace;
+  padding: 4cqi 6cqi;
+  display: flex;
+  flex-direction: column;
+  gap: 2cqi;
+}
+.grub-title {
+  text-align: center;
+}
+.grub-box {
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  display: flex;
+  flex-direction: column;
+}
+.grub-box button {
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  color: #ccc;
+  border: 0;
+  padding: 0 0.3em;
+  white-space: pre;
+}
+.grub-box button.on {
+  background: #ccc;
+  color: #000;
+}
+.grub-help {
+  font-size: 0.9em;
+}
+.grub-go {
+  font: inherit;
+  background: #333;
+  color: #fff;
+  border: 1px solid #777;
+  padding: 0 0.6em;
+}
+.ub-login {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, #77216f, #2c001e 70%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2cqi;
+  color: #fff;
+  font-family: 'Ubuntu', system-ui;
+}
+.ub-user {
+  font-size: 3cqi;
+}
+.small-abs {
+  position: absolute;
+  top: 3cqi;
+  right: 3cqi;
+}
+.ubk-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .ut,
+  .ma,
+  .ws,
+  .ubk {
+    grid-template-columns: 1fr;
+  }
+  .ubuntu-desktop {
+    padding-left: 18px;
+  }
+  .ub-dock {
+    display: none;
+  }
+  .oobe {
+    grid-template-columns: 1fr;
+  }
+  .oobe-art {
+    display: none;
+  }
+}
+/* Monitör ekranının açık renkli yazısı kurulum pencerelerine geçmesin */
+.ws-dlg,
+.oobe,
+.rf-dialog {
+  color: #1b1b1b;
+}

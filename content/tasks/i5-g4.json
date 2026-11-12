@@ -1,0 +1,243 @@
+{
+ "id": "i5-g4",
+ "istasyon": "i5",
+ "baslik": "Güncelleme ve kullanıcı yönetimi",
+ "arayuz": "ubuntu-terminal",
+ "kazanimlar": [
+  "S5",
+  "B5"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "Ubuntu kurulu öğretmen bilgisayarında iki iş var: 1) Sistemi güncelle (paket listesini yenile ve paketleri yükselt). 2) Yaz stajyeri için 'stajyer' adında standart (yönetici olmayan) bir kullanıcı hesabı aç.",
+ "ogren": [
+  "Ubuntu'da yazılımlar paket yöneticisi (apt) ile kurulur ve güncellenir. 'sudo apt update' paket listesini yeniler, 'sudo apt upgrade' kurulu paketleri yükseltir.",
+  "Sistemi değiştiren komutlar yönetici yetkisi ister; bunun için komutun başına 'sudo' yazılır.",
+  "'sudo adduser <ad>' yeni kullanıcı açar. Bir kullanıcıya yönetici yetkisi vermek için 'sudo' grubuna eklenir; standart kullanıcı bu gruba eklenmez (en az yetki ilkesi)."
+ ],
+ "ipuclari": [
+  "Önce 'sudo apt update', sonra 'sudo apt upgrade -y'.",
+  "Kullanıcı için 'sudo adduser stajyer'. Kontrol için 'groups stajyer'."
+ ],
+ "veri": {
+  "kopya": [
+   {
+    "komut": "sudo apt update",
+    "aciklama": "Paket listesini yeniler"
+   },
+   {
+    "komut": "sudo apt upgrade -y",
+    "aciklama": "Paketleri onay sormadan yükseltir"
+   },
+   {
+    "komut": "sudo adduser <ad>",
+    "aciklama": "Yeni kullanıcı ekler"
+   },
+   {
+    "komut": "groups <ad>",
+    "aciklama": "Kullanıcının gruplarını gösterir"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "sudo",
+    "soru": "sudo ne işe yarar?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "root",
+      "metin": "Bir komutu yönetici (root) yetkisiyle çalıştırır",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "Komutu hızlandırır",
+      "dogru": false
+     },
+     {
+      "id": "indir",
+      "metin": "İnternetten program indirir",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "fark",
+    "soru": "'apt update' ile 'apt upgrade' arasındaki fark nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "dogru",
+      "metin": "update paket listesini yeniler; upgrade kurulu paketleri yeni sürümlerine yükseltir",
+      "dogru": true
+     },
+     {
+      "id": "ters",
+      "metin": "update paketleri yükseltir; upgrade listeyi yeniler",
+      "dogru": false
+     },
+     {
+      "id": "ayni",
+      "metin": "İkisi aynı işi yapar",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "standart",
+    "soru": "Stajyer neden 'sudo' grubuna eklenmemeli?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "yetki",
+      "metin": "Yönetici yetkisi alırsa sistem ayarlarını değiştirip zarar verebilir; en az yetki ilkesi",
+      "dogru": true
+     },
+     {
+      "id": "yavas",
+      "metin": "sudo grubu bilgisayarı yavaşlatır",
+      "dogru": false
+     },
+     {
+      "id": "internet",
+      "metin": "sudo grubundakiler internete giremez",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "update",
+   "aciklama": "Paket listesi güncellendi (apt update)",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "sh.apt.guncel",
+    "eq": true
+   }
+  },
+  {
+   "id": "upgrade",
+   "aciklama": "Paketler yükseltildi (apt upgrade)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "sh.apt.yukseltildi",
+    "eq": true
+   }
+  },
+  {
+   "id": "kullanici",
+   "aciklama": "'stajyer' kullanıcısı oluşturuldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5",
+    "B5"
+   ],
+   "kural": {
+    "path": "sh.kullanicilar",
+    "includes": "stajyer"
+   }
+  },
+  {
+   "id": "standart",
+   "aciklama": "Stajyer standart kullanıcı (sudo grubunda değil)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "sh.kullanicilar",
+      "includes": "stajyer"
+     },
+     {
+      "path": "sh.sudocular",
+      "excludes": "stajyer"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-sudo",
+   "aciklama": "Soru: sudo ne işe yarar?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5",
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.sudo",
+    "eq": "root"
+   }
+  },
+  {
+   "id": "q-fark",
+   "aciklama": "Soru: 'apt update' ile 'apt upgrade' arasındaki fark nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5",
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.fark",
+    "eq": "dogru"
+   }
+  },
+  {
+   "id": "q-standart",
+   "aciklama": "Soru: Stajyer neden 'sudo' grubuna eklenmemeli?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5",
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.standart",
+    "eq": "yetki"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sudo",
+   "aciklama": "Stajyere yönetici (sudo) yetkisi verildi",
+   "ceza": 20,
+   "kural": {
+    "path": "sh.sudocular",
+    "includes": "stajyer"
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "sh": {
+    "apt": {
+     "guncel": true,
+     "yukseltildi": true
+    },
+    "kullanicilar": [
+     "root",
+     "ogrenci",
+     "stajyer"
+    ],
+    "sudocular": [
+     "ogrenci"
+    ]
+   },
+   "cevaplar": {
+    "sudo": "root",
+    "fark": "dogru",
+    "standart": "yetki"
+   }
+  },
+  "events": []
+ }
+}

@@ -1,0 +1,363 @@
+{
+ "id": "i3-g2",
+ "istasyon": "i3",
+ "baslik": "Açık kaynak işletim sistemleri",
+ "arayuz": "bilgi",
+ "kazanimlar": [
+  "B5",
+  "B4"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Okul yönetimi bilişim laboratuvarında açık kaynak kodlu bir işletim sistemi kullanmayı düşünüyor. Karar vermeden önce açık kaynak hakkında bilmen gerekenleri yanıtla.",
+ "ogren": [
+  "Açık kaynak kodlu yazılımda kaynak kod herkese açıktır. Lisansına uygun olarak incelenebilir, değiştirilebilir ve dağıtılabilir. En yaygın lisanslardan biri GPL'dir.",
+  "Linux bir çekirdektir. Linux çekirdeği, masaüstü ortamı ve uygulamalarla birlikte 'dağıtım' (distro) olarak sunulur: Ubuntu, Debian, Pardus, Linux Mint…",
+  "Pardus, TÜBİTAK ULAKBİM tarafından geliştirilen yerli bir Linux dağıtımıdır; Debian tabanlıdır.",
+  "Avantajlar: lisans ücreti yok, şeffaflık ve güvenlik, eski donanımda çalışabilme. Dezavantajlar: bazı ticari programlar ve sürücüler eksik olabilir, kullanıcıların alışma süreci."
+ ],
+ "ipuclari": [
+  "'Ücretsiz' ile 'açık kaynak' aynı şey değildir.",
+  "Ubuntu'yu Canonical, Pardus'u bir Türk kamu kurumu geliştirir."
+ ],
+ "veri": {
+  "sorular": [
+   {
+    "id": "tanim",
+    "soru": "Açık kaynak kodlu yazılım ne demektir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kod",
+      "metin": "Kaynak kodu herkese açıktır; lisansına uygun olarak incelenebilir, değiştirilebilir ve dağıtılabilir",
+      "dogru": true
+     },
+     {
+      "id": "ucretsiz",
+      "metin": "Her zaman ücretsiz olan yazılımdır",
+      "dogru": false,
+      "aciklama": "Ücretsiz olmak açık kaynak olmak demek değildir; kaynak kodu gizli ücretsiz yazılımlar da vardır."
+     },
+     {
+      "id": "linux",
+      "metin": "Yalnızca Linux'ta çalışan yazılımdır",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "hangileri",
+    "soru": "Hangileri açık kaynak kodlu işletim sistemleridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "ubuntu",
+      "metin": "Ubuntu",
+      "dogru": true
+     },
+     {
+      "id": "pardus",
+      "metin": "Pardus",
+      "dogru": true
+     },
+     {
+      "id": "debian",
+      "metin": "Debian",
+      "dogru": true
+     },
+     {
+      "id": "win",
+      "metin": "Windows 11",
+      "dogru": false
+     },
+     {
+      "id": "mac",
+      "metin": "macOS",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "distro",
+    "soru": "Linux dağıtımı (distro) nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "paket",
+      "metin": "Linux çekirdeği ile masaüstü ortamı ve uygulamaların bir arada sunulduğu işletim sistemi",
+      "dogru": true
+     },
+     {
+      "id": "program",
+      "metin": "Linux'ta çalışan bir oyun",
+      "dogru": false
+     },
+     {
+      "id": "surucu",
+      "metin": "Bir ekran kartı sürücüsü",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "pardus",
+    "soru": "Yerli işletim sistemi Pardus'u hangi kurum geliştirmektedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "tubitak",
+      "metin": "TÜBİTAK ULAKBİM",
+      "dogru": true
+     },
+     {
+      "id": "meb",
+      "metin": "Milli Eğitim Bakanlığı",
+      "dogru": false,
+      "aciklama": "MEB Pardus'u okullarda kullanır ama geliştiren TÜBİTAK ULAKBİM'dir."
+     },
+     {
+      "id": "canonical",
+      "metin": "Canonical",
+      "dogru": false,
+      "aciklama": "Canonical, Ubuntu'yu geliştirir."
+     }
+    ]
+   },
+   {
+    "id": "gpl",
+    "soru": "GPL lisanslı bir yazılımı değiştirip dağıtırsanız ne yapmanız gerekir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kod",
+      "metin": "Değiştirdiğiniz kodu da aynı lisansla, kaynak koduyla birlikte paylaşmalısınız",
+      "dogru": true
+     },
+     {
+      "id": "gizle",
+      "metin": "Kaynak kodunu gizleyip satabilirsiniz",
+      "dogru": false
+     },
+     {
+      "id": "izin",
+      "metin": "Hiçbir şey; GPL yalnızca kişisel kullanım içindir",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "avantaj",
+    "soru": "Açık kaynak işletim sistemlerinin avantajları hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "ucret",
+      "metin": "Genellikle lisans ücreti yoktur",
+      "dogru": true
+     },
+     {
+      "id": "topluluk",
+      "metin": "Kaynak kodu açık olduğu için güvenlik açıkları topluluk tarafından hızla bulunup düzeltilebilir",
+      "dogru": true
+     },
+     {
+      "id": "hafif",
+      "metin": "Eski donanımlarda çalışabilen hafif dağıtımlar vardır",
+      "dogru": true
+     },
+     {
+      "id": "hepsi",
+      "metin": "Tüm Windows programları doğrudan çalışır",
+      "dogru": false,
+      "aciklama": "Photoshop, Microsoft Office gibi birçok ticari program Linux'ta doğrudan çalışmaz."
+     }
+    ]
+   },
+   {
+    "id": "dezavantaj",
+    "soru": "Açık kaynak işletim sistemlerinin dezavantajları hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "program",
+      "metin": "Bazı ticari programlar (ör. Photoshop, Microsoft Office) doğrudan çalışmaz",
+      "dogru": true
+     },
+     {
+      "id": "surucu",
+      "metin": "Bazı donanımların sürücüsü bulunmayabilir",
+      "dogru": true
+     },
+     {
+      "id": "gizli",
+      "metin": "Kaynak kodu gizlidir",
+      "dogru": false
+     },
+     {
+      "id": "pahali",
+      "metin": "Lisansları çok pahalıdır",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "q-tanim",
+   "aciklama": "Soru: Açık kaynak kodlu yazılım ne demektir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.tanim",
+    "eq": "kod"
+   }
+  },
+  {
+   "id": "q-hangileri",
+   "aciklama": "Soru: Hangileri açık kaynak kodlu işletim sistemleridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.hangileri",
+      "includes": "ubuntu"
+     },
+     {
+      "path": "cevaplar.hangileri",
+      "includes": "pardus"
+     },
+     {
+      "path": "cevaplar.hangileri",
+      "includes": "debian"
+     },
+     {
+      "path": "cevaplar.hangileri",
+      "len_eq": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-distro",
+   "aciklama": "Soru: Linux dağıtımı (distro) nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.distro",
+    "eq": "paket"
+   }
+  },
+  {
+   "id": "q-pardus",
+   "aciklama": "Soru: Yerli işletim sistemi Pardus'u hangi kurum geliştirmektedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.pardus",
+    "eq": "tubitak"
+   }
+  },
+  {
+   "id": "q-gpl",
+   "aciklama": "Soru: GPL lisanslı bir yazılımı değiştirip dağıtırsanız ne yapmanız gerekir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.gpl",
+    "eq": "kod"
+   }
+  },
+  {
+   "id": "q-avantaj",
+   "aciklama": "Soru: Açık kaynak işletim sistemlerinin avantajları hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.avantaj",
+      "includes": "ucret"
+     },
+     {
+      "path": "cevaplar.avantaj",
+      "includes": "topluluk"
+     },
+     {
+      "path": "cevaplar.avantaj",
+      "includes": "hafif"
+     },
+     {
+      "path": "cevaplar.avantaj",
+      "len_eq": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-dezavantaj",
+   "aciklama": "Soru: Açık kaynak işletim sistemlerinin dezavantajları hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.dezavantaj",
+      "includes": "program"
+     },
+     {
+      "path": "cevaplar.dezavantaj",
+      "includes": "surucu"
+     },
+     {
+      "path": "cevaplar.dezavantaj",
+      "len_eq": 2
+     }
+    ]
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "sira": [],
+   "cevaplar": {
+    "tanim": "kod",
+    "hangileri": [
+     "ubuntu",
+     "pardus",
+     "debian"
+    ],
+    "distro": "paket",
+    "pardus": "tubitak",
+    "gpl": "kod",
+    "avantaj": [
+     "ucret",
+     "topluluk",
+     "hafif"
+    ],
+    "dezavantaj": [
+     "program",
+     "surucu"
+    ]
+   }
+  },
+  "events": []
+ }
+}

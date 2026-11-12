@@ -8,7 +8,7 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - Okul portalı (portal.mkcaglar.com) entegrasyonu: [docs/PORTAL.md](docs/PORTAL.md)
 - Görsel üretim listesi: [docs/GORSEL_PROMPTLARI.md](docs/GORSEL_PROMPTLARI.md)
 
-## Neler var? (F1 + F2)
+## Neler var? (F1–F3)
 
 **Öğrenci**
 - Okul portalından otomatik giriş ya da kullanıcı adı + şifre ile giriş
@@ -19,6 +19,13 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - **İ2 POST ve BIOS/UEFI** (B3, S1, S2, B9, S8): açılış zinciri, zamanlı tuşla Setup'a giriş, Aptio benzeri BIOS Setup
   (önyükleme sırası, sanallaştırma, SATA modu, Secure Boot, TPM, yönetici parolası, USB önyükleme, tarih/saat),
   görsel bip kodu teşhisi, CMOS pili arızası. Yanlış ayarların gerçekçi sonuçları vardır (ör. SATA modu değişince mavi ekran).
+- **İ3 İşletim sistemi seçimi** (B4, B5, B6, Y1): sınıflandırma (masaüstü/sunucu/mobil/gömülü, açık/kapalı kaynak),
+  açık kaynak ve dağıtımlar, gereksinim karşılaştırması (Windows 11 / Ubuntu), ihtiyaca göre seçim ve avantaj/dezavantaj
+- **İ4 Windows 11 kurulumu** (S3, Y2, Y1): Rufus ile kurulum USB'si (UEFI→GPT, BIOS→MBR; yedek diski tuzağı),
+  tam kurulum sihirbazı (dil, ürün anahtarı, lisans, disk bölümleme, ilk açılış: bölge, cihaz adı, yerel hesap, gizlilik),
+  kişisel verileri koruyarak yeniden kurulum
+- **İ5 Ubuntu** (B5, S3, Y2, S5, B8, S7): canlı oturumda donanım tanıma, elle bölümlemeyle kurulum (EFI, /, /home),
+  Windows ile çift önyükleme ve GRUB, eğitsel terminal (`apt update/upgrade`, `adduser`, `usermod`, `mkdir/cp/mv/rm`…)
 - Yarım kalan çalışma sunucuya kaydedilir; başka bilgisayardan kaldığı yerden devam edilir
 - Görev sonunda puan, kriterler, hatalar ve kazanım düzeyleri
 

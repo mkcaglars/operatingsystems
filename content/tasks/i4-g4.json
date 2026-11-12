@@ -1,0 +1,246 @@
+{
+ "id": "i4-g4",
+ "istasyon": "i4",
+ "baslik": "Verileri koruyarak yeniden kurulum",
+ "arayuz": "windows-kurulum",
+ "kazanimlar": [
+  "S3",
+  "Y1"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "İdari bürodaki bilgisayarın Windows'u bozuldu ve yeniden kurulacak. Kurulum dosyaları kopyalanmaya hazır; şimdi disk ekranındasın. Sürücü 0'daki eski Windows bölümüne temiz kurulum yap (eski dosyalar gerekmiyor). Sürücü 1'de (D:) müdür yardımcısının belgeleri ve fotoğrafları var: onlara dokunma!",
+ "ogren": [
+  "Yeniden kurulumda yalnızca işletim sisteminin bulunduğu bölüm (genellikle C:) biçimlendirilir ya da silinir.",
+  "Kişisel dosyaların bulunduğu bölüm (D:) silinir ya da biçimlendirilirse veriler kaybolur. Bu yüzden kurulumdan önce yedek alınır ve doğru bölüm dikkatle seçilir.",
+  "Eski Windows bölümüne biçimlendirmeden kurulum yapılırsa eski dosyalar Windows.old klasörüne taşınır; bu temiz kurulum değildir.",
+  "Sistem (EFI), MSR ve kurtarma bölümleri Windows tarafından kullanılır; bunlara kurulum yapılamaz."
+ ],
+ "ipuclari": [
+  "Sürücü 0'daki 'Birincil' bölüm eski Windows'tur.",
+  "Önce o bölümü biçimlendir, sonra seçip İleri'ye bas.",
+  "Sürücü 1'e hiçbir işlem yapma."
+ ],
+ "veri": {
+  "baslangic": "disk",
+  "oobeYok": true,
+  "anahtar": "TBH8K-3QWCR-M7XJP-6YD4F-G2KRV",
+  "surum": "Windows 11 Pro",
+  "diskler": [
+   {
+    "id": "d0",
+    "bolumler": [
+     {
+      "id": "b1",
+      "tur": "sistem",
+      "boyutGB": 0.1
+     },
+     {
+      "id": "b2",
+      "tur": "msr",
+      "boyutGB": 0.016
+     },
+     {
+      "id": "b3",
+      "tur": "birincil",
+      "boyutGB": 237.4,
+      "veri": true,
+      "aciklama": "eski Windows (C:)"
+     },
+     {
+      "id": "b4",
+      "tur": "kurtarma",
+      "boyutGB": 0.75
+     }
+    ]
+   },
+   {
+    "id": "d1",
+    "bolumler": [
+     {
+      "id": "b5",
+      "tur": "birincil",
+      "boyutGB": 931.5,
+      "etiket": "Veri",
+      "veri": true,
+      "kisisel": true,
+      "aciklama": "belgeler ve fotoğraflar (D:)"
+     }
+    ]
+   }
+  ],
+  "diskNotu": [
+   {
+    "disk": "d0",
+    "metin": "Sürücü 0: 256 GB SSD — bozuk eski Windows (C:). Kişisel dosya yok."
+   },
+   {
+    "disk": "d1",
+    "metin": "Sürücü 1: 1 TB HDD — müdür yardımcısının belgeleri ve fotoğrafları (D:)."
+   }
+  ],
+  "sorular": [
+   {
+    "id": "neden",
+    "soru": "Neden D: sürücüsü (Sürücü 1) silinmemeli ya da biçimlendirilmemeli?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kisisel",
+      "metin": "Müdür yardımcısının belgeleri ve fotoğrafları orada; biçimlendirilirse kaybolur",
+      "dogru": true
+     },
+     {
+      "id": "windows",
+      "metin": "Windows yalnızca D:'ye kurulabilir",
+      "dogru": false
+     },
+     {
+      "id": "hiz",
+      "metin": "Biçimlendirme çok uzun sürer",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "d",
+   "aciklama": "D: sürücüsündeki kişisel dosyalar korundu",
+   "agirlik": 3,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "diskler[1].bolumler[0].kisisel",
+      "eq": true
+     },
+     {
+      "path": "diskler[1].bolumler[0].tur",
+      "eq": "birincil"
+     },
+     {
+      "path": "kurulum",
+      "eq": "tamam"
+     }
+    ]
+   }
+  },
+  {
+   "id": "hedef",
+   "aciklama": "Windows Sürücü 0'a kuruldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "hedef.disk",
+    "eq": "d0"
+   }
+  },
+  {
+   "id": "temiz",
+   "aciklama": "Eski Windows bölümü biçimlendirilip temiz kurulum yapıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "ozet.temiz",
+    "eq": true
+   }
+  },
+  {
+   "id": "kurulum",
+   "aciklama": "Kurulum tamamlandı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "kurulum",
+    "eq": "tamam"
+   }
+  },
+  {
+   "id": "kayip",
+   "aciklama": "Kişisel veri kaybı olmadı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "kurulum",
+      "eq": "tamam"
+     },
+     {
+      "path": "ozet.veriKaybi",
+      "len_eq": 0
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-neden",
+   "aciklama": "Soru: Neden D: sürücüsü (Sürücü 1) silinmemeli ya da biçimlendirilmemeli?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "cevaplar.neden",
+    "eq": "kisisel"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "veri",
+   "aciklama": "Kişisel dosyaların bulunduğu D: sürücüsü silindi ya da biçimlendirildi!",
+   "ceza": 50,
+   "kural": {
+    "path": "ozet.veriKaybi",
+    "len_gte": 1
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "diskler": [
+    {
+     "id": "d0",
+     "bolumler": []
+    },
+    {
+     "id": "d1",
+     "bolumler": [
+      {
+       "id": "b5",
+       "tur": "birincil",
+       "boyutGB": 931.5,
+       "kisisel": true
+      }
+     ]
+    }
+   ],
+   "hedef": {
+    "disk": "d0",
+    "bolum": "b3"
+   },
+   "ozet": {
+    "temiz": true,
+    "veriKaybi": []
+   },
+   "kurulum": "tamam",
+   "cevaplar": {
+    "neden": "kisisel"
+   }
+  },
+  "events": []
+ }
+}

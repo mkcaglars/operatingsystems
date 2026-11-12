@@ -1,0 +1,229 @@
+{
+ "id": "i4-g2",
+ "istasyon": "i4",
+ "baslik": "Eski bilgisayar için Ubuntu USB'si",
+ "arayuz": "medya-araci",
+ "kazanimlar": [
+  "Y2",
+  "B5"
+ ],
+ "sure_hedef": 300,
+ "ipucu_cezasi": 5,
+ "senaryo": "Kütüphanedeki 2009 model bilgisayara Ubuntu kurulacak. Bilgisayarın DVD sürücüsü bozuk. Rufus ile USB belleğe Ubuntu kurulum medyası hazırla.",
+ "ogren": [
+  "Kurulum medyası, işletim sisteminin ISO kalıbının önyüklenebilir şekilde USB belleğe (ya da DVD'ye) yazılmasıyla hazırlanır. Rufus bu iş için kullanılan ücretsiz bir araçtır.",
+  "Hedef bilgisayar UEFI ise bölüm düzeni GPT, eski (Legacy) BIOS ise MBR seçilir. Yanlış seçimde bilgisayar USB'den açılmaz.",
+  "Yazma işlemi seçilen aygıttaki TÜM verileri siler. Aygıt seçerken yedek disklerine dikkat edilir!"
+ ],
+ "ipuclari": [
+  "Aygıt listesinde iki disk var: hangisi boş USB bellek?",
+  "Hedef bilgisayarın bellenimine bak: UEFI ise GPT, eski BIOS ise MBR."
+ ],
+ "veri": {
+  "aygitlar": [
+   {
+    "id": "usb",
+    "ad": "SANDISK (E:) [32 GB]"
+   },
+   {
+    "id": "harici",
+    "ad": "WD Elements (F:) [1 TB] — Yedekler"
+   }
+  ],
+  "isolar": [
+   {
+    "id": "win11",
+    "ad": "Win11_24H2_Turkish_x64.iso",
+    "boyut": "5,4 GB"
+   },
+   {
+    "id": "ubuntu",
+    "ad": "ubuntu-24.04.1-desktop-amd64.iso",
+    "boyut": "5,8 GB"
+   }
+  ],
+  "hedefPc": {
+   "ad": "Hedef bilgisayar — Kütüphane PC (2009)",
+   "satirlar": [
+    {
+     "ad": "Bellenim",
+     "deger": "Eski BIOS (Legacy), UEFI yok"
+    },
+    {
+     "ad": "İşlemci",
+     "deger": "Core 2 Duo, 64 bit"
+    },
+    {
+     "ad": "RAM",
+     "deger": "4 GB"
+    },
+    {
+     "ad": "DVD sürücüsü",
+     "deger": "Arızalı"
+    }
+   ]
+  },
+  "sorular": [
+   {
+    "id": "neden",
+    "soru": "Eski bilgisayar için neden MBR seçilir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "legacy",
+      "metin": "Eski (Legacy) BIOS yalnızca MBR bölüm düzenindeki aygıtlardan açılabilir",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "MBR daha hızlıdır",
+      "dogru": false
+     },
+     {
+      "id": "ubuntu",
+      "metin": "Ubuntu yalnızca MBR'de çalışır",
+      "dogru": false,
+      "aciklama": "Ubuntu UEFI+GPT'de de çalışır; belirleyici olan bilgisayarın bellenimidir."
+     }
+    ]
+   },
+   {
+    "id": "dvd",
+    "soru": "Bu bilgisayarda kurulum için neden USB bellek kullanılıyor?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "bozuk",
+      "metin": "DVD sürücüsü bozuk",
+      "dogru": true
+     },
+     {
+      "id": "zorunlu",
+      "metin": "Ubuntu DVD'den kurulamaz",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "aygit",
+   "aciklama": "Doğru aygıt (USB bellek) seçildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "yazilan.aygit",
+    "eq": "usb"
+   }
+  },
+  {
+   "id": "iso",
+   "aciklama": "Doğru ISO seçildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "yazilan.iso",
+    "eq": "ubuntu"
+   }
+  },
+  {
+   "id": "bolum",
+   "aciklama": "Bölüm düzeni MBR (BIOS)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "yazilan.bolum",
+    "eq": "MBR"
+   }
+  },
+  {
+   "id": "bitti",
+   "aciklama": "USB bellek hazırlandı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "medya.durum",
+    "eq": "bitti"
+   }
+  },
+  {
+   "id": "q-neden",
+   "aciklama": "Soru: Eski bilgisayar için neden MBR seçilir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "cevaplar.neden",
+    "eq": "legacy"
+   }
+  },
+  {
+   "id": "q-dvd",
+   "aciklama": "Soru: Bu bilgisayarda kurulum için neden USB bellek kullanılıyor?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "cevaplar.dvd",
+    "eq": "bozuk"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "yedek",
+   "aciklama": "Yedeklerin bulunduğu harici disk biçimlendirildi!",
+   "ceza": 50,
+   "kural": {
+    "event": "medya.baslat",
+    "where": {
+     "aygit": "harici"
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "medya": {
+    "aygit": "usb",
+    "iso": "ubuntu",
+    "bolum": "MBR",
+    "hedef": "BIOS",
+    "dosya": "NTFS",
+    "etiket": "",
+    "durum": "bitti"
+   },
+   "yazilan": {
+    "aygit": "usb",
+    "iso": "ubuntu",
+    "bolum": "MBR",
+    "hedef": "BIOS"
+   },
+   "cevaplar": {
+    "neden": "legacy",
+    "dvd": "bozuk"
+   }
+  },
+  "events": [
+   {
+    "type": "medya.baslat",
+    "t": 1,
+    "aygit": "usb",
+    "iso": "ubuntu",
+    "bolum": "MBR",
+    "hedef": "BIOS"
+   }
+  ]
+ }
+}

@@ -1,0 +1,410 @@
+{
+ "id": "i3-g3",
+ "istasyon": "i3",
+ "baslik": "Kurulum gereksinimleri",
+ "arayuz": "bilgi",
+ "kazanimlar": [
+  "B6",
+  "Y1"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "Okulda üç farklı bilgisayar var. Gereksinim tablolarını bilgisayarların özellikleriyle karşılaştır ve her birine hangi işletim sisteminin kurulabileceğine karar ver.",
+ "ogren": [
+  "Kurulumdan önce işletim sisteminin en az sistem gereksinimleri bilgisayarın özellikleriyle karşılaştırılır: işlemci, bellek (RAM), depolama, bellenim (UEFI/BIOS), TPM, ekran kartı.",
+  "Bir gereksinim bile karşılanmıyorsa kurulum yapılamaz ya da sistem düzgün çalışmaz.",
+  "Windows 11, TPM 2.0, UEFI ve Güvenli Önyükleme ister. Ubuntu gibi Linux dağıtımları daha eski bilgisayarlarda da çalışabilir."
+ ],
+ "ipuclari": [
+  "Her bilgisayarı satır satır karşılaştır: önce RAM, sonra depolama, sonra TPM ve bellenim.",
+  "Bilgisayar 3'ün belleğine dikkat et."
+ ],
+ "veri": {
+  "bilgiler": [
+   {
+    "baslik": "Windows 11 en az gereksinimleri",
+    "satirlar": [
+     {
+      "ad": "İşlemci",
+      "deger": "1 GHz veya üstü, en az 2 çekirdek, 64 bit, desteklenen işlemci listesinde"
+     },
+     {
+      "ad": "Bellek (RAM)",
+      "deger": "4 GB"
+     },
+     {
+      "ad": "Depolama",
+      "deger": "64 GB veya üstü"
+     },
+     {
+      "ad": "Sistem bellenimi",
+      "deger": "UEFI, Güvenli Önyükleme destekli"
+     },
+     {
+      "ad": "TPM",
+      "deger": "TPM 2.0"
+     },
+     {
+      "ad": "Ekran kartı",
+      "deger": "DirectX 12 / WDDM 2.0"
+     }
+    ]
+   },
+   {
+    "baslik": "Ubuntu 24.04 Desktop önerilen gereksinimler",
+    "satirlar": [
+     {
+      "ad": "İşlemci",
+      "deger": "2 GHz çift çekirdekli 64 bit işlemci"
+     },
+     {
+      "ad": "Bellek (RAM)",
+      "deger": "4 GB"
+     },
+     {
+      "ad": "Depolama",
+      "deger": "25 GB"
+     },
+     {
+      "ad": "Sistem bellenimi",
+      "deger": "UEFI ya da eski BIOS"
+     }
+    ]
+   },
+   {
+    "baslik": "Bilgisayar 1 — Laboratuvar",
+    "satirlar": [
+     {
+      "ad": "İşlemci",
+      "deger": "Intel Core i5-10400 (6 çekirdek, 2,9 GHz, 64 bit)"
+     },
+     {
+      "ad": "Bellek (RAM)",
+      "deger": "8 GB"
+     },
+     {
+      "ad": "Depolama",
+      "deger": "256 GB SSD"
+     },
+     {
+      "ad": "Bellenim",
+      "deger": "UEFI, Güvenli Önyükleme destekli"
+     },
+     {
+      "ad": "TPM",
+      "deger": "TPM 2.0"
+     }
+    ]
+   },
+   {
+    "baslik": "Bilgisayar 2 — Kütüphane (2009)",
+    "satirlar": [
+     {
+      "ad": "İşlemci",
+      "deger": "Intel Core 2 Duo E8400 (2 çekirdek, 3,0 GHz, 64 bit)"
+     },
+     {
+      "ad": "Bellek (RAM)",
+      "deger": "4 GB"
+     },
+     {
+      "ad": "Depolama",
+      "deger": "160 GB HDD"
+     },
+     {
+      "ad": "Bellenim",
+      "deger": "Eski BIOS (Legacy), UEFI yok"
+     },
+     {
+      "ad": "TPM",
+      "deger": "Yok"
+     }
+    ]
+   },
+   {
+    "baslik": "Bilgisayar 3 — Mini tablet PC",
+    "satirlar": [
+     {
+      "ad": "İşlemci",
+      "deger": "Intel Atom x5-Z8350 (4 çekirdek, 1,44 GHz, 64 bit)"
+     },
+     {
+      "ad": "Bellek (RAM)",
+      "deger": "2 GB"
+     },
+     {
+      "ad": "Depolama",
+      "deger": "32 GB eMMC"
+     },
+     {
+      "ad": "Bellenim",
+      "deger": "UEFI"
+     },
+     {
+      "ad": "TPM",
+      "deger": "TPM 2.0"
+     }
+    ]
+   }
+  ],
+  "sorular": [
+   {
+    "id": "pc1",
+    "soru": "Bilgisayar 1 — Laboratuvar: hangi işletim sistemi kurulabilir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "win",
+      "metin": "Windows 11",
+      "dogru": true
+     },
+     {
+      "id": "ubuntu",
+      "metin": "Ubuntu 24.04 Desktop",
+      "dogru": true
+     },
+     {
+      "id": "hicbiri",
+      "metin": "Hiçbiri (gereksinimleri karşılamıyor)",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "pc2",
+    "soru": "Bilgisayar 2 — Kütüphane (2009): hangi işletim sistemi kurulabilir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "win",
+      "metin": "Windows 11",
+      "dogru": false
+     },
+     {
+      "id": "ubuntu",
+      "metin": "Ubuntu 24.04 Desktop",
+      "dogru": true
+     },
+     {
+      "id": "hicbiri",
+      "metin": "Hiçbiri (gereksinimleri karşılamıyor)",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "pc3",
+    "soru": "Bilgisayar 3 — Mini tablet PC: hangi işletim sistemi kurulabilir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "win",
+      "metin": "Windows 11",
+      "dogru": false
+     },
+     {
+      "id": "ubuntu",
+      "metin": "Ubuntu 24.04 Desktop",
+      "dogru": false
+     },
+     {
+      "id": "hicbiri",
+      "metin": "Hiçbiri (gereksinimleri karşılamıyor)",
+      "dogru": true
+     }
+    ]
+   },
+   {
+    "id": "neden2",
+    "soru": "Bilgisayar 2'ye Windows 11 neden kurulamaz?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "tpm",
+      "metin": "TPM 2.0 yok",
+      "dogru": true
+     },
+     {
+      "id": "uefi",
+      "metin": "UEFI ve Güvenli Önyükleme yok",
+      "dogru": true
+     },
+     {
+      "id": "cpu",
+      "metin": "İşlemci Windows 11'in desteklediği işlemciler arasında değil",
+      "dogru": true
+     },
+     {
+      "id": "ram",
+      "metin": "RAM yetersiz",
+      "dogru": false,
+      "aciklama": "4 GB, Windows 11 için en az gereksinimi karşılar."
+     },
+     {
+      "id": "disk",
+      "metin": "Disk yetersiz",
+      "dogru": false,
+      "aciklama": "160 GB, 64 GB gereksinimini karşılar."
+     }
+    ]
+   },
+   {
+    "id": "neden3",
+    "soru": "Bilgisayar 3'e Ubuntu neden kurulamaz?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "ram",
+      "metin": "RAM 4 GB'tan az",
+      "dogru": true
+     },
+     {
+      "id": "cpu",
+      "metin": "İşlemci 64 bit değil",
+      "dogru": false
+     },
+     {
+      "id": "uefi",
+      "metin": "UEFI olduğu için",
+      "dogru": false,
+      "aciklama": "Ubuntu UEFI'de sorunsuz çalışır."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "q-pc1",
+   "aciklama": "Soru: Bilgisayar 1 — Laboratuvar: hangi işletim sistemi kurulabilir?",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B6",
+    "Y1"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.pc1",
+      "includes": "win"
+     },
+     {
+      "path": "cevaplar.pc1",
+      "includes": "ubuntu"
+     },
+     {
+      "path": "cevaplar.pc1",
+      "len_eq": 2
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-pc2",
+   "aciklama": "Soru: Bilgisayar 2 — Kütüphane (2009): hangi işletim sistemi kurulabilir?",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B6",
+    "Y1"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.pc2",
+      "includes": "ubuntu"
+     },
+     {
+      "path": "cevaplar.pc2",
+      "len_eq": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-pc3",
+   "aciklama": "Soru: Bilgisayar 3 — Mini tablet PC: hangi işletim sistemi kurulabilir?",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B6",
+    "Y1"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.pc3",
+      "includes": "hicbiri"
+     },
+     {
+      "path": "cevaplar.pc3",
+      "len_eq": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-neden2",
+   "aciklama": "Soru: Bilgisayar 2'ye Windows 11 neden kurulamaz?",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.neden2",
+      "includes": "tpm"
+     },
+     {
+      "path": "cevaplar.neden2",
+      "includes": "uefi"
+     },
+     {
+      "path": "cevaplar.neden2",
+      "includes": "cpu"
+     },
+     {
+      "path": "cevaplar.neden2",
+      "len_eq": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-neden3",
+   "aciklama": "Soru: Bilgisayar 3'e Ubuntu neden kurulamaz?",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B6"
+   ],
+   "kural": {
+    "path": "cevaplar.neden3",
+    "eq": "ram"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "sira": [],
+   "cevaplar": {
+    "pc1": [
+     "win",
+     "ubuntu"
+    ],
+    "pc2": [
+     "ubuntu"
+    ],
+    "pc3": [
+     "hicbiri"
+    ],
+    "neden2": [
+     "tpm",
+     "uefi",
+     "cpu"
+    ],
+    "neden3": "ram"
+   }
+  },
+  "events": []
+ }
+}

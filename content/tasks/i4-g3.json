@@ -1,0 +1,280 @@
+{
+ "id": "i4-g3",
+ "istasyon": "i4",
+ "baslik": "Windows 11 temiz kurulum",
+ "arayuz": "windows-kurulum",
+ "kazanimlar": [
+  "S3",
+  "Y2"
+ ],
+ "sure_hedef": 720,
+ "ipucu_cezasi": 5,
+ "senaryo": "Laboratuvara gelen yeni bilgisayara, hazırladığın USB bellekten Windows 11 Pro kur. Dil, saat biçimi ve klavye Türkçe (Q) olsun; lisans etiketindeki ürün anahtarını kullan; yeni SSD'nin tamamını kullan. İlk açılışta: bölge Kıbrıs, klavye Türkçe Q, cihaz adı LAB-PC-07, yerel hesap adı Ogrenci. Okul politikası: konum, reklam kimliği ve isteğe bağlı tanılama verileri kapalı.",
+ "ogren": [
+  "Kurulum sırası: dil ve klavye → kurulum seçeneği → ürün anahtarı → lisans koşulları → kurulum konumu (disk) → dosyaların kopyalanması → ilk açılış (OOBE) ayarları.",
+  "Türkiye ve Kıbrıs'ta yaygın klavye düzeni Türkçe Q'dur. Türkçe F farklı bir tuş yerleşimidir.",
+  "Boş diske kurulumda 'Ayrılmamış Alan' seçilip İleri'ye basılır; Windows gerekli bölümleri (EFI sistem, MSR, kurtarma) kendisi oluşturur.",
+  "Cihaz adı en fazla 15 karakterdir; boşluk ve Türkçe karakter kullanılmaz.",
+  "Gizlilik ayarlarında kurumun politikasına uyulur; gereksiz veri paylaşımı kapatılır."
+ ],
+ "ipuclari": [
+  "Klavye seçeneğinde Türkçe Q'yu seç.",
+  "Ürün anahtarı sağdaki lisans etiketinde.",
+  "Disk ekranında 'Sürücü 0 Ayrılmamış Alan'ı seç ve İleri'ye bas."
+ ],
+ "veri": {
+  "anahtar": "TBH8K-3QWCR-M7XJP-6YD4F-G2KRV",
+  "surum": "Windows 11 Pro",
+  "diskler": [
+   {
+    "id": "d0",
+    "bolumler": [
+     {
+      "id": "b0",
+      "tur": "ayrilmamis",
+      "boyutGB": 476.9
+     }
+    ]
+   }
+  ],
+  "diskNotu": [
+   {
+    "disk": "d0",
+    "metin": "Sürücü 0: yeni 500 GB SSD (boş)."
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "dil",
+   "aciklama": "Dil Türkçe ve klavye Türkçe Q seçildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "dil.dil",
+      "eq": "Türkçe"
+     },
+     {
+      "path": "dil.klavye",
+      "eq": "Türkçe Q"
+     }
+    ]
+   }
+  },
+  {
+   "id": "anahtar",
+   "aciklama": "Ürün anahtarı doğru girildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3",
+    "Y2"
+   ],
+   "kural": {
+    "path": "anahtar.durum",
+    "eq": "gecerli"
+   }
+  },
+  {
+   "id": "lisans",
+   "aciklama": "Lisans koşulları kabul edildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "lisans",
+    "eq": true
+   }
+  },
+  {
+   "id": "disk",
+   "aciklama": "Windows yeni SSD'ye temiz kuruldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S3",
+    "Y2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "hedef.disk",
+      "eq": "d0"
+     },
+     {
+      "path": "ozet.temiz",
+      "eq": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "kurulum",
+   "aciklama": "Kurulum tamamlandı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S3",
+    "Y2"
+   ],
+   "kural": {
+    "path": "kurulum",
+    "eq": "tamam"
+   }
+  },
+  {
+   "id": "bolge",
+   "aciklama": "Bölge ve klavye düzeni doğru",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "oobe.bolge",
+      "eq": "Kıbrıs"
+     },
+     {
+      "path": "oobe.klavye",
+      "eq": "Türkçe Q"
+     }
+    ]
+   }
+  },
+  {
+   "id": "ad",
+   "aciklama": "Cihaz adı LAB-PC-07",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "oobe.cihazAdi",
+    "eq": "LAB-PC-07"
+   }
+  },
+  {
+   "id": "hesap",
+   "aciklama": "Yerel hesap (Ogrenci) parolayla oluşturuldu",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "oobe.kullanici",
+      "eq": "Ogrenci"
+     },
+     {
+      "path": "oobe.parola",
+      "eq": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "gizlilik",
+   "aciklama": "Konum, reklam kimliği ve isteğe bağlı tanılama kapalı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "oobe.gizlilik.konum",
+      "eq": false
+     },
+     {
+      "path": "oobe.gizlilik.reklam",
+      "eq": false
+     },
+     {
+      "path": "oobe.gizlilik.tanilama",
+      "eq": "gerekli"
+     }
+    ]
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "f",
+   "aciklama": "Klavye Türkçe F seçildi",
+   "ceza": 10,
+   "kural": {
+    "any": [
+     {
+      "path": "dil.klavye",
+      "eq": "Türkçe F"
+     },
+     {
+      "path": "oobe.klavye",
+      "eq": "Türkçe F"
+     }
+    ]
+   }
+  },
+  {
+   "id": "anahtar",
+   "aciklama": "Ürün anahtarı birçok kez yanlış girildi",
+   "ceza": 5,
+   "kural": {
+    "event": "anahtar.gir",
+    "where": {
+     "dogru": false
+    },
+    "count": {
+     "gte": 3
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "adim": "bitti",
+   "dil": {
+    "dil": "Türkçe",
+    "bicim": "Türkçe (Türkiye)",
+    "klavye": "Türkçe Q"
+   },
+   "anahtar": {
+    "deger": "TBH8K-3QWCR-M7XJP-6YD4F-G2KRV",
+    "durum": "gecerli"
+   },
+   "lisans": true,
+   "hedef": {
+    "disk": "d0",
+    "bolum": "x"
+   },
+   "ozet": {
+    "temiz": true,
+    "veriKaybi": []
+   },
+   "kurulum": "tamam",
+   "oobe": {
+    "bolge": "Kıbrıs",
+    "klavye": "Türkçe Q",
+    "ag": "ethernet",
+    "cihazAdi": "LAB-PC-07",
+    "kullanici": "Ogrenci",
+    "parola": true,
+    "guvenlik": 3,
+    "gizlilik": {
+     "konum": false,
+     "cihazBul": true,
+     "tanilama": "gerekli",
+     "murekkep": true,
+     "ozel": false,
+     "reklam": false
+    }
+   },
+   "cevaplar": {}
+  },
+  "events": []
+ }
+}

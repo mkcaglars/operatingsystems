@@ -31,7 +31,8 @@
   "kazanimlar": [
    "B4",
    "B5",
-   "B6"
+   "B6",
+   "Y1"
   ],
   "faz": "F3"
  },
@@ -42,7 +43,9 @@
   "aciklama": "Kurulum medyası hazırlama, Windows 11 kurulumu ve ilk açılış.",
   "kazanimlar": [
    "S3",
-   "Y2"
+   "Y2",
+   "B6",
+   "Y1"
   ],
   "faz": "F3"
  },
@@ -54,7 +57,10 @@
   "kazanimlar": [
    "B5",
    "S3",
-   "Y2"
+   "Y2",
+   "S5",
+   "B8",
+   "S7"
   ],
   "faz": "F3"
  },
