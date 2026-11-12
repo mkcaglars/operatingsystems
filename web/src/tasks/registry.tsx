@@ -15,6 +15,7 @@ import MedyaAraci, { initialMedyaAraci } from './MedyaAraci';
 import WinSetup, { initialWinSetup } from './WinSetup';
 import UbuntuKur, { initialUbuntuKur } from './UbuntuKur';
 import UbuntuTerminal, { initialUbuntuTerminal } from './UbuntuTerminal';
+import WinGorev, { initialWinGorev } from './WinGorev';
 
 export interface TaskUIProps {
   task: TaskDef;
@@ -44,4 +45,5 @@ export const taskUIs: Record<string, TaskUI> = {
   'windows-kurulum': { initial: initialWinSetup, Component: WinSetup },
   'ubuntu-kurulum': { initial: initialUbuntuKur, Component: UbuntuKur },
   'ubuntu-terminal': { initial: initialUbuntuTerminal, Component: UbuntuTerminal },
+  windows: { initial: initialWinGorev, Component: WinGorev },
 };

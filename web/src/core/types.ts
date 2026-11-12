@@ -37,6 +37,8 @@ export interface TaskDef {
   hatalar?: TaskMistake[];
   /** Testler için örnek tam puanlı çözüm (arayüzde kullanılmaz) */
   test_cozum?: { state: Json; events: import('./rules').SimEvent[] };
+  /** Öğretmenin sınıf ayarlarından açtığı isteğe bağlı yazılım görevi (açılmadıysa öğrenciye görünmez) */
+  istege_bagli?: 'winrar' | 'acrobat' | 'photoshop';
   /** "ileri düzey" görevler isteğe bağlıdır */
   ileri?: boolean;
 }

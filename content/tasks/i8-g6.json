@@ -1,0 +1,227 @@
+{
+ "id": "i8-g6",
+ "istasyon": "i8",
+ "baslik": "Office onarma ve istenmeyen program kaldırma",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S6",
+  "B8"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Muhasebe bürosunda Word açılırken çöküyor; ayrıca birisi 'PC Speed Booster' adlı bir program kurmuş ve sürekli reklam çıkıyor. Office'i onar, Word'ün açıldığını kontrol et ve PC Speed Booster'ı kaldır.",
+ "ogren": [
+  "Bozulan Office kurulumu Ayarlar › Uygulamalar › Yüklü uygulamalar › Office › Değiştir › Hızlı Onarım ile düzeltilir.",
+  "İstenmeyen programlar Ayarlar › Uygulamalar › Yüklü uygulamalar › Kaldır ile kaldırılır.",
+  "Önce en hafif çözüm denenir; format en son çaredir."
+ ],
+ "ipuclari": [
+  "Ayarlar › Uygulamalar › Yüklü uygulamalar.",
+  "Office'in yanındaki ⋯ › Değiştir › Hızlı Onarım."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "ayarlar",
+   "dosya",
+   "gorev"
+  ],
+  "baslangicUygulama": "ayarlar",
+  "pc": {
+   "uygulamalar": [
+    {
+     "id": "edge",
+     "ad": "Microsoft Edge",
+     "yayinci": "Microsoft Corporation",
+     "surum": "130.0.2849.80",
+     "boyutMB": 520
+    },
+    {
+     "id": "teams",
+     "ad": "Microsoft Teams",
+     "yayinci": "Microsoft Corporation",
+     "surum": "24295.605",
+     "boyutMB": 410
+    },
+    {
+     "id": "office",
+     "ad": "Microsoft Office Professional Plus 2024 - tr-tr",
+     "yayinci": "Microsoft Corporation",
+     "surum": "16.0.17932.20162",
+     "boyutMB": 3100,
+     "bilesenler": [
+      "word",
+      "excel",
+      "powerpoint"
+     ],
+     "etkin": true,
+     "bozuk": true,
+     "kaynak": "resmi"
+    },
+    {
+     "id": "booster",
+     "ad": "PC Speed Booster",
+     "yayinci": "Bilinmiyor",
+     "surum": "1.0",
+     "boyutMB": 45
+    }
+   ],
+   "baslangic": [
+    {
+     "id": "booster",
+     "ad": "PC Speed Booster",
+     "yayinci": "Bilinmiyor",
+     "etki": "Yüksek",
+     "acik": true
+    },
+    {
+     "id": "security",
+     "ad": "Windows Security notification icon",
+     "yayinci": "Microsoft Corporation",
+     "etki": "Düşük",
+     "acik": true
+    }
+   ],
+   "belirti": {
+    "reklam": true
+   }
+  },
+  "sorular": [
+   {
+    "id": "onar",
+    "soru": "Bir program bozulduğunda ilk denenecek çözüm hangisidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "onar",
+      "metin": "Programın onarım (Değiştir › Onar) seçeneği",
+      "dogru": true
+     },
+     {
+      "id": "format",
+      "metin": "Bilgisayara format atmak",
+      "dogru": false,
+      "aciklama": "Format son çaredir; önce daha hafif çözümler denenir."
+     },
+     {
+      "id": "bios",
+      "metin": "BIOS ayarlarını sıfırlamak",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "onar",
+   "aciklama": "Office onarıldı",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "office"
+     },
+     {
+      "path": "pc.bozukUygulamalar",
+      "excludes": "office"
+     }
+    ]
+   }
+  },
+  {
+   "id": "kaldir",
+   "aciklama": "PC Speed Booster kaldırıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6",
+    "B8"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "edge"
+     },
+     {
+      "path": "pc.kurulu",
+      "excludes": "booster"
+     }
+    ]
+   }
+  },
+  {
+   "id": "reklam",
+   "aciklama": "Reklamlar kesildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B8"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "edge"
+     },
+     {
+      "path": "pc.belirti.reklam",
+      "eq": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-onar",
+   "aciklama": "Soru: Bir program bozulduğunda ilk denenecek çözüm hangisidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "cevaplar.onar",
+    "eq": "onar"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "office",
+   "aciklama": "Office kaldırıldı",
+   "ceza": 30,
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "edge"
+     },
+     {
+      "path": "pc.kurulu",
+      "excludes": "office"
+     }
+    ]
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "kurulu": [
+     "edge",
+     "teams",
+     "office"
+    ],
+    "bozukUygulamalar": [],
+    "belirti": {
+     "reklam": false
+    }
+   },
+   "cevaplar": {
+    "onar": "onar"
+   }
+  },
+  "events": []
+ }
+}

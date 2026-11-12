@@ -8,7 +8,7 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - Okul portalı (portal.mkcaglar.com) entegrasyonu: [docs/PORTAL.md](docs/PORTAL.md)
 - Görsel üretim listesi: [docs/GORSEL_PROMPTLARI.md](docs/GORSEL_PROMPTLARI.md)
 
-## Neler var? (F1–F3)
+## Neler var? (F1–F4)
 
 **Öğrenci**
 - Okul portalından otomatik giriş ya da kullanıcı adı + şifre ile giriş
@@ -26,6 +26,15 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
   kişisel verileri koruyarak yeniden kurulum
 - **İ5 Ubuntu** (B5, S3, Y2, S5, B8, S7): canlı oturumda donanım tanıma, elle bölümlemeyle kurulum (EFI, /, /home),
   Windows ile çift önyükleme ve GRUB, eğitsel terminal (`apt update/upgrade`, `adduser`, `usermod`, `mkdir/cp/mv/rm`…)
+- **Sanal Windows 11 masaüstü** (İ6–İ8): başlat menüsü, görev çubuğu, UAC; Ayarlar, Görev Yöneticisi, Dosya Gezgini,
+  Aygıt Yöneticisi, Windows Güvenliği, tarayıcı (resmî ve sahte siteler, SmartScreen), kurulum sihirbazları, Word
+- **İ6 Ayarlar ve kişiselleştirme** (B7, B8, S4, S7): Görev Yöneticisi, sistem bilgisi, kişiselleştirme, erişilebilirlik
+  ve solak fare, güç ve başlangıç, Dosya Gezgini (uzantılar, gizli öğeler)
+- **İ7 Sürücüler ve Windows Güvenliği** (S5, S6, Y3, S8): sürücüleri doğru sırayla yükleme, Defender uyarıları, tam
+  tarama ve karantina, fidye yazılımı koruması, standart hesap ve geri yükleme noktası
+- **İ8 Uygulama yazılımları** (S6, Y3, S5, B6): Chrome (resmî site, varsayılan tarayıcı), Microsoft Office (özel kurulum,
+  ürün anahtarıyla etkinleştirme; KMS tuzağı), Office onarma ve istenmeyen program kaldırma, Ubuntu'da .deb ile Chrome;
+  öğretmenin açtığı isteğe bağlı WinRAR, Acrobat Reader (McAfee teklifleri) ve Photoshop (gereksinimler, hesap)
 - Yarım kalan çalışma sunucuya kaydedilir; başka bilgisayardan kaldığı yerden devam edilir
 - Görev sonunda puan, kriterler, hatalar ve kazanım düzeyleri
 

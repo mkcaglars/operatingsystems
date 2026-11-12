@@ -1,0 +1,152 @@
+{
+ "id": "i6-g3",
+ "istasyon": "i6",
+ "baslik": "Erişilebilirlik ve solak kullanıcı",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S4",
+  "B7",
+  "B1"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bilişim öğretmeni Ayşe Hanım az görüyor ve solak. Bilgisayarını onun için ayarla: ölçek en az %150, metin boyutu en az %125, fare işaretçisi boyutu en az 3 olsun. Birincil fare düğmesini sağ yap ve çift tıklama hızını yavaşlat (3 ya da daha düşük).",
+ "ogren": [
+  "Erişilebilirlik ayarları; görme, işitme ve hareket güçlüğü yaşayan kullanıcıların bilgisayarı rahat kullanmasını sağlar: metin boyutu, fare işaretçisi, kontrast temaları, büyüteç, Ekran Okuyucusu.",
+  "Ayarlar › Sistem › Ekran'daki ölçek tüm öğeleri büyütür. Erişilebilirlik › Metin boyutu yalnızca yazıları büyütür.",
+  "Solak kullanıcılar için Bluetooth ve cihazlar › Fare'den birincil düğme 'Sağ' yapılır. Çift tıklamada zorlanan kullanıcılar için çift tıklama hızı yavaşlatılır."
+ ],
+ "ipuclari": [
+  "Ölçek: Ayarlar › Sistem › Ekran.",
+  "Metin boyutu ve işaretçi: Ayarlar › Erişilebilirlik.",
+  "Fare: Ayarlar › Bluetooth ve cihazlar › Fare."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "ayarlar",
+   "dosya"
+  ],
+  "sorular": [
+   {
+    "id": "olcek",
+    "soru": "Ölçeği büyütmek ile metin boyutunu büyütmek arasındaki fark nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "fark",
+      "metin": "Ölçek tüm öğeleri (simge, düğme, metin) büyütür; metin boyutu yalnızca yazıları büyütür",
+      "dogru": true
+     },
+     {
+      "id": "ayni",
+      "metin": "İkisi aynıdır",
+      "dogru": false
+     },
+     {
+      "id": "coz",
+      "metin": "Ölçek çözünürlüğü düşürür",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "olcek",
+   "aciklama": "Ölçek en az %150",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4",
+    "B7"
+   ],
+   "kural": {
+    "path": "pc.ekran.olcek",
+    "gte": 150
+   }
+  },
+  {
+   "id": "metin",
+   "aciklama": "Metin boyutu en az %125",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4",
+    "B7"
+   ],
+   "kural": {
+    "path": "pc.ekran.metin",
+    "gte": 125
+   }
+  },
+  {
+   "id": "imlec",
+   "aciklama": "Fare işaretçisi boyutu en az 3",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "path": "pc.ekran.imlec",
+    "gte": 3
+   }
+  },
+  {
+   "id": "sag",
+   "aciklama": "Birincil fare düğmesi sağ",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S4",
+    "B1"
+   ],
+   "kural": {
+    "path": "pc.fare.birincil",
+    "eq": "sag"
+   }
+  },
+  {
+   "id": "cift",
+   "aciklama": "Çift tıklama hızı yavaşlatıldı (≤ 3)",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4",
+    "B1"
+   ],
+   "kural": {
+    "path": "pc.fare.ciftTik",
+    "lte": 3
+   }
+  },
+  {
+   "id": "q-olcek",
+   "aciklama": "Soru: Ölçeği büyütmek ile metin boyutunu büyütmek arasındaki fark nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "path": "cevaplar.olcek",
+    "eq": "fark"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "ekran": {
+     "olcek": 150,
+     "metin": 130,
+     "imlec": 4
+    },
+    "fare": {
+     "birincil": "sag",
+     "ciftTik": 2
+    }
+   },
+   "cevaplar": {
+    "olcek": "fark"
+   }
+  },
+  "events": []
+ }
+}
