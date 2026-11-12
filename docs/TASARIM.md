@@ -1,6 +1,6 @@
 # İşletim Sistemleri Sanal Laboratuvarı — Tasarım Dokümanı
 
-> Durum: **Taslak v0.3 — onay bekliyor.** Kod yazımına bu doküman onaylandıktan sonra başlanacaktır.
+> Durum: **Taslak v0.4 — onay bekliyor.** Kod yazımına bu doküman onaylandıktan sonra başlanacaktır.
 > Yayın adresi: **https://isletimsistemi.mkcaglar.com** (Hostinger). Hedef: **9. sınıf Bilişim Teknolojileri**.
 > Son bölümdeki **Açık Sorular** karara bağlanmalıdır.
 
@@ -31,7 +31,9 @@ adımlarına, kullanımına yönelik bilgi, beceri ve yeterlilik kazandırmak.
 - Sunucu işletim sistemleri (Windows Server, Linux sunucu) — kazanımlarda yer almadığı için kapsam dışıdır.
 
 ### Görsel ve içerik ilkeleri (kararlaştırıldı)
-- **Tamamen gerçekçi görsel stil:** Donanım fotoğraf gerçekliğinde; Windows 11, Ubuntu, BIOS/UEFI, Office ve Chrome
+- **Tamamen gerçekçi görsel stil:** Donanım için **açık lisanslı fotoğraflar** (Wikimedia Commons vb., CC BY / CC BY-SA /
+  CC0); her görselin kaynağı, yazarı ve lisansı `assets/KAYNAKLAR.md` dosyasında ve sitedeki "Görsel Kaynakları" sayfasında
+  belirtilir. Donanım Windows 11, Ubuntu, BIOS/UEFI, Office ve Chrome
   ekranları gerçeğine olabildiğince yakın canlandırılır. **Gerçek ürün adları ve logoları** kullanılır (eğitim amaçlı,
   yalnızca giriş yapan kullanıcılara açık kapalı sistem).
 - **Kapalı kaynak sistem: Windows 11.** **Açık kaynak ana dağıtım: Ubuntu** (Pardus, Linux Mint vb. yalnızca İ3'te
@@ -322,25 +324,37 @@ Görev Yöneticisi, Aygıt Yöneticisi (yalnızca görüntüleme; arıza kısmı
 
 ---
 
-### İ7 — Sürücüler, Güvenlik ve Yardımcı Programlar  (S5, S6, Y3, B7○)
+### İ7 — Sürücüler ve Güvenlik (Windows Güvenliği / Microsoft Defender)  (S5, S6, Y3, B7○)
 
-**Ekranlar:** Güvenlik merkezi (antivirüs, güvenlik duvarı, güncelleme), kullanıcı hesapları, yazılım yükleme sihirbazı
-(Next-Next tuzakları dahil), sürücü yükleme, yedekleme ve geri yükleme noktası.
+**Ekranlar:** **Windows Güvenliği** uygulaması (gerçekçi), Windows Update, kullanıcı hesapları, Aygıt Yöneticisi'nden
+sürücü yükleme, yedekleme ve geri yükleme noktası; Ubuntu'da güncellemeler ve `ufw` güvenlik duvarı.
+
+**Windows Güvenliği (Microsoft Defender) ayarları — simülasyonda yapılandırılabilir:**
+| Bölüm | Ayarlar |
+|---|---|
+| Virüs ve tehdit koruması | Gerçek zamanlı koruma, bulut tabanlı koruma, otomatik örnek gönderimi, kurcalama koruması; **Hızlı / Tam / Özel / Çevrimdışı tarama**; koruma güncellemeleri; karantina ve **koruma geçmişi**; dışlamalar (ne zaman eklenmemeli) |
+| Fidye yazılımı koruması | Denetimli klasör erişimi, korunan klasörler, izin verilen uygulamalar |
+| Güvenlik duvarı ve ağ koruması | Etki alanı / Özel / Ortak ağ profilleri, uygulamaya güvenlik duvarından izin verme |
+| Uygulama ve tarayıcı denetimi | SmartScreen (itibar tabanlı koruma), istenmeyebilecek uygulamaları engelleme |
+| Cihaz güvenliği | TPM (güvenlik işlemcisi), Güvenli Önyükleme durumu (İ2 ile bağ) |
+| Hesap koruması | Windows Hello / PIN, dinamik kilit |
 
 **Öğrenme içeriği:**
 - *Güvenlik (S5):* güncellemeler, antivirüs/kötü amaçlı yazılım koruması, güvenlik duvarı, standart/yönetici hesap ayrımı,
   güçlü parola ve kilit ekranı, kullanıcı hesabı denetimi (UAC), disk şifreleme kavramı, yedekleme ve geri yükleme
   noktası, güvenilir kaynaktan yazılım indirme.
-- *Yardımcı programlar (S6):* sürücüler (yonga seti, ekran, ses, ağ), sıkıştırma, PDF okuyucu, tarayıcı, ofis yazılımı,
-  medya oynatıcı; lisans türleri (ücretsiz, deneme, açık kaynak); kurulum sırasında istenmeyen ek yazılım tuzakları.
+- *Sürücüler (S6):* yonga seti, ekran, ses, ağ sürücüleri; doğru sıra; üreticinin resmî sitesi / Windows Update.
+  (Uygulama yazılımlarının kurulumu İ8'dedir.)
 
 **Görevler (örnek):**
 | ID | Görev | Kazanım | Başarı koşulu |
 |---|---|---|---|
 | İ7-G1 | Yeni kurulan sistemde eksik sürücüleri doğru sırayla yükle (önce yonga seti) | S6 | Tüm aygıtlar çalışıyor |
-| İ7-G2 | Güvenlik merkezindeki tüm uyarıları gider | S5 | Durum "korunuyor" |
+| İ7-G2 | Windows Güvenliği'ndeki tüm uyarıları gider (gerçek zamanlı koruma kapalı, güncellemeler eski, güvenlik duvarı kapalı) | S5 | Tüm bölümler yeşil |
+| İ7-G2b | Şüpheli dosya bulunan bilgisayarda tam tarama yap, tehdidi karantinaya al, koruma geçmişini yorumla | S5, S8 | Tehdit karantinada |
+| İ7-G2c | Belgeler klasörünü fidye yazılımına karşı denetimli klasör erişimiyle koru | S5 | Ayar açık, klasör korunuyor |
 | İ7-G3 | Öğrenci hesabını standart hesap yap, yazılım kurma yetkisini kaldır | S5 | Doğru |
-| İ7-G4 | Sıkıştırma ve PDF okuyucu gibi yardımcı programları kur; kurulumdaki istenmeyen ek yazılımları reddet (uygulama yazılımlarının ayrıntısı İ8'de) | S6, Y3 | Doğru küme, tuzak yok |
+| İ7-G4 | Okul laboratuvarı için güvenlik duvarını ortak ağ profilinde açık tut, yalnızca gerekli uygulamaya izin ver | S5, Y3 | Profil ve izinler doğru |
 | İ7-G5 | Büyük değişiklikten önce geri yükleme noktası oluştur | S5 | Nokta oluşturuldu |
 
 ---
@@ -355,15 +369,17 @@ kaldırılması.
 İndirilenler klasörü, kurulum sihirbazları (.exe/.msi), Office kurulum ve etkinleştirme ekranları, Ayarlar → Uygulamalar
 (kaldır/değiştir/onar), varsayılan uygulamalar, Ubuntu App Center ve terminal (`apt`).
 
-**Yazılım kataloğu** (veri dosyasında tutulur; öğretmen yeni yazılım ekleyebilir):
+**Yazılım kataloğu.** Temel yazılımlar her zaman açıktır; **isteğe bağlı** yazılımları öğretmen sınıf bazında açar/kapatır.
 | Kategori | Windows 11 | Ubuntu | Öğretilen nokta |
 |---|---|---|---|
 | Ofis | **Microsoft Office** (Microsoft 365 / Office) | LibreOffice (hazır gelir); MS Office Linux'a doğrudan kurulamaz → web sürümü veya LibreOffice | Lisans ve etkinleştirme, bileşen seçimi, platform uyumu, dosya biçimi uyumu (.docx/.odt) |
-| Web tarayıcı | **Google Chrome**, Mozilla Firefox (Edge hazır gelir) | Firefox (hazır), Chrome (.deb paketi) | Resmî kaynaktan indirme, varsayılan tarayıcı yapma |
-| Sıkıştırma | 7-Zip, WinRAR | Arşiv yöneticisi (hazır) | Açık kaynak ve deneme sürümü farkı |
-| PDF | Adobe Acrobat Reader | Belge görüntüleyici (hazır) | Kurulumdaki ek yazılım teklifleri |
-| Medya | VLC | VLC (`apt`) | Codec kavramı |
-| Alan yazılımları (opsiyonel) | Visual Studio Code, Python vb. | Aynı | Bilişim alanına özgü ihtiyaçlar |
+| Web tarayıcı | **Google Chrome** (Edge hazır gelir) | Chrome (.deb paketi); Firefox hazır gelir | Resmî kaynaktan indirme, varsayılan tarayıcı yapma |
+| *İsteğe bağlı:* Sıkıştırma | **WinRAR** | Arşiv yöneticisi (hazır) | Deneme sürümü ve lisans kavramı |
+| *İsteğe bağlı:* PDF | **Adobe Acrobat Reader** | Belge görüntüleyici (hazır) | Kurulumdaki ek yazılım teklifleri (ör. tarayıcı uzantısı, ek araç) |
+| *İsteğe bağlı:* Grafik | **Adobe Photoshop** | Linux sürümü yok (bilgi kartı: alternatifler) | Yüksek sistem gereksinimi (RAM, ekran kartı — B6), hesapla giriş ve abonelik lisansı, platform uyumu |
+
+Katalogda başka yazılım yoktur (karar). Ubuntu tarafında Office ve Photoshop'un kurulamaması, platform uyumu kazanımı
+için bilinçli olarak gösterilir.
 
 **Kurulum akışı — Windows:**
 1. **İndirme:** Sanal tarayıcıda resmî siteyi bulmak; reklam ve sahte "İndir" düğmelerini, benzer alan adlarını ayırt etmek
@@ -381,7 +397,7 @@ kaldırılması.
 7. **Bakım:** Ayarlar → Uygulamalar'dan kaldırma; Office **onarma** (hızlı/çevrimiçi onarım).
 8. **İleri düzey (opsiyonel):** Laboratuvar için komut satırından toplu kurulum (`winget install Google.Chrome` vb.).
 
-**Kurulum akışı — Ubuntu:** App Center'dan kurulum; `sudo apt update && sudo apt install vlc`;
+**Kurulum akışı — Ubuntu:** App Center ve `sudo apt update && sudo apt upgrade` ile güncelleme;
 Chrome için `.deb` dosyasını indirip paket kurucu ile veya `sudo apt install ./google-chrome-stable_current_amd64.deb`
 ile kurma; Office yerine LibreOffice ile .docx açıp düzenleme ve kaydetme.
 
@@ -391,11 +407,12 @@ ile kurma; Office yerine LibreOffice ile .docx açıp düzenleme ve kaydetme.
 | İ8-G1 | Google Chrome'u resmî sitesinden indir, kur ve varsayılan tarayıcı yap | S6, S5, S4 | Resmî kaynak, sahte bağlantıya tıklanmadı, varsayılan Chrome |
 | İ8-G2 | Microsoft Office'i Türkçe kur; yalnızca Word, Excel, PowerPoint olsun; ürün anahtarıyla etkinleştir | S6, Y3 | Bileşenler doğru, ürün etkin |
 | İ8-G3 | Senaryoya göre yazılım paketini seç ve kur (okul laboratuvarı / muhasebe ofisi / grafik atölyesi) | S6, Y3 | Gerekli küme eksiksiz, gereksiz/zararlı yazılım yok |
-| İ8-G4 | Kurulum sihirbazlarındaki ek yazılım tekliflerini reddederek PDF okuyucu ve sıkıştırma programı kur | S6, S5 | Ek yazılım kurulmadı |
+| İ8-G4 *(isteğe bağlı)* | Ek yazılım tekliflerini reddederek Adobe Acrobat Reader ve WinRAR kur | S6, S5 | Ek yazılım kurulmadı |
+| İ8-G4b *(isteğe bağlı)* | Photoshop kurulacak bilgisayarın gereksinimleri karşılayıp karşılamadığını kontrol et; uygunsa kur ve hesapla etkinleştir | B6, S6 | Doğru karar, kurulum tamam |
 | İ8-G5 | 32 bit sisteme 64 bit yazılım kurma girişiminde çıkan hatayı yorumla, doğru sürümü kur | B6, S6 | Doğru sürüm kurulu |
 | İ8-G6 | Çalışmayan Office'i onar; kullanılmayan bir programı kaldır | S6, B8 | Onarım + kaldırma yapıldı |
-| İ8-G7 | Ubuntu'da VLC'yi `apt` ile, Chrome'u `.deb` ile kur; LibreOffice ile .docx dosyasını düzenle | S6, B5 | Paketler kurulu, dosya kaydedildi |
-| İ8-G8 (ileri) | 5 programı `winget` ile tek seferde kur | S6 | Tümü kurulu |
+| İ8-G7 | Ubuntu'yu `apt` ile güncelle, Chrome'u `.deb` ile kur; LibreOffice ile .docx dosyasını düzenle | S6, B5 | Güncel, Chrome kurulu, dosya kaydedildi |
+| İ8-G8 (ileri) | Chrome ve açık olan isteğe bağlı programları `winget` ile tek seferde kur | S6 | Tümü kurulu |
 
 **Puanlama notu:** Güvenilmeyen kaynaktan indirme, lisanssız yazılım veya istenmeyen ek yazılım kurulması süreç
 puanından düşer ve sanal makinede kalıcı sonuç doğurur (yavaşlama, reklam pencereleri, kötü amaçlı yazılım).
@@ -434,8 +451,23 @@ Görev Yöneticisi, olay günlüğü, güvenli mod, kurtarma ortamı, terminal),
 | A12 | Office "Etkinleştirilmemiş ürün" uyarısı veriyor, belgeler düzenlenemiyor | Lisans/etkinleştirme sorunu | Geçerli ürün anahtarını gir | S8 |
 | A13 | Word açılırken çöküyor | Bozuk kurulum | Office onarımı | S8 |
 
-**Puanlama (İ9'a özel):** doğru teşhis + doğru çözüm + **gereksiz/zararlı işlem yapmama** (ör. sorunu çözmek için
-işletim sistemini yeniden kurmak düşük puan) + süre.
+| A14 | Kötü amaçlı yazılım tarama sonrası da geri geliyor (kırılmış program kaynaklı) | Sistem dosyalarına yerleşmiş zararlı | **Verileri yedekle → biçimlendir → temiz kurulum** | S8, Y4 |
+| A15 | Sistem açılmıyor, başlangıç onarımı ve geri yükleme başarısız | Bozuk sistem dosyaları | **Bu bilgisayarı sıfırla** veya biçimlendirip yeniden kur | S8, Y4 |
+
+**Format atma ve yeniden kurulum (her zaman erişilebilir):** Öğrenci sorunlu bilgisayara istediği an format atabilir:
+- **Windows: "Bu bilgisayarı sıfırla"** — *Dosyalarımı koru* / *Her şeyi kaldır*; yerel yeniden yükleme / bulut indirme.
+- **Medya ile temiz kurulum** — İ4 (Windows 11) veya İ5 (Ubuntu) akışı: USB'den açılış, bölümleri silme/biçimlendirme, kurulum.
+- **Önce yedek:** Format öncesi kullanıcı dosyaları yedeklenmezse **veri kaybı** gerçekleşir, rapora "veri kaybı" olarak
+  işlenir (Y1 ile bağ).
+- **Sonrası:** Format atılan bilgisayarda sürücüler, Windows Güvenliği ayarları, programlar (Office, Chrome…) ve
+  kişiselleştirme yeniden gerekir; görevin başarı koşulları bunları da denetler.
+- **Gerçekçi sonuç:** Kök neden donanımsa (A1 kablo, A2 RAM, A3 çakışma, A9 CMOS pili) format sorunu **çözmez**.
+- Öğretmen, kurulumu daha önce tamamlamış öğrenciler için **hızlandırılmış kurulum** seçeneğini açabilir (adımlar aynı,
+  bekleme süreleri kısalır).
+
+**Puanlama (İ9'a özel):** doğru teşhis + doğru çözüm + **orantılı müdahale** + süre. Format; A14/A15 gibi durumlarda
+tam puanlı doğru çözümdür. Daha hafif bir çözümün yeterli olduğu arızalarda (ör. A13 Word çöküyor → onarım) format
+sorunu çözer ama süreç puanı düşer. Yedeksiz format her durumda puan kaybettirir.
 
 ---
 
@@ -445,6 +477,7 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
 | **K1 "Laboratuvara yeni bilgisayar"**: kutudan çıkar, bağla, BIOS'u ayarla, uygun işletim sistemini seç, medyayı hazırla, kur, sürücüleri ve güvenliği tamamla, Office ve Chrome gibi gerekli programları kur, kişiselleştir | İ1→İ8 | Y1, Y2, Y3 |
 | **K2 "Ubuntu'ya geçiş"**: verileri koruyarak çift önyüklemeli açık kaynak kurulum ve yapılandırma | İ1, İ2, İ3, İ5, İ7, İ8 | Y1, Y2, Y3 |
 | **K3 "Servis masası"**: art arda 3 rastgele arıza bileti | İ9 (+ İ2, İ6) | Y4 |
+| **K4 "Format ve yeniden kurulum"**: kurtarılamayan bilgisayarda yedek al → format at → Windows 11 kur → sürücüler, Windows Güvenliği, Office ve Chrome → verileri geri yükle | İ4, İ7, İ8, İ9 | Y1, Y2, Y3, Y4 |
 
 ---
 
@@ -479,7 +512,7 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
 | Raporlar | Kazanım × öğrenci ısı haritası; öğrenci karnesi; görev bazlı başarı; sık yapılan hatalar |
 | Dışa aktarma | PDF (karne), CSV/Excel (not listesi) |
 | Tekrar izleme | Öğrencinin bir görevdeki eylem günlüğünü adım adım izleme |
-| İçerik | Görevleri etkinleştirme/gizleme; eşikleri ayarlama |
+| İçerik | Görevleri etkinleştirme/gizleme; eşikleri ayarlama; **isteğe bağlı yazılımları (WinRAR, Adobe Acrobat Reader, Adobe Photoshop) sınıf bazında açma/kapatma**; hızlandırılmış kurulumu açma/kapatma |
 
 Roller: **Yönetici** (öğretmen hesaplarını yönetir), **Öğretmen**, **Öğrenci**. Şifreler sunucuda güvenli özet (bcrypt/argon2) olarak saklanır; çok sayıda hatalı girişte geçici kilit.
 
@@ -521,7 +554,7 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
   tabloları, bip kodu tabloları, kurgusal ürün anahtarı kalıpları. Yeni görev eklemek kod gerektirmez.
 - **Kaldığı yerden devam:** Sanal makine durumu düzenli aralıklarla sunucuya kaydedilir; öğrenci başka bilgisayardan
   girince kaldığı yerden devam eder.
-- **Gerçekçi görseller:** Donanım için yüksek çözünürlüklü fotoğraf/görseller (WebP, tembel yükleme); işletim sistemi
+- **Gerçekçi görseller:** Donanım için açık lisanslı fotoğraflar (WebP'ye dönüştürülmüş, tembel yükleme, atıf listesiyle); işletim sistemi
   ve uygulama ekranları HTML/CSS ile canlandırılır (gerçek logolar, Windows 11 için Segoe UI/Fluent görünümü,
   Ubuntu için Ubuntu yazı tipi). Toplam sayfa ağırlığı istasyon bazında bölünür (her istasyon ayrı yüklenir).
 - **Dağıtım:** GitHub'a gönderilen her sürüm, GitHub Actions ile derlenip Hostinger'a (FTP/SFTP veya hPanel Git) yüklenir.
@@ -563,7 +596,7 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
 
 ### 8.4 Okul Portalı ile Otomatik Giriş (C# Form Stüdyosu ile aynı sistem)
 
-C# Form Stüdyosu'ndaki (`mkcaglars/c-lesson`) token sistemi aynen uygulanır; portal tarafında aynı örnek kod
+Portal adresi: **https://portal.mkcaglar.com**. C# Form Stüdyosu'ndaki (`mkcaglars/c-lesson`) token sistemi aynen uygulanır; portal tarafında aynı örnek kod
 (yalnızca adres ve anahtar değişerek) kullanılabilir.
 
 ```
@@ -602,8 +635,8 @@ Kullanıcı portalda "İşletim Sistemleri" bağlantısına tıklar
 | F1 | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş (portal token + kullanıcı adı/şifre), çoklu öğretmen, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
 | F2 | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
 | F3 | İ3 Seçim + İ4 Windows 11 kurulumu + İ5 Ubuntu kurulumu (terminal) | Kurulum modülleri |
-| F4 | İ6 Ayarlar + İ7 Sürücü & Güvenlik + İ8 Uygulama Yazılımları (Office, Chrome…) + Windows 11/Ubuntu masaüstü | Gelişmiş özellikler |
-| F5 | İ9 Arıza + kampanyalar (Y1–Y4) + canlı izleme + arıza gönderme + CSV/PDF raporlar | Tam kapsam |
+| F4 | İ6 Ayarlar + İ7 Sürücü & Windows Güvenliği + İ8 Uygulama Yazılımları (Office, Chrome, isteğe bağlı WinRAR/Acrobat/Photoshop) + Windows 11/Ubuntu masaüstü | Gelişmiş özellikler |
+| F5 | İ9 Arıza + format/yeniden kurulum + kampanyalar K1–K4 (Y1–Y4) + canlı izleme + arıza gönderme + CSV/PDF raporlar | Tam kapsam |
 | F6 | Pilot uygulama geri bildirimi, içerik zenginleştirme, performans | Sürüm 1.0 |
 
 Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu geri bildirime göre düzeltilir.
@@ -621,7 +654,7 @@ Her hafta tek oturum (2 × 40 dk) olarak düşünülür: ~10 dk Öğren modu, ~5
 | İ7 Sürücü ve güvenlik | 2 hafta |
 | İ8 Uygulama yazılımları | 3 hafta |
 | İ9 Arıza giderme | 4 hafta |
-| Kampanyalar K1–K3 (yeterlilik) | 3 hafta |
+| Kampanyalar K1–K4 (yeterlilik) | 3 hafta |
 | **Toplam** | **29 hafta** (kalan haftalar tekrar, telafi ve sınavlar için) |
 
 Görevler 20–30 dakikalık parçalara bölünür; öğrenci oturum sonunda kaldığı yerden devam eder. Süreler öğretmen
@@ -645,12 +678,11 @@ tarafından değiştirilebilir.
 | 10 | Logolar | **Gerçek logolar** (eğitim amaçlı kapalı sistem) |
 | 11 | Değerlendirme | Merkezi öğretmen paneli |
 | 12 | Öğretmenler | **Birden fazla öğretmen**; her biri kendi sınıflarını görür, yönetici hepsini |
+| 13 | Portal | **portal.mkcaglar.com** (portal dışı giriş de açık) |
+| 14 | Yazılımlar | Temel: Microsoft Office, Google Chrome; ayrıca **Windows Güvenliği (Defender) ayarları**. İsteğe bağlı (öğretmen açar/kapatır): WinRAR, Adobe Acrobat Reader, Adobe Photoshop. Başka yazılım yok |
+| 15 | Format | Öğrenci sorunlu bilgisayara her zaman format atıp yeniden kurabilir (yedek almazsa veri kaybı) |
+| 16 | Fotoğraflar | Açık lisanslı fotoğraflar, atıflarıyla |
 
 ## 11. Kalan Açık Konular
 
-1. **Kurulacak programlar listesi (İ8):** Microsoft Office, Google Chrome, Firefox, 7-Zip, WinRAR, Acrobat Reader, VLC
-   var. Eklenmesi istenen başka program var mı (ör. Scratch, Python, Visual Studio Code, Zoom)?
-2. **Donanım görselleri:** "Tamamen gerçekçi" stil için fotoğraf kaynağı: (a) okul laboratuvarından kendi çekeceğiniz
-   fotoğraflar, (b) açık lisanslı fotoğraf arşivleri (Wikimedia Commons vb.), (c) ikisi birlikte. Öneri: (c).
-3. **Portal tarafı:** Okul portalı hangi adreste ve C# Form Stüdyosu bağlantısını üreten kodu kim ekledi? Aynı yere
-   "İşletim Sistemleri" bağlantısı için örnek kod (`portal-ornek/`) hazırlanacak.
+Yok. Doküman onaylandığında **F1** (iskelet) ile kodlamaya başlanır.
