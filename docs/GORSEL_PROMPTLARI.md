@@ -7,7 +7,7 @@ fiziksel nesneler ve ortamlar var.
 ## Genel kurallar (her görsel için)
 
 1. **Yazı, logo, marka adı olmasın.** Yapay zekâ yazıları bozar; logolar ve etiketler sonradan kodla eklenir.
-2. **Dekupe (kesilmiş) görseller:** Mümkünse **şeffaf arka planlı PNG**; araç desteklemiyorsa düz **saf beyaz** arka plan
+2. **Biçim:** `.webp` de kabul (şeffaf arka planlı webp olur). **Dekupe (kesilmiş) görseller:** Mümkünse **şeffaf arka planlı PNG**; araç desteklemiyorsa düz **saf beyaz** arka plan
    (arka planı ben temizlerim).
 3. **Çözünürlük:** En az **2048 px** uzun kenar. Oran her satırda belirtildi.
 4. **Tutarlılık:** Aynı aracı, aynı stil ekiyle kullanın ki tüm görseller aynı ışıkta ve aynı "fotoğraf çekiminden" çıkmış gibi dursun.
@@ -46,7 +46,7 @@ fiziksel nesneler ve ortamlar var.
 | 14 | `hdd.png` | 4:3 | A 3.5 inch internal hard disk drive, angled view showing SATA connectors. **[DEKUPE]** |
 | 15 | `sata-kablo-gevsek.webp` | 4:3 | Macro close-up of a red SATA data cable that is loose and half-unplugged from an SSD connector inside a computer. photorealistic macro photograph, shallow depth of field, no text, no logos |
 | 16 | `guc-kaynagi.png` | 4:3 | An ATX computer power supply unit with modular cables, angled view. **[DEKUPE]** |
-| 17 | `guc-kablosu.png` | 4:3 | A black computer power cable with a European Schuko plug on one end and IEC C13 connector on the other, loosely coiled. **[DEKUPE]** |
+| 17 | `guc-kablosu.png` | 4:3 | A black computer power cable, loosely coiled. One end: a **European Type F Schuko plug (CEE 7/7) with two round metal pins and metal grounding clips on the top and bottom edges, as used in Turkey and Germany**. Other end: an IEC C13 connector. **NOT a UK plug, no rectangular pins, no fuse.** **[DEKUPE]** |
 
 ## 3. Monitör ve dizüstü (ekran içi kodla doldurulacak)
 
