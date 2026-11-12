@@ -1,6 +1,6 @@
 # İşletim Sistemleri Sanal Laboratuvarı — Tasarım Dokümanı
 
-> Durum: **Taslak v0.2 — onay bekliyor.** Kod yazımına bu doküman onaylandıktan sonra başlanacaktır.
+> Durum: **Taslak v0.3 — onay bekliyor.** Kod yazımına bu doküman onaylandıktan sonra başlanacaktır.
 > Yayın adresi: **https://isletimsistemi.mkcaglar.com** (Hostinger). Hedef: **9. sınıf Bilişim Teknolojileri**.
 > Son bölümdeki **Açık Sorular** karara bağlanmalıdır.
 
@@ -470,7 +470,9 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
 | Özellik | Açıklama |
 |---|---|
 | Sınıf yönetimi | Sınıf/şube oluşturma, düzenleme, silme |
-| **Öğrenci hesapları** | Öğrenciler **kullanıcı adı + şifre** ile girer. Hesapları **yalnızca öğretmen** panelden ekler, düzenler, şifresini sıfırlar, pasifleştirir/siler; tek tek veya CSV/Excel listesinden toplu ekleme (otomatik kullanıcı adı ve şifre üretimi, yazdırılabilir giriş kartları). Öğrenci kendi kendine kayıt olamaz. |
+| **Giriş yolları** | (1) **Okul portalından otomatik giriş** (imzalı bağlantı, şifresiz — bkz. §8.4); (2) **portal dışından kullanıcı adı + şifre** ile giriş (`/giris` sayfası). İkisi aynı hesaba çıkabilir. |
+| **Öğrenci hesapları** | Portal dışı giriş için öğrenciler **kullanıcı adı + şifre** kullanır. Hesapları **yalnızca öğretmen** panelden ekler, düzenler, şifresini sıfırlar, pasifleştirir/siler; tek tek veya CSV/Excel listesinden toplu ekleme (otomatik kullanıcı adı ve şifre üretimi, yazdırılabilir giriş kartları). Öğrenci kendi kendine kayıt olamaz. Portaldan ilk kez gelen öğrencinin hesabı otomatik açılır; öğretmen bu hesaba sonradan şifre tanımlayarak portal dışından da girmesini sağlayabilir. |
+| **Çoklu öğretmen** | Birden fazla öğretmen kullanır. Her öğretmen **yalnızca kendi sınıflarını** görür ve yönetir; bir sınıf birden çok öğretmenle paylaşılabilir. Yönetici tüm öğretmen ve sınıfları görür. |
 | Görev atama | İstasyon/görev/kampanya seçimi, mod (Uygula/Değerlendir), başlangıç–bitiş tarihi, süre sınırı |
 | **Canlı izleme** | (Birkaç saniyede bir yenilenir) Sınıf ızgarası: her öğrencinin o anki istasyonu, ilerlemesi, takıldığı adım, ipucu kullanımı |
 | Arıza gönderme | Ders sırasında seçili öğrencilere İ9 arıza senaryosu gönderme |
@@ -531,8 +533,10 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
 ### 8.1 Veri modeli (özet)
 | Tablo | Alanlar |
 |---|---|
-| users | id, rol, ad-soyad, kullanıcı adı, şifre özeti, aktif, son giriş |
-| classes | id, ad (ör. 9-A), öğretmen_id, öğretim yılı |
+| users | id, rol, ad-soyad, **portal_uid** (portaldan gelenler; boş olabilir), **kullanıcı adı + şifre özeti** (portal dışı giriş; boş olabilir), aktif, son giriş |
+| classes | id, ad (ör. 9-A), öğretim yılı |
+| class_teachers | class_id, teacher_id (bir sınıfın birden çok öğretmeni olabilir) |
+| used_tokens | jti, son geçerlilik (portal bağlantısı tek kullanımlık) |
 | enrollments | class_id, student_id |
 | assignments | id, class_id, görev/kampanya, mod, başlangıç, bitiş, süre |
 | attempts | id, assignment_id, student_id, başlangıç, bitiş, durum, puan |
@@ -543,7 +547,7 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
 | outcome_scores | student_id, kazanım_kodu, puan, düzey, güncelleme |
 
 ### 8.2 Gizlilik (KVKK)
-- Asgari kişisel veri: ad-soyad ve kullanıcı adı; T.C. kimlik no ve okul no **tutulmaz** (isteğe bağlı takma ad kullanılabilir).
+- Asgari kişisel veri: ad-soyad, kullanıcı adı ve portaldan gelen kalıcı kod (okul no). **T.C. kimlik no tutulmaz.**
 - Veri yalnızca Hostinger'daki veritabanında tutulur; üçüncü taraf analiz/izleme aracı kullanılmaz.
 - Tüm trafik HTTPS üzerinden; arama motorlarına kapalı (`noindex`); giriş yapmadan hiçbir simülasyon ekranı görülmez.
 - Öğretmen, sınıf/öğrenci verisini silebilir; dönem sonu toplu silme/arşivleme.
@@ -557,6 +561,37 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
 
 ---
 
+### 8.4 Okul Portalı ile Otomatik Giriş (C# Form Stüdyosu ile aynı sistem)
+
+C# Form Stüdyosu'ndaki (`mkcaglars/c-lesson`) token sistemi aynen uygulanır; portal tarafında aynı örnek kod
+(yalnızca adres ve anahtar değişerek) kullanılabilir.
+
+```
+Kullanıcı portalda "İşletim Sistemleri" bağlantısına tıklar
+  → Portal imzalı bağlantı üretir: https://isletimsistemi.mkcaglar.com/giris.php?token=eyJ...
+  → giris.php: imza (HS256), süre (en çok 5 dk) ve tek kullanımlık (jti) denetimi
+  → Kullanıcı ilk girişte otomatik oluşturulur / ad, rol, sınıf her girişte güncellenir
+  → Oturum açılır (varsayılan 10 saat) → öğrenci kendi görevlerine, öğretmen paneline yönlenir
+```
+
+| Token alanı | Zorunlu | Açıklama |
+|---|---|---|
+| `uid` | evet | Kalıcı benzersiz kod (okul no; T.C. kimlik no **değil**) |
+| `name` | evet | Ad soyad |
+| `role` | hayır | `ogrenci` (varsayılan) / `ogretmen` |
+| `sinif` | hayır | Ör. `9-A`; öğrenci bu ada sahip sınıfa otomatik eklenir (sınıf yoksa oluşturulur) |
+| `exp`, `jti` | evet | Son geçerlilik (≤5 dk) ve tek kullanımlık rastgele kod |
+
+- **Gizli anahtar** (`jwt_secret`) yalnızca sunucudaki ayar dosyasında durur (public_html dışına konabilir). Güvenlik için
+  C# Form Stüdyosu'ndan **farklı** bir anahtar kullanılması önerilir (biri sızarsa diğeri etkilenmez).
+- Portaldan gelen öğretmen, `sinif` alanındaki sınıfa otomatik bağlanmaz; öğretmen panelinden sınıflarını seçer
+  (yanlışlıkla başka öğretmenin sınıfını görmemek için). Yönetici atama yapabilir.
+- **Hesap eşleştirme:** Portal kullanıcısı (`portal_uid`) ile öğretmenin elle açtığı hesap aynı kişiyse öğretmen panelinden
+  birleştirilir; ilerleme tek hesapta toplanır.
+- **Portal dışı giriş:** `/giris` sayfasında kullanıcı adı + şifre formu her zaman açıktır; oturum süresi ve güvenlik
+  kuralları (hatalı giriş kilidi, CSRF, HttpOnly çerez) iki yolda da aynıdır.
+- **Deneme sayfası** (`test-portal.php`) yalnızca ayarda açıkken çalışır; canlıda kapalıdır.
+
 ---
 
 ## 9. Yol Haritası
@@ -564,7 +599,7 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
 | Faz | İçerik | Çıktı |
 |---|---|---|
 | F0 | Bu dokümanın onayı; görsel kaynaklarının belirlenmesi | Onaylı tasarım |
-| F1 | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
+| F1 | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş (portal token + kullanıcı adı/şifre), çoklu öğretmen, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
 | F2 | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
 | F3 | İ3 Seçim + İ4 Windows 11 kurulumu + İ5 Ubuntu kurulumu (terminal) | Kurulum modülleri |
 | F4 | İ6 Ayarlar + İ7 Sürücü & Güvenlik + İ8 Uygulama Yazılımları (Office, Chrome…) + Windows 11/Ubuntu masaüstü | Gelişmiş özellikler |
@@ -573,6 +608,25 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
 
 Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu geri bildirime göre düzeltilir.
 
+### 9.1 Ders planına uyum (9. sınıf, haftada 2 ders saati)
+Her hafta tek oturum (2 × 40 dk) olarak düşünülür: ~10 dk Öğren modu, ~55 dk Uygula modu, ~15 dk değerlendirme/özet.
+| İstasyon | Önerilen süre |
+|---|---|
+| İ1 Donanım ve hazırlık | 2 hafta |
+| İ2 POST ve BIOS/UEFI | 3 hafta |
+| İ3 İşletim sistemi seçimi | 2 hafta |
+| İ4 Windows 11 kurulumu | 3 hafta |
+| İ5 Ubuntu kurulumu ve yapılandırma | 4 hafta |
+| İ6 Ayarlar ve kişiselleştirme | 3 hafta |
+| İ7 Sürücü ve güvenlik | 2 hafta |
+| İ8 Uygulama yazılımları | 3 hafta |
+| İ9 Arıza giderme | 4 hafta |
+| Kampanyalar K1–K3 (yeterlilik) | 3 hafta |
+| **Toplam** | **29 hafta** (kalan haftalar tekrar, telafi ve sınavlar için) |
+
+Görevler 20–30 dakikalık parçalara bölünür; öğrenci oturum sonunda kaldığı yerden devam eder. Süreler öğretmen
+tarafından değiştirilebilir.
+
 ---
 
 ## 10. Kararlar
@@ -580,8 +634,8 @@ Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu g
 | # | Konu | Karar |
 |---|---|---|
 | 1 | Barındırma | Hostinger paylaşımlı hosting, **isletimsistemi.mkcaglar.com**; PHP 8 + MySQL API, simülasyon tarayıcıda |
-| 2 | Giriş | **Kullanıcı adı + şifre**; öğrenci hesaplarını öğretmen panelden ekler/düzenler/sıfırlar |
-| 3 | Hedef kitle | **9. sınıf Bilişim Teknolojileri** |
+| 2 | Giriş | İki yol: **okul portalından otomatik giriş** (C# Form Stüdyosu ile aynı token sistemi) **ve** portal dışından **kullanıcı adı + şifre**; hesapları öğretmen panelden ekler/düzenler/sıfırlar |
+| 3 | Hedef kitle | **9. sınıf Bilişim Teknolojileri**, haftada **2 ders saati** |
 | 4 | Kapalı kaynak işletim sistemi | **Windows 11** |
 | 5 | Açık kaynak ana dağıtım | **Ubuntu** |
 | 6 | Sunucu işletim sistemleri | Kapsam dışı |
@@ -590,6 +644,7 @@ Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu g
 | 9 | Lisans/etkinleştirme | Windows ve Office **ürün anahtarı** ile (kurgusal anahtarlar) |
 | 10 | Logolar | **Gerçek logolar** (eğitim amaçlı kapalı sistem) |
 | 11 | Değerlendirme | Merkezi öğretmen paneli |
+| 12 | Öğretmenler | **Birden fazla öğretmen**; her biri kendi sınıflarını görür, yönetici hepsini |
 
 ## 11. Kalan Açık Konular
 
@@ -597,5 +652,5 @@ Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu g
    var. Eklenmesi istenen başka program var mı (ör. Scratch, Python, Visual Studio Code, Zoom)?
 2. **Donanım görselleri:** "Tamamen gerçekçi" stil için fotoğraf kaynağı: (a) okul laboratuvarından kendi çekeceğiniz
    fotoğraflar, (b) açık lisanslı fotoğraf arşivleri (Wikimedia Commons vb.), (c) ikisi birlikte. Öneri: (c).
-3. **9. sınıf haftalık ders saati:** Görev süreleri ve kampanya uzunluğu buna göre ayarlanacak.
-4. **Birden fazla öğretmen** sistemi kullanacak mı (öğretmen yalnızca kendi sınıflarını görür), yoksa tek öğretmen mi?
+3. **Portal tarafı:** Okul portalı hangi adreste ve C# Form Stüdyosu bağlantısını üreten kodu kim ekledi? Aynı yere
+   "İşletim Sistemleri" bağlantısı için örnek kod (`portal-ornek/`) hazırlanacak.
