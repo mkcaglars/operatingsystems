@@ -1,6 +1,7 @@
 # İşletim Sistemleri Sanal Laboratuvarı — Tasarım Dokümanı
 
-> Durum: **Taslak v0.1 — onay bekliyor.** Kod yazımına bu doküman onaylandıktan sonra başlanacaktır.
+> Durum: **Taslak v0.2 — onay bekliyor.** Kod yazımına bu doküman onaylandıktan sonra başlanacaktır.
+> Yayın adresi: **https://isletimsistemi.mkcaglar.com** (Hostinger). Hedef: **9. sınıf Bilişim Teknolojileri**.
 > Son bölümdeki **Açık Sorular** karara bağlanmalıdır.
 
 ---
@@ -27,8 +28,20 @@ adımlarına, kullanımına yönelik bilgi, beceri ve yeterlilik kazandırmak.
 
 ### Kapsam dışı
 - Gerçek bir işletim sistemini emüle etmek (sanal makine değil, **eğitsel simülasyon**).
-- Gerçek ürünlerin arayüzlerinin birebir kopyası. Gerçek ürün adları (Windows, Pardus, Ubuntu) metinlerde geçer; ekranlar
-  **özgün** tasarlanır, kavramlar ve adımlar gerçekle uyumlu tutulur.
+- Sunucu işletim sistemleri (Windows Server, Linux sunucu) — kazanımlarda yer almadığı için kapsam dışıdır.
+
+### Görsel ve içerik ilkeleri (kararlaştırıldı)
+- **Tamamen gerçekçi görsel stil:** Donanım fotoğraf gerçekliğinde; Windows 11, Ubuntu, BIOS/UEFI, Office ve Chrome
+  ekranları gerçeğine olabildiğince yakın canlandırılır. **Gerçek ürün adları ve logoları** kullanılır (eğitim amaçlı,
+  yalnızca giriş yapan kullanıcılara açık kapalı sistem).
+- **Kapalı kaynak sistem: Windows 11.** **Açık kaynak ana dağıtım: Ubuntu** (Pardus, Linux Mint vb. yalnızca İ3'te
+  tanıtım ve karşılaştırmada geçer).
+- **Ses kullanılmaz:** Laboratuvarda ses yokmuş gibi tasarlanır; bip kodları dahil tüm sesli bilgiler görsel/metin olarak verilir.
+- **Ürün anahtarları:** Windows 11 ve Microsoft Office etkinleştirmesi **ürün anahtarı** ile yapılır. Anahtarlar
+  simülasyonun ürettiği **kurgusal** anahtarlardır (gerçek anahtar kullanılmaz); sanal ürün kutusu/lisans etiketi
+  üzerinde verilir, yanlış yazılan anahtar reddedilir.
+- **Hedef kitle 9. sınıf:** Dil sade, adımlar kısa; Öğren modu ağırlıklı başlar, ipuçları bol; ileri görevler (winget,
+  çift önyükleme, kaynak çakışmaları) "ileri düzey" etiketiyle isteğe bağlıdır.
 
 ---
 
@@ -175,8 +188,8 @@ kurulum öncesi kontrol listesi.
 
 ### İ2 — POST ve BIOS/UEFI  (B3, S1, S2, B9○, S8○)
 
-**Ekranlar:** Açılış ekranı (logo + "Setup için DEL'e basın"), POST metin ekranı, bip sesi oynatıcı (ses + görsel
-gösterim: ▬ uzun, • kısa), BIOS Setup (klasik mavi-gri metin arayüzü) ve UEFI (grafik arayüz) — iki tür de bulunur.
+**Ekranlar:** Açılış ekranı (logo + "Setup için DEL'e basın"), POST metin ekranı, bip dizisinin **görsel gösterimi**
+(▬ uzun, • kısa; ekranda "Hoparlörden duyulan:" kutusu — ses çalınmaz), BIOS Setup (klasik mavi-gri metin arayüzü) ve UEFI (grafik arayüz) — iki tür de bulunur.
 
 **Öğrenme içeriği:**
 - BIOS/UEFI'nin görevi: donanımı tanıma ve sınama (POST), önyükleyiciyi bulma ve başlatma, temel ayarların
@@ -200,7 +213,7 @@ yönetici/kullanıcı parolası · tümleşik aygıtlar (ses, ağ, USB) aç/kapa
 | İ2-G3 | USB'den kurulum için önyükleme sırasını ayarla, kaydet ve çık | S2 | 1. sıra USB, ayarlar kaydedildi |
 | İ2-G4 | Sanal makine yazılımı kullanılacak: sanallaştırmayı aç | S2 | VT-x açık |
 | İ2-G5 | Laboratuvar güvenliği: BIOS yönetici parolası koy, USB'den açılışı kapat | S2, S5 | Parola var, ilgili ayar kapalı |
-| İ2-G6 | Bip kodu teşhisi: 3 farklı bip dizisini dinle, arızalı bileşeni bul | B3, B9, S8 | Doğru bileşen |
+| İ2-G6 | Bip kodu teşhisi: 3 farklı bip dizisini (görsel) incele, arızalı bileşeni bul | B3, B9, S8 | Doğru bileşen |
 | İ2-G7 | Saat her açılışta sıfırlanıyor — sebebini bul (CMOS pili) | B9, S8 | Doğru teşhis + çözüm |
 
 ---
@@ -213,12 +226,12 @@ ekranı (verilen bilgisayarın donanımı), gereksinim denetleyicisi.
 **Öğrenme içeriği:**
 - İşletim sistemi çeşitleri: kullanım alanına göre (masaüstü, sunucu, mobil, gömülü/gerçek zamanlı), lisansa göre
   (kapalı/açık kaynak, ücretli/ücretsiz), kullanıcı ve görev sayısına göre.
-- Örnekler: Windows, macOS, Pardus, Ubuntu ve diğer Linux dağıtımları, Android, iOS, Windows Server.
-- Açık kaynak kavramı, GPL, dağıtım (distro) kavramı, Pardus'un yerli bir dağıtım olması.
+- Örnekler: Windows 11, macOS, **Ubuntu**, Pardus ve diğer Linux dağıtımları, Android, iOS.
+- Açık kaynak kavramı, GPL, dağıtım (distro) kavramı; Ubuntu (ana dağıtım) ve yerli dağıtım Pardus örnekleri.
 - **Karşılaştırma ölçütleri:** maliyet/lisans, donanım gereksinimi, yazılım ve sürücü desteği, güvenlik, özelleştirme,
   destek ve topluluk, kullanım kolaylığı. *(Dersin hedefindeki "avantaj/dezavantaj" kazanımı burada ölçülür.)*
-- Kurulum gereksinimleri: işlemci (mimari 32/64 bit, hız, çekirdek), RAM, disk alanı, ekran, TPM/UEFI/Secure Boot
-  (güncel Windows için). Değerler bir **veri dosyasında** tutulur; resmî kaynaklardan doğrulanıp güncellenebilir.
+- Kurulum gereksinimleri: işlemci (mimari 32/64 bit, hız, çekirdek), RAM, disk alanı, ekran, TPM 2.0/UEFI/Secure Boot
+  (Windows 11 için). Değerler bir **veri dosyasında** tutulur; resmî kaynaklardan doğrulanıp güncellenebilir.
 
 **Görevler (örnek):**
 | ID | Görev | Kazanım | Başarı koşulu |
@@ -233,14 +246,15 @@ ekranı (verilen bilgisayarın donanımı), gereksinim denetleyicisi.
 ### İ4 — Kurulum Medyası ve Kapalı Kaynak Kurulum  (S3, Y2, S1○, S2○, B6○)
 
 **Ekranlar:** Medya hazırlama aracı (ISO seçimi, hedef USB, bölüm şeması MBR/GPT, hedef sistem BIOS/UEFI, dosya sistemi),
-DVD yazdırma, kurulum sihirbazı (özgün tasarım, Windows kurulum akışıyla uyumlu adımlar), disk bölümleme ekranı, ilk
+DVD yazdırma, **Windows 11 kurulum sihirbazı** (gerçekçi), disk bölümleme ekranı, ilk
 açılış (OOBE) ekranları.
 
 **Kurulum akışı (simülasyon):**
 1. Medya hazırlama: ISO → USB (GPT + UEFI veya MBR + BIOS seçimi; yanlış eşleşme açılışta sorun doğurur).
 2. Önyükleme menüsünden veya BIOS'tan medya ile açılış.
 3. Dil, saat ve klavye (Türkçe Q).
-4. Ürün anahtarı / lisans sözleşmesi.
+4. **Ürün anahtarı** girişi (sanal lisans etiketinden), sürüm seçimi (Home/Pro), lisans sözleşmesi.
+   Windows 11 donanım denetimi: TPM 2.0 veya Secure Boot kapalıysa "Bu bilgisayar Windows 11'i çalıştıramaz" uyarısı (İ2'ye bağlanır).
 5. Kurulum türü: **Yükseltme** veya **Özel (temiz kurulum)**.
 6. Disk bölümleme: bölüm oluşturma/silme/biçimlendirme; sistemin otomatik oluşturduğu EFI, MSR, kurtarma bölümleri;
    NTFS; birden fazla disk ve veri bölümünü koruma senaryosu.
@@ -261,8 +275,8 @@ açılış (OOBE) ekranları.
 
 ### İ5 — Açık Kaynak İşletim Sistemi Kurulum ve Yapılandırma  (B5, S3, Y2, + M4 bütünü)
 
-**Ekranlar:** Canlı (live) masaüstü, kurulum sihirbazı (Pardus/Ubuntu akışıyla uyumlu, özgün tasarım), gelişmiş
-bölümleme, **sanal terminal**, paket yöneticisi (grafik + komut satırı), ayarlar.
+**Ekranlar:** Canlı (live) masaüstü, **Ubuntu kurulum sihirbazı** (gerçekçi), gelişmiş
+bölümleme, **sanal terminal**, paket yöneticisi (App Center + komut satırı), ayarlar.
 
 **Öğrenme içeriği:**
 - Canlı sistemle deneme ve kurulum farkı.
@@ -339,10 +353,10 @@ kaldırılması.
 
 **Ekranlar:** Sanal web tarayıcı (arama sonuçları, resmî siteler, **sahte indirme siteleri ve reklam bağlantıları**),
 İndirilenler klasörü, kurulum sihirbazları (.exe/.msi), Office kurulum ve etkinleştirme ekranları, Ayarlar → Uygulamalar
-(kaldır/değiştir/onar), varsayılan uygulamalar, Pardus Yazılım Merkezi ve terminal (`apt`).
+(kaldır/değiştir/onar), varsayılan uygulamalar, Ubuntu App Center ve terminal (`apt`).
 
 **Yazılım kataloğu** (veri dosyasında tutulur; öğretmen yeni yazılım ekleyebilir):
-| Kategori | Windows | Pardus / Linux | Öğretilen nokta |
+| Kategori | Windows 11 | Ubuntu | Öğretilen nokta |
 |---|---|---|---|
 | Ofis | **Microsoft Office** (Microsoft 365 / Office) | LibreOffice (hazır gelir); MS Office Linux'a doğrudan kurulamaz → web sürümü veya LibreOffice | Lisans ve etkinleştirme, bileşen seçimi, platform uyumu, dosya biçimi uyumu (.docx/.odt) |
 | Web tarayıcı | **Google Chrome**, Mozilla Firefox (Edge hazır gelir) | Firefox (hazır), Chrome (.deb paketi) | Resmî kaynaktan indirme, varsayılan tarayıcı yapma |
@@ -359,15 +373,15 @@ kaldırılması.
    hesap ayarı burada sonuç doğurur).
 4. **Sihirbaz:** lisans sözleşmesi, kurulum türü (Hızlı/Özel), hedef klasör, bileşen seçimi, masaüstü kısayolu,
    **istenmeyen ek yazılım/araç çubuğu tuzakları**, varsayılan uygulama yapma.
-5. **Microsoft Office'e özel:** hesapla giriş veya ürün anahtarı ile **etkinleştirme**; bileşen seçimi (ör. yalnızca Word,
-   Excel, PowerPoint); dil; etkinleştirme durumunun kontrolü (Dosya → Hesap); kurumsal/okul hesabı senaryosu.
+5. **Microsoft Office'e özel:** **ürün anahtarı ile etkinleştirme**; bileşen seçimi (ör. yalnızca Word,
+   Excel, PowerPoint); dil; etkinleştirme durumunun kontrolü (Dosya → Hesap).
    **Lisanssız (kırılmış) yazılım** seçeneği simülasyonda kötü amaçlı yazılım bulaştırır ve İ9'da arıza olarak geri döner;
    hukuki ve güvenlik riskleri açıklanır.
 6. **Doğrulama:** Başlat menüsünde görünme, çalıştırma, sürüm bilgisi, otomatik güncellemenin açık olması.
 7. **Bakım:** Ayarlar → Uygulamalar'dan kaldırma; Office **onarma** (hızlı/çevrimiçi onarım).
 8. **İleri düzey (opsiyonel):** Laboratuvar için komut satırından toplu kurulum (`winget install Google.Chrome` vb.).
 
-**Kurulum akışı — Pardus/Linux:** Yazılım Merkezi'nden kurulum; `sudo apt update && sudo apt install vlc`;
+**Kurulum akışı — Ubuntu:** App Center'dan kurulum; `sudo apt update && sudo apt install vlc`;
 Chrome için `.deb` dosyasını indirip paket kurucu ile veya `sudo apt install ./google-chrome-stable_current_amd64.deb`
 ile kurma; Office yerine LibreOffice ile .docx açıp düzenleme ve kaydetme.
 
@@ -375,12 +389,12 @@ ile kurma; Office yerine LibreOffice ile .docx açıp düzenleme ve kaydetme.
 | ID | Görev | Kazanım | Başarı koşulu |
 |---|---|---|---|
 | İ8-G1 | Google Chrome'u resmî sitesinden indir, kur ve varsayılan tarayıcı yap | S6, S5, S4 | Resmî kaynak, sahte bağlantıya tıklanmadı, varsayılan Chrome |
-| İ8-G2 | Microsoft Office'i Türkçe kur; yalnızca Word, Excel, PowerPoint olsun; etkinleştir | S6, Y3 | Bileşenler doğru, ürün etkin |
+| İ8-G2 | Microsoft Office'i Türkçe kur; yalnızca Word, Excel, PowerPoint olsun; ürün anahtarıyla etkinleştir | S6, Y3 | Bileşenler doğru, ürün etkin |
 | İ8-G3 | Senaryoya göre yazılım paketini seç ve kur (okul laboratuvarı / muhasebe ofisi / grafik atölyesi) | S6, Y3 | Gerekli küme eksiksiz, gereksiz/zararlı yazılım yok |
 | İ8-G4 | Kurulum sihirbazlarındaki ek yazılım tekliflerini reddederek PDF okuyucu ve sıkıştırma programı kur | S6, S5 | Ek yazılım kurulmadı |
 | İ8-G5 | 32 bit sisteme 64 bit yazılım kurma girişiminde çıkan hatayı yorumla, doğru sürümü kur | B6, S6 | Doğru sürüm kurulu |
 | İ8-G6 | Çalışmayan Office'i onar; kullanılmayan bir programı kaldır | S6, B8 | Onarım + kaldırma yapıldı |
-| İ8-G7 | Pardus'ta VLC'yi `apt` ile, Chrome'u `.deb` ile kur; LibreOffice ile .docx dosyasını düzenle | S6, B5 | Paketler kurulu, dosya kaydedildi |
+| İ8-G7 | Ubuntu'da VLC'yi `apt` ile, Chrome'u `.deb` ile kur; LibreOffice ile .docx dosyasını düzenle | S6, B5 | Paketler kurulu, dosya kaydedildi |
 | İ8-G8 (ileri) | 5 programı `winget` ile tek seferde kur | S6 | Tümü kurulu |
 
 **Puanlama notu:** Güvenilmeyen kaynaktan indirme, lisanssız yazılım veya istenmeyen ek yazılım kurulması süreç
@@ -407,7 +421,7 @@ Görev Yöneticisi, olay günlüğü, güvenli mod, kurtarma ortamı, terminal),
 | ID | Belirti | Kök neden | Beklenen çözüm | Kazanım |
 |---|---|---|---|---|
 | A1 | "No bootable device" | Önyükleme sırası / disk SATA kablosu | BIOS'ta sıralama veya kablo | S8, S2 |
-| A2 | Açılışta bip sesi, görüntü yok | RAM yerinden çıkmış | RAM'i tak | B9, S8 |
+| A2 | Açılışta bip kodu (görsel), görüntü yok | RAM yerinden çıkmış | RAM'i tak | B9, S8 |
 | A3 | Ekran kartı takıldıktan sonra görüntü bozuk | Tümleşik ve harici ekran kartı çakışması | Tümleşik kartı BIOS'ta kapat, sürücüyü kur | B10, S9 |
 | A4 | Ses kartı çalışmıyor, sarı ünlem (Kod 12) | Kaynak çakışması | Çakışan aygıtı devre dışı bırak / kaynakları yeniden ata | B10, S9 |
 | A5 | Sürücü güncellemesinden sonra mavi ekran | Uyumsuz sürücü | Güvenli mod → sürücüyü geri al | S8, S9 |
@@ -417,7 +431,7 @@ Görev Yöneticisi, olay günlüğü, güvenli mod, kurtarma ortamı, terminal),
 | A9 | Saat sürekli geri gidiyor | CMOS pili | Pili değiştir | B9 |
 | A10 | Elektrik kesintisinde veri kaybı | UPS yok / yanlış bağlantı | UPS + güvenli kapatma | B2, Y4 |
 | A11 | Tarayıcıda sürekli reklam açılıyor, ana sayfa değişmiş | İstenmeyen ek yazılım / sahte siteden indirilen program (İ8) | Programı kaldır, tarayıcıyı sıfırla, tarama yap | S8, Y4 |
-| A12 | Office "Etkinleştirilmemiş ürün" uyarısı veriyor, belgeler düzenlenemiyor | Lisans/etkinleştirme sorunu | Hesapla etkinleştir veya geçerli anahtar gir | S8 |
+| A12 | Office "Etkinleştirilmemiş ürün" uyarısı veriyor, belgeler düzenlenemiyor | Lisans/etkinleştirme sorunu | Geçerli ürün anahtarını gir | S8 |
 | A13 | Word açılırken çöküyor | Bozuk kurulum | Office onarımı | S8 |
 
 **Puanlama (İ9'a özel):** doğru teşhis + doğru çözüm + **gereksiz/zararlı işlem yapmama** (ör. sorunu çözmek için
@@ -429,7 +443,7 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
 | Senaryo | Kapsadığı istasyonlar | Ölçülen |
 |---|---|---|
 | **K1 "Laboratuvara yeni bilgisayar"**: kutudan çıkar, bağla, BIOS'u ayarla, uygun işletim sistemini seç, medyayı hazırla, kur, sürücüleri ve güvenliği tamamla, Office ve Chrome gibi gerekli programları kur, kişiselleştir | İ1→İ8 | Y1, Y2, Y3 |
-| **K2 "Pardus'a geçiş"**: verileri koruyarak çift önyüklemeli açık kaynak kurulum ve yapılandırma | İ1, İ2, İ3, İ5, İ7, İ8 | Y1, Y2, Y3 |
+| **K2 "Ubuntu'ya geçiş"**: verileri koruyarak çift önyüklemeli açık kaynak kurulum ve yapılandırma | İ1, İ2, İ3, İ5, İ7, İ8 | Y1, Y2, Y3 |
 | **K3 "Servis masası"**: art arda 3 rastgele arıza bileti | İ9 (+ İ2, İ6) | Y4 |
 
 ---
@@ -444,8 +458,10 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
   *Başlamadı / Gelişiyor (<50) / Yeterli (50–84) / Ustalaştı (≥85)*. (Eşikler öğretmen ayarıdır.)
 - **Bilgi kazanımları (B):** Görev içine gömülü kısa sorular (eşleştirme, sıralama, sürükle-bırak, çoktan seçmeli) ile de
   ölçülür; soru bankası istasyon bazlıdır.
-- **Hile/güvenilirlik:** Puan sunucuda, olay günlüğünün yeniden oynatılmasıyla hesaplanır (istemcinin gönderdiği puana
-  güvenilmez). Değerlendirme modunda soru/görev varyantları rastgele seçilir.
+- **Hile/güvenilirlik:** Başarı koşulları **bildirimsel kurallar** (JSON) olarak yazılır; aynı kurallar tarayıcıda (anlık
+  geri bildirim) ve sunucuda (PHP, resmî puan) değerlendirilir. Sunucu, istemcinin gönderdiği son durum ve olay günlüğü
+  üzerinde kuralları yeniden çalıştırır; istemcinin hesapladığı puana tek başına güvenilmez. Değerlendirme modunda
+  görev varyantları (ürün anahtarı, arıza, donanım) rastgele seçilir.
 
 ---
 
@@ -453,107 +469,133 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
 
 | Özellik | Açıklama |
 |---|---|
-| Sınıf yönetimi | Sınıf/şube oluşturma; **sınıf kodu** ile öğrenci katılımı veya liste içe aktarma (CSV) |
-| Öğrenci girişi | Sınıf kodu + öğrenci no + öğretmenin belirlediği/ürettiği basit parola (bkz. Açık Sorular) |
+| Sınıf yönetimi | Sınıf/şube oluşturma, düzenleme, silme |
+| **Öğrenci hesapları** | Öğrenciler **kullanıcı adı + şifre** ile girer. Hesapları **yalnızca öğretmen** panelden ekler, düzenler, şifresini sıfırlar, pasifleştirir/siler; tek tek veya CSV/Excel listesinden toplu ekleme (otomatik kullanıcı adı ve şifre üretimi, yazdırılabilir giriş kartları). Öğrenci kendi kendine kayıt olamaz. |
 | Görev atama | İstasyon/görev/kampanya seçimi, mod (Uygula/Değerlendir), başlangıç–bitiş tarihi, süre sınırı |
-| **Canlı izleme** | Sınıf ızgarası: her öğrencinin o anki istasyonu, ilerlemesi, takıldığı adım, ipucu kullanımı |
+| **Canlı izleme** | (Birkaç saniyede bir yenilenir) Sınıf ızgarası: her öğrencinin o anki istasyonu, ilerlemesi, takıldığı adım, ipucu kullanımı |
 | Arıza gönderme | Ders sırasında seçili öğrencilere İ9 arıza senaryosu gönderme |
 | Raporlar | Kazanım × öğrenci ısı haritası; öğrenci karnesi; görev bazlı başarı; sık yapılan hatalar |
 | Dışa aktarma | PDF (karne), CSV/Excel (not listesi) |
 | Tekrar izleme | Öğrencinin bir görevdeki eylem günlüğünü adım adım izleme |
 | İçerik | Görevleri etkinleştirme/gizleme; eşikleri ayarlama |
 
-Roller: **Yönetici** (okul; öğretmen hesapları), **Öğretmen**, **Öğrenci**.
+Roller: **Yönetici** (öğretmen hesaplarını yönetir), **Öğretmen**, **Öğrenci**. Şifreler sunucuda güvenli özet (bcrypt/argon2) olarak saklanır; çok sayıda hatalı girişte geçici kilit.
 
 ---
 
-## 8. Teknik Mimari (öneri)
+## 8. Teknik Mimari
+
+**Barındırma:** Hostinger paylaşımlı hosting (Web/Premium/Business), alan adı **isletimsistemi.mkcaglar.com**
+(alt alan adı; hPanel'den SSL). Paylaşımlı hostingte Node.js süreci ve WebSocket çalıştırılamadığı için mimari buna göre
+seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP API + MySQL**.
 
 ```
-┌────────────── Tarayıcı (öğrenci / öğretmen) ───────────────┐
-│ React + TypeScript (Vite)                                   │
-│  ├─ Simülasyon çekirdeği: saf TS durum makinesi (VM durumu) │
-│  ├─ İstasyon arayüzleri (İ1–İ9), sanal masaüstü, terminal   │
-│  └─ Öğretmen paneli                                         │
-└──────────────▲───────────────────────────────▲──────────────┘
-          REST │ (JSON)              WebSocket │ (canlı izleme, arıza gönderme)
-┌──────────────┴───────────────────────────────┴──────────────┐
-│ Node.js + Fastify (TypeScript)                              │
-│  ├─ Kimlik doğrulama (oturum çerezi), roller                │
-│  ├─ Değerlendirme motoru (paylaşılan simülasyon çekirdeğiyle│
-│  │   olay günlüğünü yeniden oynatır, puanlar)               │
-│  └─ Rapor üretimi (PDF/CSV)                                 │
-│ Veritabanı: SQLite (varsayılan) / PostgreSQL (seçenek)      │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────── Tarayıcı (öğrenci / öğretmen) ────────────────────┐
+│ React + TypeScript (Vite ile derlenmiş statik dosyalar)                │
+│  ├─ Simülasyon çekirdeği: saf TS durum makinesi (sanal makine durumu)  │
+│  ├─ Kural değerlendirici (TS)  ← content/*.json görev kuralları        │
+│  ├─ İstasyon arayüzleri İ1–İ9: gerçekçi donanım, BIOS/UEFI,           │
+│  │   Windows 11, Ubuntu, Office, Chrome ekranları; sanal terminal      │
+│  └─ Öğretmen paneli                                                    │
+└───────────────▲───────────────────────────────────────────────────────┘
+       HTTPS    │ REST/JSON  (canlı izleme ve arıza gönderme: 3–5 sn'de bir yoklama)
+┌───────────────┴───────────────────────────────────────────────────────┐
+│ Hostinger: public_html/ (isletimsistemi.mkcaglar.com)                  │
+│  ├─ index.html + assets/  (derlenmiş arayüz)                           │
+│  └─ api/  PHP 8.x (çerçevesiz, küçük yönlendirici; PDO)                │
+│       ├─ Kimlik doğrulama (PHP oturumu, HttpOnly çerez, CSRF koruması) │
+│       ├─ Kullanıcı/sınıf/görev yönetimi                                │
+│       ├─ Kural değerlendirici (PHP) → resmî puan, kazanım düzeyi       │
+│       └─ Rapor: CSV/Excel; PDF karne (tarayıcıda yazdır → PDF)         │
+│ MySQL / MariaDB (hPanel'den oluşturulan veritabanı)                    │
+└───────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Paylaşılan çekirdek (`packages/core`)**: Simülasyon durumu ve görev denetleyicileri hem istemcide (anlık geri bildirim)
-  hem sunucuda (resmî puan) **aynı kodla** çalışır.
-- **İçerik veri dosyalarıyla (JSON/YAML)**: görevler, sorular, arıza senaryoları, işletim sistemi gereksinim tabloları,
-  bip kodu tabloları. Yeni görev eklemek kod gerektirmez.
-- **Kurulum:** Tek Docker imajı **veya** tek komutla (`npm start`) çalışan Node uygulaması. Okul içi ağda (LAN) öğretmen
-  bilgisayarı veya okul sunucusunda **internetsiz** çalışabilir; isteğe bağlı bulut kurulumu.
-- **Depo yapısı (monorepo):** `apps/web`, `apps/server`, `packages/core`, `content/`, `docs/`.
-- **Test:** Çekirdek ve denetleyiciler için birim testleri (Vitest); kritik akışlar için Playwright uçtan uca testleri.
+- **Neden bu yapı:** Her Hostinger paketinde çalışır, ek sunucu maliyeti yoktur; ileride VPS'e taşınırsa aynı arayüz korunur.
+- **Paylaşılan kurallar:** Görevlerin başarı koşulları kod değil, JSON kurallardır (ör. `{"yol":"bios.bootOrder[0]","eşit":"usb"}`,
+  `{"olay":"office.activate","sayı":">=1"}`). Aynı kurallar TS'de ve PHP'de küçük birer değerlendiriciyle çalışır; iki
+  değerlendiricinin aynı sonucu verdiği ortak test dosyalarıyla doğrulanır.
+- **İçerik veri dosyalarıyla (JSON):** görevler, sorular, arıza senaryoları, yazılım kataloğu, işletim sistemi gereksinim
+  tabloları, bip kodu tabloları, kurgusal ürün anahtarı kalıpları. Yeni görev eklemek kod gerektirmez.
+- **Kaldığı yerden devam:** Sanal makine durumu düzenli aralıklarla sunucuya kaydedilir; öğrenci başka bilgisayardan
+  girince kaldığı yerden devam eder.
+- **Gerçekçi görseller:** Donanım için yüksek çözünürlüklü fotoğraf/görseller (WebP, tembel yükleme); işletim sistemi
+  ve uygulama ekranları HTML/CSS ile canlandırılır (gerçek logolar, Windows 11 için Segoe UI/Fluent görünümü,
+  Ubuntu için Ubuntu yazı tipi). Toplam sayfa ağırlığı istasyon bazında bölünür (her istasyon ayrı yüklenir).
+- **Dağıtım:** GitHub'a gönderilen her sürüm, GitHub Actions ile derlenip Hostinger'a (FTP/SFTP veya hPanel Git) yüklenir.
+  Veritabanı şeması sürümlü SQL betikleriyle kurulur; ilk kurulumda bir **kurulum sihirbazı** yönetici hesabını oluşturur.
+- **Depo yapısı:** `web/` (React+TS), `api/` (PHP), `content/` (JSON içerik), `assets/` (görseller), `db/` (SQL), `docs/`.
+- **Test:** TS çekirdek ve kurallar için Vitest; PHP API için PHPUnit; kritik akışlar (giriş, görev tamamlama, rapor)
+  için Playwright uçtan uca testleri.
 
 ### 8.1 Veri modeli (özet)
 | Tablo | Alanlar |
 |---|---|
-| users | id, rol, ad, kullanıcı adı/öğrenci no, parola özeti |
-| classes | id, ad, öğretmen_id, katılım kodu |
+| users | id, rol, ad-soyad, kullanıcı adı, şifre özeti, aktif, son giriş |
+| classes | id, ad (ör. 9-A), öğretmen_id, öğretim yılı |
 | enrollments | class_id, student_id |
 | assignments | id, class_id, görev/kampanya, mod, başlangıç, bitiş, süre |
 | attempts | id, assignment_id, student_id, başlangıç, bitiş, durum, puan |
 | events | attempt_id, sıra, zaman, tür, veri (JSON) |
+| attempt_state | attempt_id, sanal makine durumu (JSON, ara kayıt — öğrenci kaldığı yerden devam eder) |
+| live_status | student_id, istasyon, adım, ilerleme, son görülme (canlı izleme için) |
+| commands | id, hedef öğrenci/sınıf, tür (arıza gönder vb.), veri, teslim edildi mi |
 | outcome_scores | student_id, kazanım_kodu, puan, düzey, güncelleme |
 
 ### 8.2 Gizlilik (KVKK)
-- Asgari kişisel veri: ad-soyad ve öğrenci no; T.C. kimlik no **tutulmaz**.
-- Veri okulun kendi sunucusunda kalır (yerel kurulumda dışarı veri gönderilmez).
+- Asgari kişisel veri: ad-soyad ve kullanıcı adı; T.C. kimlik no ve okul no **tutulmaz** (isteğe bağlı takma ad kullanılabilir).
+- Veri yalnızca Hostinger'daki veritabanında tutulur; üçüncü taraf analiz/izleme aracı kullanılmaz.
+- Tüm trafik HTTPS üzerinden; arama motorlarına kapalı (`noindex`); giriş yapmadan hiçbir simülasyon ekranı görülmez.
 - Öğretmen, sınıf/öğrenci verisini silebilir; dönem sonu toplu silme/arşivleme.
 
 ### 8.3 Arayüz ilkeleri
 - Tamamen **Türkçe**; terimlerin ilk geçtiği yerde İngilizce karşılığı (POST, Boot, Secure Boot).
 - Akıllı tahta ve dokunmatik uyumu (büyük hedefler, sürükle-bırak dokunmatikte de çalışır); en az 1366×768.
-- Klavye ile kullanılabilirlik ve yeterli renk kontrastı; sesli öğeler (bip) için görsel karşılık.
+- 9. sınıf düzeyine uygun sade dil; kısa yönergeler; teknik terimler için tıklanınca açılan sözlük.
+- Klavye ile kullanılabilirlik ve yeterli renk kontrastı; ses kullanılmaz; bip kodları görsel olarak gösterilir.
 - Laboratuvar bilgisayarları için hafif: modern tarayıcıda çalışır, eklenti gerektirmez.
 
 ---
 
-## 9. Yol Haritası (önerilen fazlar)
+---
+
+## 9. Yol Haritası
 
 | Faz | İçerik | Çıktı |
 |---|---|---|
-| F0 | Bu dokümanın onayı, açık soruların kapatılması | Onaylı tasarım |
-| F1 | Monorepo, kimlik doğrulama, sınıf/öğrenci yönetimi, simülasyon çekirdeği, görev motoru, olay günlüğü | Çalışan iskelet |
+| F0 | Bu dokümanın onayı; görsel kaynaklarının belirlenmesi | Onaylı tasarım |
+| F1 | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
 | F2 | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
-| F3 | İ3 Seçim + İ4 Kapalı kaynak kurulum + İ5 Açık kaynak kurulum (terminal) | Kurulum modülleri |
-| F4 | İ6 Ayarlar + İ7 Sürücü & Güvenlik + İ8 Uygulama Yazılımları + sanal masaüstü | Gelişmiş özellikler |
-| F5 | İ9 Arıza + kampanyalar (Y1–Y4) + canlı izleme + PDF/CSV raporlar | Tam kapsam |
-| F6 | Pilot uygulama geri bildirimi, içerik zenginleştirme, kurulum paketi (Docker) | Sürüm 1.0 |
+| F3 | İ3 Seçim + İ4 Windows 11 kurulumu + İ5 Ubuntu kurulumu (terminal) | Kurulum modülleri |
+| F4 | İ6 Ayarlar + İ7 Sürücü & Güvenlik + İ8 Uygulama Yazılımları (Office, Chrome…) + Windows 11/Ubuntu masaüstü | Gelişmiş özellikler |
+| F5 | İ9 Arıza + kampanyalar (Y1–Y4) + canlı izleme + arıza gönderme + CSV/PDF raporlar | Tam kapsam |
+| F6 | Pilot uygulama geri bildirimi, içerik zenginleştirme, performans | Sürüm 1.0 |
 
 Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu geri bildirime göre düzeltilir.
 
 ---
 
-## 10. Açık Sorular (karar gerekli)
+## 10. Kararlar
 
-1. **Sunucu nerede çalışacak?** Okul içi (öğretmen PC / okul sunucusu, internetsiz) mi, bulutta tek merkez (birden çok
-   okul) mi, yoksa ikisi de mi desteklenmeli?
-2. **Öğrenci girişi:** Sınıf kodu + öğrenci no + öğretmenin ürettiği parola mı, yoksa her öğrencinin kendi parolası mı?
-   (MEB/e-Okul entegrasyonu kapsam dışı varsayıldı.)
-3. **Hedef sınıf düzeyi ve ders saati:** Görev sayısı ve süreleri buna göre ölçeklenecek (ör. 10. sınıf, haftalık X saat).
-4. **Windows sürümü:** Kapalı kaynak kurulum güncel Windows (11) akışıyla mı modellensin, yoksa okullarda yaygın olan
-   10 da seçenek olarak bulunsun mu?
-5. **Açık kaynak:** Birincil dağıtım **Pardus** (yerli, MEB okullarında yaygın) mı olsun? Ubuntu ikincil mi?
-6. **Sunucu işletim sistemleri** (Windows Server / Linux sunucu) kapsam dışı mı? (Görsellerdeki kazanımlarda yok.)
-7. **Ses:** Bip kodları ve ortam sesleri için hoparlör/kulaklık varsayılabilir mi? (Her durumda görsel karşılık olacak.)
-8. **Görsel stil:** Gerçekçi (fotoğrafa yakın çizimler) mi, sade-şematik (vektör, düz renk) mi? Öneri: sade-şematik
-   (hafif, akıllı tahtada net, üretimi hızlı).
-9. **Kurulacak programlar listesi:** İ8 kataloğunda Microsoft Office, Google Chrome, Firefox, 7-Zip, WinRAR,
-   Acrobat Reader, VLC var. Eklenmesini istediğiniz başka program var mı (ör. EBA'ya özgü araçlar, Zoom, Scratch, Python,
-   Visual Studio Code, Packet Tracer)?
-10. **Office lisans senaryosu:** Etkinleştirme okul/kurumsal Microsoft 365 hesabıyla mı, ürün anahtarıyla mı, yoksa
-    ikisi de mi gösterilsin?
-11. **Ürün logoları:** Gerçek adlar kullanılacak. Logolar yerine özgün, benzer renkte simgeler kullanılması öneriliyor
-    (marka/telif riski olmaması için). Uygun mu?
+| # | Konu | Karar |
+|---|---|---|
+| 1 | Barındırma | Hostinger paylaşımlı hosting, **isletimsistemi.mkcaglar.com**; PHP 8 + MySQL API, simülasyon tarayıcıda |
+| 2 | Giriş | **Kullanıcı adı + şifre**; öğrenci hesaplarını öğretmen panelden ekler/düzenler/sıfırlar |
+| 3 | Hedef kitle | **9. sınıf Bilişim Teknolojileri** |
+| 4 | Kapalı kaynak işletim sistemi | **Windows 11** |
+| 5 | Açık kaynak ana dağıtım | **Ubuntu** |
+| 6 | Sunucu işletim sistemleri | Kapsam dışı |
+| 7 | Ses | **Kullanılmaz**; tüm sesli bilgiler görsel |
+| 8 | Görsel stil | **Tamamen gerçekçi** |
+| 9 | Lisans/etkinleştirme | Windows ve Office **ürün anahtarı** ile (kurgusal anahtarlar) |
+| 10 | Logolar | **Gerçek logolar** (eğitim amaçlı kapalı sistem) |
+| 11 | Değerlendirme | Merkezi öğretmen paneli |
+
+## 11. Kalan Açık Konular
+
+1. **Kurulacak programlar listesi (İ8):** Microsoft Office, Google Chrome, Firefox, 7-Zip, WinRAR, Acrobat Reader, VLC
+   var. Eklenmesi istenen başka program var mı (ör. Scratch, Python, Visual Studio Code, Zoom)?
+2. **Donanım görselleri:** "Tamamen gerçekçi" stil için fotoğraf kaynağı: (a) okul laboratuvarından kendi çekeceğiniz
+   fotoğraflar, (b) açık lisanslı fotoğraf arşivleri (Wikimedia Commons vb.), (c) ikisi birlikte. Öneri: (c).
+3. **9. sınıf haftalık ders saati:** Görev süreleri ve kampanya uzunluğu buna göre ayarlanacak.
+4. **Birden fazla öğretmen** sistemi kullanacak mı (öğretmen yalnızca kendi sınıflarını görür), yoksa tek öğretmen mi?
