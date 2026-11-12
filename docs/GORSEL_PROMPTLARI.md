@@ -1,5 +1,7 @@
 # Görsel Üretim Listesi ve Promptlar
 
+Bağlam: **Kuzey Kıbrıs** — elektrik prizleri ve fişler **UK tipi (BS 1363)**.
+
 Bu görseller yapay zekâ ile üretilecek ve projeye ait olacak; açık lisans/atıf gerekmez.
 Ekran görüntüleri (BIOS, Windows 11, Ubuntu, Office, Chrome, Windows Güvenliği) **kodla çizilir**; burada yalnızca
 fiziksel nesneler ve ortamlar var.
@@ -17,7 +19,7 @@ fiziksel nesneler ve ortamlar var.
 
 - **[DEKUPE]**: `photorealistic studio product photography, isolated object, transparent background (or pure white #FFFFFF background), soft even studio lighting, subtle natural shadow, sharp focus, high detail, no text, no logos, no brand names, no watermark`
 - **[ÖNDEN]**: `perfectly straight-on orthographic front view, camera centered and level, no perspective distortion` — tıklanabilir bölge (port, yuva) içeren görsellerde şart.
-- **[ORTAM]**: `photorealistic photograph, natural daylight from windows, realistic school environment in Turkey, clean and tidy, 35mm lens, no people's faces visible, no text, no logos, no watermark`
+- **[ORTAM]**: `photorealistic photograph, natural daylight from windows, realistic school environment in Northern Cyprus, **UK-type BS 1363 wall sockets (three rectangular holes) wherever sockets are visible**, clean and tidy, 35mm lens, no people's faces visible, no text, no logos, no watermark`
 
 ---
 
@@ -25,9 +27,9 @@ fiziksel nesneler ve ortamlar var.
 
 | # | Dosya adı | Oran | Prompt |
 |---|---|---|---|
-| 1 | `ortam-lab-masa.webp` | 16:9 | An empty wooden computer workbench in a school IT workshop, front view at desk height, a power strip with switch on the desk surface, a wall socket behind, plenty of empty space on the desk for placing a computer, monitor and peripherals, blurred workshop shelves in background. **[ORTAM]** |
+| 1 | `ortam-lab-masa.webp` | 16:9 | 🔁 **Yeniden üretilecek** (ilk sürümde Schuko priz vardı).  An empty wooden computer workbench in a school IT workshop, front view at desk height, a **UK-type BS 1363** power strip with switch on the desk, a **UK-type BS 1363 wall socket** (three rectangular holes, with switch) behind, plenty of empty space on the desk for placing a computer, monitor and peripherals, blurred workshop shelves in background. **[ORTAM]** |
 | 2 | `ortam-bilgisayar-sinifi.webp` | 16:9 | A modern secondary school computer lab classroom with rows of desktop computers and monitors, an interactive whiteboard at the front, bright and organized, wide angle. **[ORTAM]** |
-| 3 | `ortam-servis-masasi.webp` | 16:9 | A computer repair technician workbench with an anti-static mat, a desktop computer case with side panel removed, small screwdrivers, labeled parts boxes, a desk lamp, front view. **[ORTAM]** |
+| 3 | `ortam-servis-masasi.webp` | 16:9 | ✅ **Alındı.**  A computer repair technician workbench with an anti-static mat, a desktop computer case with side panel removed, small screwdrivers, labeled parts boxes, a desk lamp, front view. **[ORTAM]** |
 
 ## 2. Bilgisayar kasası ve iç donanım
 
@@ -39,14 +41,14 @@ fiziksel nesneler ve ortamlar var.
 | 7 | `anakart.png` | 1:1 | Top-down view of a modern ATX motherboard with CPU socket covered by a cooler, four RAM slots, a PCIe x16 slot, an M.2 slot, SATA ports, 24-pin power connector, and a visible CR2032 coin cell CMOS battery. **[ÖNDEN] [DEKUPE]** |
 | 8 | `ram-modul.png` | 16:9 | A single desktop DDR4 RAM memory stick with a black heat spreader, showing the gold contact pins and the notch, horizontal. **[DEKUPE]** |
 | 9 | `ram-yerinden-cikmis.webp` | 4:3 | Close-up of a motherboard RAM slot where one RAM stick is visibly not fully seated, one side tilted up and the retention clip open, shallow depth of field. photorealistic macro photograph, no text, no logos |
-| 10 | `cmos-pil.png` | 1:1 | Close-up of a CR2032 coin cell battery in its holder on a motherboard, top-down macro. **[DEKUPE]** |
+| 10 | `cmos-pil.webp` | 1:1 | ✅ **Alındı.**  Close-up of a CR2032 coin cell battery in its holder on a motherboard, top-down macro. **[DEKUPE]** |
 | 11 | `ekran-karti.png` | 16:9 | A dedicated desktop graphics card with dual fans, PCIe connector visible, side view. **[DEKUPE]** |
 | 12 | `ssd-sata.png` | 4:3 | A 2.5 inch SATA solid state drive, angled view showing SATA data and power connectors. **[DEKUPE]** |
 | 13 | `ssd-nvme.png` | 16:9 | An M.2 NVMe SSD stick, top view. **[DEKUPE]** |
 | 14 | `hdd.png` | 4:3 | A 3.5 inch internal hard disk drive, angled view showing SATA connectors. **[DEKUPE]** |
-| 15 | `sata-kablo-gevsek.webp` | 4:3 | Macro close-up of a red SATA data cable that is loose and half-unplugged from an SSD connector inside a computer. photorealistic macro photograph, shallow depth of field, no text, no logos |
+| 15 | `sata-kablo-gevsek.webp` | 4:3 | ✅ **Alındı.**  Macro close-up of a red SATA data cable that is loose and half-unplugged from an SSD connector inside a computer. photorealistic macro photograph, shallow depth of field, no text, no logos |
 | 16 | `guc-kaynagi.png` | 4:3 | An ATX computer power supply unit with modular cables, angled view. **[DEKUPE]** |
-| 17 | `guc-kablosu.png` | 4:3 | A black computer power cable, loosely coiled. One end: a **European Type F Schuko plug (CEE 7/7) with two round metal pins and metal grounding clips on the top and bottom edges, as used in Turkey and Germany**. Other end: an IEC C13 connector. **NOT a UK plug, no rectangular pins, no fuse.** **[DEKUPE]** |
+| 17 | `guc-kablosu.webp` | 4:3 | ✅ **Alındı.** (UK tipi BS 1363 fiş + IEC C13 — Kıbrıs'ta kullanılan tip) |
 
 ## 3. Monitör ve dizüstü (ekran içi kodla doldurulacak)
 
@@ -89,7 +91,7 @@ fiziksel nesneler ve ortamlar var.
 | 37 | `ups-line-interactive.png` | 3:4 | A tower line-interactive UPS with a small blank LCD display and buttons on the front. **[ÖNDEN] [DEKUPE]** |
 | 38 | `ups-online.png` | 3:4 | A larger professional online double-conversion tower UPS with a blank LCD panel. **[ÖNDEN] [DEKUPE]** |
 | 39 | `ups-arka.png` | 4:3 | Rear panel of a tower UPS showing an input power socket, four IEC C13 output sockets, a USB communication port and a circuit breaker button. **[ÖNDEN] [DEKUPE]** |
-| 40 | `grup-priz.png` | 3:1 | A 6-outlet European Schuko power strip with an illuminated switch, top-down view. **[DEKUPE]** |
+| 40 | `grup-priz.png` | 3:1 | A 6-outlet **UK-type BS 1363** power strip (three rectangular holes per socket, as used in the UK and Cyprus) with an illuminated switch and a UK plug, top-down view. **[DEKUPE]** |
 | 41 | `yazici-lazer.png` | 1:1 | A desktop office laser printer. **[DEKUPE]** |
 
 ## 7. Kurulum medyası ve lisans
@@ -106,17 +108,17 @@ fiziksel nesneler ve ortamlar var.
 
 | # | Dosya adı | Oran | Prompt |
 |---|---|---|---|
-| 47 | `kisi-ogretmen.webp` | 1:1 | Friendly portrait of a Turkish female school teacher in her 40s in a classroom, head and shoulders, natural light, photorealistic, no text, no logos |
-| 48 | `kisi-muhasebeci.webp` | 1:1 | Portrait of a Turkish male accountant in his 50s at an office desk, head and shoulders, slightly worried expression, photorealistic, no text, no logos |
-| 49 | `kisi-grafiker.webp` | 1:1 | Portrait of a young Turkish graphic designer in a creative studio, head and shoulders, photorealistic, no text, no logos |
-| 50 | `kisi-ogrenci.webp` | 1:1 | Portrait of a Turkish high school student around 15 years old in a school computer lab, head and shoulders, photorealistic, no text, no logos |
+| 47 | `kisi-ogretmen.webp` | 1:1 | Friendly portrait of a Turkish Cypriot female school teacher in her 40s in a classroom, head and shoulders, natural light, photorealistic, no text, no logos |
+| 48 | `kisi-muhasebeci.webp` | 1:1 | Portrait of a Turkish Cypriot male accountant in his 50s at an office desk, head and shoulders, slightly worried expression, photorealistic, no text, no logos |
+| 49 | `kisi-grafiker.webp` | 1:1 | Portrait of a young Turkish Cypriot graphic designer in a creative studio, head and shoulders, photorealistic, no text, no logos |
+| 50 | `kisi-ogrenci.webp` | 1:1 | Portrait of a Turkish Cypriot high school student around 15 years old in a school computer lab, head and shoulders, photorealistic, no text, no logos |
 
 ## 9. Masaüstü arka planları (İ6 kişiselleştirme görevi)
 
 | # | Dosya adı | Oran | Prompt |
 |---|---|---|---|
-| 51 | `duvar-kagidi-1.webp` | 16:9 | Wide landscape photograph of Cappadocia at sunrise with hot air balloons, desktop wallpaper, no text |
-| 52 | `duvar-kagidi-2.webp` | 16:9 | Calm turquoise Mediterranean bay in Turkey with pine trees, desktop wallpaper, no text |
+| 51 | `duvar-kagidi-1.webp` | 16:9 | Wide landscape photograph of Kyrenia (Girne) old harbour with the castle at sunset, desktop wallpaper, no text |
+| 52 | `duvar-kagidi-2.webp` | 16:9 | Golden sand beach and turquoise sea of the Karpaz peninsula in Northern Cyprus, desktop wallpaper, no text |
 | 53 | `duvar-kagidi-3.webp` | 16:9 | Abstract soft gradient waves in deep blue and purple, minimal desktop wallpaper, no text |
 
 ---

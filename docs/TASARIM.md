@@ -37,6 +37,8 @@ adımlarına, kullanımına yönelik bilgi, beceri ve yeterlilik kazandırmak.
   yalnızca giriş yapan kullanıcılara açık kapalı sistem).
 - **Kapalı kaynak sistem: Windows 11.** **Açık kaynak ana dağıtım: Ubuntu** (Pardus, Linux Mint vb. yalnızca İ3'te
   tanıtım ve karşılaştırmada geçer).
+- **Yerel bağlam: Kuzey Kıbrıs.** Prizler ve fişler UK tipi (BS 1363, 230 V); UPS çıkışları IEC C13 ve/veya UK tipi;
+  senaryolardaki kişi, yer ve kurum adları Kıbrıs bağlamında.
 - **Ses kullanılmaz:** Laboratuvarda ses yokmuş gibi tasarlanır; bip kodları dahil tüm sesli bilgiler görsel/metin olarak verilir.
 - **Ürün anahtarları:** Windows 11 ve Microsoft Office etkinleştirmesi **ürün anahtarı** ile yapılır. Anahtarlar
   simülasyonun ürettiği **kurgusal** anahtarlardır (gerçek anahtar kullanılmaz); sanal ürün kutusu/lisans etiketi
