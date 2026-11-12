@@ -4,7 +4,7 @@
 web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isletimsistemi.mkcaglar.com**
 
 - Tasarım: [docs/TASARIM.md](docs/TASARIM.md)
-- Hostinger'a kurulum: [docs/KURULUM.md](docs/KURULUM.md)
+- Hostinger'a kurulum (Git ile otomatik yayın): [docs/KURULUM.md](docs/KURULUM.md)
 - Okul portalı (portal.mkcaglar.com) entegrasyonu: [docs/PORTAL.md](docs/PORTAL.md)
 - Görsel üretim listesi: [docs/GORSEL_PROMPTLARI.md](docs/GORSEL_PROMPTLARI.md)
 

@@ -15,6 +15,10 @@ DirectoryIndex index.html index.php
   </FilesMatch>
 </IfModule>
 
+# Hostinger Git kurulumunda oluşan .git klasörü web'den okunamaz
+RedirectMatch 404 /\.git
+RedirectMatch 404 /BENIOKU\.txt$
+
 # Gizli dosyalar ve ayarlar web'den okunamaz
 <FilesMatch "^(\.|config\.php$|config\.example\.php$)">
   Require all denied

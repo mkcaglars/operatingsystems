@@ -1,6 +1,7 @@
-# Her "main" dalına gönderimde: testleri çalıştırır, siteyi derler ve (ayarlıysa) Hostinger'a FTP ile yükler.
+# Her "main" dalına gönderimde: testleri çalıştırır, siteyi derler ve derlenmiş siteyi "yayin" dalına koyar.
+# Hostinger (hPanel > Gelişmiş > Git) bu "yayin" dalını public_html'e çeker. Ayrıntılar: docs/KURULUM.md
 #
-# Gerekli depo ayarları (Settings > Secrets and variables > Actions):
+# İsteğe bağlı FTP yüklemesi (Git yerine): Settings > Secrets and variables > Actions
 #   Secrets:   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
 #   Variables: FTP_DIR  (ör. "domains/isletimsistemi.mkcaglar.com/public_html/")
 name: Derle ve Yayınla
@@ -14,6 +15,9 @@ on:
 concurrency:
   group: yayinla-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: write   # "yayin" dalına gönderebilmek için
 
 jobs:
   derle:
@@ -56,7 +60,11 @@ jobs:
           include-hidden-files: true
           retention-days: 7
 
-      - name: Hostinger'a yükle (FTP)
+      - name: Derlenmiş siteyi "yayin" dalına gönder (Hostinger Git buradan çeker)
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: bash scripts/yayin-dali.sh dist yayin
+
+      - name: Hostinger'a yükle (FTP, isteğe bağlı)
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.FTP_SERVER != ''
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

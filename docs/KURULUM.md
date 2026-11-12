@@ -37,20 +37,39 @@ Uygulama önce `public_html`'in bir üstündeki `isletimsistemi-config.php` dosy
 
 ## 4. Dosyaları yükleme
 
-### A) GitHub Actions ile otomatik (önerilir)
+Site önce derlenmelidir (`npm run build`). Hostinger paylaşımlı hostingte derleme yapılamadığı için derlemeyi
+**GitHub Actions** yapar: `main` dalına her gönderimde testler çalışır, site derlenir ve derlenmiş hâli
+**`yayin`** dalına konur (`.github/workflows/yayinla.yml`). Hostinger bu dalı çeker.
 
-`main` dalına her gönderimde testler çalışır, site derlenir ve FTP ile yüklenir (`.github/workflows/yayinla.yml`).
+### A) Hostinger "Git" ile (önerilir)
 
-1. hPanel > **Dosyalar > FTP Hesapları** bölümünden FTP bilgilerini alın.
-2. GitHub deposunda **Settings > Secrets and variables > Actions** bölümüne ekleyin:
-   - **Secrets:** `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`
-   - **Variables:** `FTP_DIR` = FTP hesabının kök klasörüne göre site klasörü, sonunda `/` ile
-     (ör. `domains/isletimsistemi.mkcaglar.com/public_html/`)
-3. `main` dalına bir değişiklik gönderin ya da Actions sekmesinden **Derle ve Yayınla** iş akışını elle çalıştırın.
+1. Önce `main` dalına bir gönderim yapın (ya da GitHub > Actions > **Derle ve Yayınla** > *Run workflow*).
+   İş bitince depoda **`yayin`** dalı oluşur.
+2. hPanel'de `isletimsistemi.mkcaglar.com` sitesinin `public_html` klasörünü **boşaltın** (Hostinger'ın koyduğu
+   `default.php` gibi dosyaları silin). Git kurulumu yalnızca boş klasöre yapılabilir. Ayar dosyası `public_html`'in
+   **üstünde** durduğu için etkilenmez.
+3. hPanel > **Gelişmiş > Git** bölümünde *Depo oluştur*:
+   - **Depo:** `https://github.com/mkcaglars/operatingsystems.git` (depo herkese açık olduğu için SSH anahtarı gerekmez)
+   - **Dal:** `yayin`  ← `main` değil!
+   - **Dizin:** boş bırakın (doğrudan `public_html`)
+4. *Oluştur* deyin, ardından listede **Dağıt (Deploy)** düğmesine basın. Site yayındadır.
+5. **Otomatik dağıtım:** aynı sayfada *Otomatik Dağıtım* bölümündeki **webhook adresini** kopyalayın. GitHub deposunda
+   **Settings > Webhooks > Add webhook**:
+   - *Payload URL:* kopyaladığınız adres
+   - *Content type:* `application/json`
+   - *Which events:* **Just the push event**
 
-`api/config.php` hiçbir zaman üzerine yazılmaz.
+   Bundan sonra `main` dalına her gönderimde: Actions derler → `yayin` dalı güncellenir → Hostinger kendiliğinden çeker.
 
-### B) Elle
+> `public_html` içindeki `.git` klasörü `.htaccess` kuralıyla web'den gizlenir.
+
+### B) FTP ile (Git yerine)
+
+GitHub deposunda **Settings > Secrets and variables > Actions** bölümüne `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`
+gizli değerlerini ve `FTP_DIR` değişkenini (ör. `domains/isletimsistemi.mkcaglar.com/public_html/`) ekleyin. İş akışı
+derlenen siteyi FTP ile de yükler. A ve B'den yalnızca birini kullanın.
+
+### C) Elle
 
 Bilgisayarınızda Node.js 22 kurulu olmalı:
 
@@ -59,8 +78,8 @@ npm ci
 npm run build
 ```
 
-Oluşan `dist/` klasörünün **içindekileri** hPanel Dosya Yöneticisi ya da FTP ile `public_html` klasörüne yükleyin.
-Gizli `.htaccess` dosyaları da yüklenmelidir. GitHub Actions'taki her derlemenin çıktısı "site" adlı artifact olarak da indirilebilir.
+Oluşan `dist/` klasörünün **içindekileri** hPanel Dosya Yöneticisi ile `public_html` klasörüne yükleyin (gizli
+`.htaccess` dosyaları dahil). GitHub Actions'taki her derlemenin çıktısı "site" adlı artifact olarak da indirilebilir.
 
 ## 5. İlk kurulum: yönetici hesabı
 
@@ -93,3 +112,5 @@ Portal tarafında yapılacaklar için [PORTAL.md](PORTAL.md) belgesine bakın.
 | Portal bağlantısı "imzası geçersiz" | Portal ile laboratuvardaki `jwt_secret` aynı değil |
 | Portal bağlantısı "süresi dolmuş" | Sunucu saatleri farklı ya da bağlantı sayfa yüklenirken üretilmiş; tıklanınca üretin |
 | "Güvenlik anahtarı geçersiz" | Oturum süresi dolmuş; sayfayı yenileyin |
+| Hostinger Git: "dizin boş değil" | `public_html` içindeki dosyaları silin (4-A, 2. adım) |
+| Site güncellenmiyor | GitHub > Actions'ta iş başarılı mı? `yayin` dalı güncellendi mi? Webhook teslim edildi mi (Settings > Webhooks > Recent Deliveries)? Gerekirse hPanel'de *Dağıt*'a basın |
