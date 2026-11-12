@@ -79,31 +79,31 @@ Kodlar uygulamanın her yerinde (görev tanımları, puanlama, raporlar) bu şek
 
 ● = birincil olarak kazandırılır ve ölçülür · ○ = destekler / tekrar edilir
 
-| Kazanım | İ1 Donanım | İ2 POST-BIOS | İ3 Seçim | İ4 Kapalı K. Kurulum | İ5 Açık K. Kurulum | İ6 Ayarlar | İ7 Güvenlik | İ8 Arıza | Modül |
-|---|---|---|---|---|---|---|---|---|---|
-| B1 | ● | | | | | ○ | | ○ | M1 |
-| B2 | ● | | | | | | | ○ | M1 |
-| B3 | | ● | | | | | | ○ | M3 |
-| B4 | | | ● | | ○ | | | | M1 |
-| B5 | | | ● | | ● | | | | M4 |
-| B6 | ○ | | ● | ○ | ○ | | | | M1 |
-| B7 | | | | | ○ | ● | ○ | | M2 |
-| B8 | | | | | ○ | ● | | | M2 |
-| B9 | | ○ | | | | | | ● | M2 |
-| B10 | | | | | | | | ● | M2 |
-| S1 | | ● | | ○ | ○ | | | | M3 |
-| S2 | | ● | | ○ | ○ | | | ○ | M3 |
-| S3 | | | | ● | ● | | | | M1/M4 |
-| S4 | | | | | ○ | ● | ○ | | M2 |
-| S5 | | ○ | | | ○ | | ● | | M2 |
-| S6 | | | | | ○ | | ● | | M2 |
-| S7 | | | | | ○ | ● | | | M2 |
-| S8 | | ○ | | | | | | ● | M2 |
-| S9 | | | | | | | | ● | M2 |
-| Y1 | ● | | ● | ○ | ○ | | | | M1 |
-| Y2 | | ○ | | ● | ● | | | | M1/M4 |
-| Y3 | | | | | ○ | ● | ● | | M2 |
-| Y4 | | ○ | | | | | | ● | M2 |
+| Kazanım | İ1 Donanım | İ2 POST-BIOS | İ3 Seçim | İ4 Kapalı K. Kurulum | İ5 Açık K. Kurulum | İ6 Ayarlar | İ7 Güvenlik | İ8 Uyg. Yazılımları | İ9 Arıza | Modül |
+|---|---|---|---|---|---|---|---|---|---|---|
+| B1 | ● | | | | | ○ | | | ○ | M1 |
+| B2 | ● | | | | | | | | ○ | M1 |
+| B3 | | ● | | | | | | | ○ | M3 |
+| B4 | | | ● | | ○ | | | | | M1 |
+| B5 | | | ● | | ● | | | ○ | | M4 |
+| B6 | ○ | | ● | ○ | ○ | | | ○ | | M1 |
+| B7 | | | | | ○ | ● | ○ | | | M2 |
+| B8 | | | | | ○ | ● | | ○ | | M2 |
+| B9 | | ○ | | | | | | | ● | M2 |
+| B10 | | | | | | | | | ● | M2 |
+| S1 | | ● | | ○ | ○ | | | | | M3 |
+| S2 | | ● | | ○ | ○ | | | | ○ | M3 |
+| S3 | | | | ● | ● | | | | | M1/M4 |
+| S4 | | | | | ○ | ● | ○ | ○ | | M2 |
+| S5 | | ○ | | | ○ | | ● | ○ | | M2 |
+| S6 | | | | | ○ | | ● | ● | | M2 |
+| S7 | | | | | ○ | ● | | | | M2 |
+| S8 | | ○ | | | | | | | ● | M2 |
+| S9 | | | | | | | | | ● | M2 |
+| Y1 | ● | | ● | ○ | ○ | | | | | M1 |
+| Y2 | | ○ | | ● | ● | | | | | M1/M4 |
+| Y3 | | | | | ○ | ● | ● | ● | | M2 |
+| Y4 | | ○ | | | | | | | ● | M2 |
 
 **Kontrol:** 23 kazanımın her biri en az bir istasyonda birincil (●) olarak yer alıyor; açıkta kalan kazanım yok.
 
@@ -127,7 +127,7 @@ bırakılırsa İ4'te kurulum USB'den başlamaz. Bu, gerçek hayattaki neden–s
 ### 4.3 İki oynanış biçimi
 1. **Serbest istasyon:** Her istasyon bağımsız açılır; hazır bir başlangıç durumu yüklenir.
 2. **Kampanya senaryosu (Yeterlilik ölçümü):** *"Okul laboratuvarına yeni gelen bilgisayarı sıfırdan kullanıma hazırla"*.
-   Tek bir sanal makine üzerinde İ1 → İ8 sırayla yapılır; Y1–Y4 bu senaryoda ölçülür.
+   Tek bir sanal makine üzerinde İ1 → İ9 sırayla yapılır; Y1–Y4 bu senaryoda ölçülür.
 
 ### 4.4 Görev kartı yapısı
 Her görev şu alanlara sahiptir (veri dosyasında tanımlanır, kod değişmeden yeni görev eklenebilir):
@@ -287,7 +287,7 @@ bölümleme, **sanal terminal**, paket yöneticisi (grafik + komut satırı), ay
 ### İ6 — Ayarlar, Genel Özellikler ve Kişiselleştirme  (B7, B8, S4, S7, Y3)
 
 **Ekranlar:** Sanal masaüstü (görev çubuğu, başlat menüsü, pencereler), Denetim Masası / Ayarlar, Dosya Gezgini,
-Görev Yöneticisi, Aygıt Yöneticisi (yalnızca görüntüleme; arıza kısmı İ8'de), Sistem Bilgisi.
+Görev Yöneticisi, Aygıt Yöneticisi (yalnızca görüntüleme; arıza kısmı İ9'da), Sistem Bilgisi.
 
 **Öğrenme içeriği:**
 - *Genel özellikler (B8, S7):* çok görevlilik, çok kullanıcılılık, dosya ve klasör yönetimi, bellek ve işlem yönetimi
@@ -308,7 +308,7 @@ Görev Yöneticisi, Aygıt Yöneticisi (yalnızca görüntüleme; arıza kısmı
 
 ---
 
-### İ7 — Güvenlik ve Yardımcı Programlar  (S5, S6, Y3, B7○)
+### İ7 — Sürücüler, Güvenlik ve Yardımcı Programlar  (S5, S6, Y3, B7○)
 
 **Ekranlar:** Güvenlik merkezi (antivirüs, güvenlik duvarı, güncelleme), kullanıcı hesapları, yazılım yükleme sihirbazı
 (Next-Next tuzakları dahil), sürücü yükleme, yedekleme ve geri yükleme noktası.
@@ -326,12 +326,69 @@ Görev Yöneticisi, Aygıt Yöneticisi (yalnızca görüntüleme; arıza kısmı
 | İ7-G1 | Yeni kurulan sistemde eksik sürücüleri doğru sırayla yükle (önce yonga seti) | S6 | Tüm aygıtlar çalışıyor |
 | İ7-G2 | Güvenlik merkezindeki tüm uyarıları gider | S5 | Durum "korunuyor" |
 | İ7-G3 | Öğrenci hesabını standart hesap yap, yazılım kurma yetkisini kaldır | S5 | Doğru |
-| İ7-G4 | Senaryoya göre (ör. muhasebe ofisi) gerekli yardımcı programları seç ve kur; istenmeyen ek yazılımları reddet | S6, Y3 | Doğru küme, tuzak yok |
+| İ7-G4 | Sıkıştırma ve PDF okuyucu gibi yardımcı programları kur; kurulumdaki istenmeyen ek yazılımları reddet (uygulama yazılımlarının ayrıntısı İ8'de) | S6, Y3 | Doğru küme, tuzak yok |
 | İ7-G5 | Büyük değişiklikten önce geri yükleme noktası oluştur | S5 | Nokta oluşturuldu |
 
 ---
 
-### İ8 — Arıza Giderme ve Donanımsal Çakışmalar  (B9, B10, S8, S9, Y4)
+### İ8 — Uygulama Yazılımlarının Kurulumu  (S6, Y3, S4○, S5○, B5○, B6○, B8○)
+
+İşletim sistemi kurulduktan sonra bilgisayarın kullanıma hazır olması için gereken programların (Microsoft Office,
+Google Chrome vb.) **doğru kaynaktan, doğru sürümle, lisansa uygun şekilde** kurulması, yapılandırılması, onarılması ve
+kaldırılması.
+
+**Ekranlar:** Sanal web tarayıcı (arama sonuçları, resmî siteler, **sahte indirme siteleri ve reklam bağlantıları**),
+İndirilenler klasörü, kurulum sihirbazları (.exe/.msi), Office kurulum ve etkinleştirme ekranları, Ayarlar → Uygulamalar
+(kaldır/değiştir/onar), varsayılan uygulamalar, Pardus Yazılım Merkezi ve terminal (`apt`).
+
+**Yazılım kataloğu** (veri dosyasında tutulur; öğretmen yeni yazılım ekleyebilir):
+| Kategori | Windows | Pardus / Linux | Öğretilen nokta |
+|---|---|---|---|
+| Ofis | **Microsoft Office** (Microsoft 365 / Office) | LibreOffice (hazır gelir); MS Office Linux'a doğrudan kurulamaz → web sürümü veya LibreOffice | Lisans ve etkinleştirme, bileşen seçimi, platform uyumu, dosya biçimi uyumu (.docx/.odt) |
+| Web tarayıcı | **Google Chrome**, Mozilla Firefox (Edge hazır gelir) | Firefox (hazır), Chrome (.deb paketi) | Resmî kaynaktan indirme, varsayılan tarayıcı yapma |
+| Sıkıştırma | 7-Zip, WinRAR | Arşiv yöneticisi (hazır) | Açık kaynak ve deneme sürümü farkı |
+| PDF | Adobe Acrobat Reader | Belge görüntüleyici (hazır) | Kurulumdaki ek yazılım teklifleri |
+| Medya | VLC | VLC (`apt`) | Codec kavramı |
+| Alan yazılımları (opsiyonel) | Visual Studio Code, Python vb. | Aynı | Bilişim alanına özgü ihtiyaçlar |
+
+**Kurulum akışı — Windows:**
+1. **İndirme:** Sanal tarayıcıda resmî siteyi bulmak; reklam ve sahte "İndir" düğmelerini, benzer alan adlarını ayırt etmek
+   (adres çubuğu, https, resmî alan adı).
+2. **Doğru sürüm:** 32/64 bit, işletim sistemi uyumu, Türkçe dil seçimi (B6 ile bağ).
+3. **Çalıştırma:** .exe/.msi dosyası, yayımcı bilgisi, kullanıcı hesabı denetimi (UAC) ve yönetici izni (İ7'deki standart
+   hesap ayarı burada sonuç doğurur).
+4. **Sihirbaz:** lisans sözleşmesi, kurulum türü (Hızlı/Özel), hedef klasör, bileşen seçimi, masaüstü kısayolu,
+   **istenmeyen ek yazılım/araç çubuğu tuzakları**, varsayılan uygulama yapma.
+5. **Microsoft Office'e özel:** hesapla giriş veya ürün anahtarı ile **etkinleştirme**; bileşen seçimi (ör. yalnızca Word,
+   Excel, PowerPoint); dil; etkinleştirme durumunun kontrolü (Dosya → Hesap); kurumsal/okul hesabı senaryosu.
+   **Lisanssız (kırılmış) yazılım** seçeneği simülasyonda kötü amaçlı yazılım bulaştırır ve İ9'da arıza olarak geri döner;
+   hukuki ve güvenlik riskleri açıklanır.
+6. **Doğrulama:** Başlat menüsünde görünme, çalıştırma, sürüm bilgisi, otomatik güncellemenin açık olması.
+7. **Bakım:** Ayarlar → Uygulamalar'dan kaldırma; Office **onarma** (hızlı/çevrimiçi onarım).
+8. **İleri düzey (opsiyonel):** Laboratuvar için komut satırından toplu kurulum (`winget install Google.Chrome` vb.).
+
+**Kurulum akışı — Pardus/Linux:** Yazılım Merkezi'nden kurulum; `sudo apt update && sudo apt install vlc`;
+Chrome için `.deb` dosyasını indirip paket kurucu ile veya `sudo apt install ./google-chrome-stable_current_amd64.deb`
+ile kurma; Office yerine LibreOffice ile .docx açıp düzenleme ve kaydetme.
+
+**Görevler (örnek):**
+| ID | Görev | Kazanım | Başarı koşulu |
+|---|---|---|---|
+| İ8-G1 | Google Chrome'u resmî sitesinden indir, kur ve varsayılan tarayıcı yap | S6, S5, S4 | Resmî kaynak, sahte bağlantıya tıklanmadı, varsayılan Chrome |
+| İ8-G2 | Microsoft Office'i Türkçe kur; yalnızca Word, Excel, PowerPoint olsun; etkinleştir | S6, Y3 | Bileşenler doğru, ürün etkin |
+| İ8-G3 | Senaryoya göre yazılım paketini seç ve kur (okul laboratuvarı / muhasebe ofisi / grafik atölyesi) | S6, Y3 | Gerekli küme eksiksiz, gereksiz/zararlı yazılım yok |
+| İ8-G4 | Kurulum sihirbazlarındaki ek yazılım tekliflerini reddederek PDF okuyucu ve sıkıştırma programı kur | S6, S5 | Ek yazılım kurulmadı |
+| İ8-G5 | 32 bit sisteme 64 bit yazılım kurma girişiminde çıkan hatayı yorumla, doğru sürümü kur | B6, S6 | Doğru sürüm kurulu |
+| İ8-G6 | Çalışmayan Office'i onar; kullanılmayan bir programı kaldır | S6, B8 | Onarım + kaldırma yapıldı |
+| İ8-G7 | Pardus'ta VLC'yi `apt` ile, Chrome'u `.deb` ile kur; LibreOffice ile .docx dosyasını düzenle | S6, B5 | Paketler kurulu, dosya kaydedildi |
+| İ8-G8 (ileri) | 5 programı `winget` ile tek seferde kur | S6 | Tümü kurulu |
+
+**Puanlama notu:** Güvenilmeyen kaynaktan indirme, lisanssız yazılım veya istenmeyen ek yazılım kurulması süreç
+puanından düşer ve sanal makinede kalıcı sonuç doğurur (yavaşlama, reklam pencereleri, kötü amaçlı yazılım).
+
+---
+
+### İ9 — Arıza Giderme ve Donanımsal Çakışmalar  (B9, B10, S8, S9, Y4)
 
 **Ekranlar:** Arıza bildirim formu ("kullanıcı şikâyeti"), sanal makine (tüm araçlar erişilebilir: BIOS, Aygıt Yöneticisi,
 Görev Yöneticisi, olay günlüğü, güvenli mod, kurtarma ortamı, terminal), teşhis defteri (öğrenci hipotezlerini yazar).
@@ -359,8 +416,11 @@ Görev Yöneticisi, olay günlüğü, güvenli mod, kurtarma ortamı, terminal),
 | A8 | Linux kurulumundan sonra Windows açılmıyor | GRUB/önyükleyici | GRUB yapılandırması / UEFI sıralaması | S8, Y4 |
 | A9 | Saat sürekli geri gidiyor | CMOS pili | Pili değiştir | B9 |
 | A10 | Elektrik kesintisinde veri kaybı | UPS yok / yanlış bağlantı | UPS + güvenli kapatma | B2, Y4 |
+| A11 | Tarayıcıda sürekli reklam açılıyor, ana sayfa değişmiş | İstenmeyen ek yazılım / sahte siteden indirilen program (İ8) | Programı kaldır, tarayıcıyı sıfırla, tarama yap | S8, Y4 |
+| A12 | Office "Etkinleştirilmemiş ürün" uyarısı veriyor, belgeler düzenlenemiyor | Lisans/etkinleştirme sorunu | Hesapla etkinleştir veya geçerli anahtar gir | S8 |
+| A13 | Word açılırken çöküyor | Bozuk kurulum | Office onarımı | S8 |
 
-**Puanlama (İ8'e özel):** doğru teşhis + doğru çözüm + **gereksiz/zararlı işlem yapmama** (ör. sorunu çözmek için
+**Puanlama (İ9'a özel):** doğru teşhis + doğru çözüm + **gereksiz/zararlı işlem yapmama** (ör. sorunu çözmek için
 işletim sistemini yeniden kurmak düşük puan) + süre.
 
 ---
@@ -368,9 +428,9 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
 ### Yeterlilik Senaryoları (Y1–Y4) — Kampanya
 | Senaryo | Kapsadığı istasyonlar | Ölçülen |
 |---|---|---|
-| **K1 "Laboratuvara yeni bilgisayar"**: kutudan çıkar, bağla, BIOS'u ayarla, uygun işletim sistemini seç, medyayı hazırla, kur, güvenli hale getir, kişiselleştir | İ1→İ7 | Y1, Y2, Y3 |
-| **K2 "Pardus'a geçiş"**: verileri koruyarak çift önyüklemeli açık kaynak kurulum ve yapılandırma | İ1, İ2, İ3, İ5, İ7 | Y1, Y2, Y3 |
-| **K3 "Servis masası"**: art arda 3 rastgele arıza bileti | İ8 (+ İ2, İ6) | Y4 |
+| **K1 "Laboratuvara yeni bilgisayar"**: kutudan çıkar, bağla, BIOS'u ayarla, uygun işletim sistemini seç, medyayı hazırla, kur, sürücüleri ve güvenliği tamamla, Office ve Chrome gibi gerekli programları kur, kişiselleştir | İ1→İ8 | Y1, Y2, Y3 |
+| **K2 "Pardus'a geçiş"**: verileri koruyarak çift önyüklemeli açık kaynak kurulum ve yapılandırma | İ1, İ2, İ3, İ5, İ7, İ8 | Y1, Y2, Y3 |
+| **K3 "Servis masası"**: art arda 3 rastgele arıza bileti | İ9 (+ İ2, İ6) | Y4 |
 
 ---
 
@@ -397,7 +457,7 @@ işletim sistemini yeniden kurmak düşük puan) + süre.
 | Öğrenci girişi | Sınıf kodu + öğrenci no + öğretmenin belirlediği/ürettiği basit parola (bkz. Açık Sorular) |
 | Görev atama | İstasyon/görev/kampanya seçimi, mod (Uygula/Değerlendir), başlangıç–bitiş tarihi, süre sınırı |
 | **Canlı izleme** | Sınıf ızgarası: her öğrencinin o anki istasyonu, ilerlemesi, takıldığı adım, ipucu kullanımı |
-| Arıza gönderme | Ders sırasında seçili öğrencilere İ8 arıza senaryosu gönderme |
+| Arıza gönderme | Ders sırasında seçili öğrencilere İ9 arıza senaryosu gönderme |
 | Raporlar | Kazanım × öğrenci ısı haritası; öğrenci karnesi; görev bazlı başarı; sık yapılan hatalar |
 | Dışa aktarma | PDF (karne), CSV/Excel (not listesi) |
 | Tekrar izleme | Öğrencinin bir görevdeki eylem günlüğünü adım adım izleme |
@@ -413,7 +473,7 @@ Roller: **Yönetici** (okul; öğretmen hesapları), **Öğretmen**, **Öğrenci
 ┌────────────── Tarayıcı (öğrenci / öğretmen) ───────────────┐
 │ React + TypeScript (Vite)                                   │
 │  ├─ Simülasyon çekirdeği: saf TS durum makinesi (VM durumu) │
-│  ├─ İstasyon arayüzleri (İ1–İ8), sanal masaüstü, terminal   │
+│  ├─ İstasyon arayüzleri (İ1–İ9), sanal masaüstü, terminal   │
 │  └─ Öğretmen paneli                                         │
 └──────────────▲───────────────────────────────▲──────────────┘
           REST │ (JSON)              WebSocket │ (canlı izleme, arıza gönderme)
@@ -468,8 +528,8 @@ Roller: **Yönetici** (okul; öğretmen hesapları), **Öğretmen**, **Öğrenci
 | F1 | Monorepo, kimlik doğrulama, sınıf/öğrenci yönetimi, simülasyon çekirdeği, görev motoru, olay günlüğü | Çalışan iskelet |
 | F2 | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
 | F3 | İ3 Seçim + İ4 Kapalı kaynak kurulum + İ5 Açık kaynak kurulum (terminal) | Kurulum modülleri |
-| F4 | İ6 Ayarlar + İ7 Güvenlik + sanal masaüstü | Gelişmiş özellikler |
-| F5 | İ8 Arıza + kampanyalar (Y1–Y4) + canlı izleme + PDF/CSV raporlar | Tam kapsam |
+| F4 | İ6 Ayarlar + İ7 Sürücü & Güvenlik + İ8 Uygulama Yazılımları + sanal masaüstü | Gelişmiş özellikler |
+| F5 | İ9 Arıza + kampanyalar (Y1–Y4) + canlı izleme + PDF/CSV raporlar | Tam kapsam |
 | F6 | Pilot uygulama geri bildirimi, içerik zenginleştirme, kurulum paketi (Docker) | Sürüm 1.0 |
 
 Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu geri bildirime göre düzeltilir.
@@ -490,3 +550,10 @@ Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu g
 7. **Ses:** Bip kodları ve ortam sesleri için hoparlör/kulaklık varsayılabilir mi? (Her durumda görsel karşılık olacak.)
 8. **Görsel stil:** Gerçekçi (fotoğrafa yakın çizimler) mi, sade-şematik (vektör, düz renk) mi? Öneri: sade-şematik
    (hafif, akıllı tahtada net, üretimi hızlı).
+9. **Kurulacak programlar listesi:** İ8 kataloğunda Microsoft Office, Google Chrome, Firefox, 7-Zip, WinRAR,
+   Acrobat Reader, VLC var. Eklenmesini istediğiniz başka program var mı (ör. EBA'ya özgü araçlar, Zoom, Scratch, Python,
+   Visual Studio Code, Packet Tracer)?
+10. **Office lisans senaryosu:** Etkinleştirme okul/kurumsal Microsoft 365 hesabıyla mı, ürün anahtarıyla mı, yoksa
+    ikisi de mi gösterilsin?
+11. **Ürün logoları:** Gerçek adlar kullanılacak. Logolar yerine özgün, benzer renkte simgeler kullanılması öneriliyor
+    (marka/telif riski olmaması için). Uygun mu?
