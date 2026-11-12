@@ -1,0 +1,21 @@
+# İşletim Sistemleri Sanal Laboratuvarı
+Options -Indexes
+DirectoryIndex index.html index.php
+
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow"
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "same-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+  <FilesMatch "\.(js|css|webp|png|jpg|svg|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "index\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# Gizli dosyalar ve ayarlar web'den okunamaz
+<FilesMatch "^(\.|config\.php$|config\.example\.php$)">
+  Require all denied
+</FilesMatch>

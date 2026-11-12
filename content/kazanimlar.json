@@ -1,0 +1,140 @@
+[
+ {
+  "kod": "B1",
+  "tur": "Bilgi",
+  "metin": "Klavye ve fare özelliklerini bilir.",
+  "modul": "M1"
+ },
+ {
+  "kod": "B2",
+  "tur": "Bilgi",
+  "metin": "UPS'in ne işe yaradığını bilir.",
+  "modul": "M1"
+ },
+ {
+  "kod": "B3",
+  "tur": "Bilgi",
+  "metin": "BIOS yazılımının görevini bilir.",
+  "modul": "M3"
+ },
+ {
+  "kod": "B4",
+  "tur": "Bilgi",
+  "metin": "İşletim sistemi çeşitlerini bilir.",
+  "modul": "M1"
+ },
+ {
+  "kod": "B5",
+  "tur": "Bilgi",
+  "metin": "Açık kaynak işletim sistemlerini bilir ve tanır.",
+  "modul": "M4"
+ },
+ {
+  "kod": "B6",
+  "tur": "Bilgi",
+  "metin": "İşletim sistemi kurulum gereksinimlerini bilir.",
+  "modul": "M1"
+ },
+ {
+  "kod": "B7",
+  "tur": "Bilgi",
+  "metin": "İşletim sistemlerinin ayarlarını bilir.",
+  "modul": "M2"
+ },
+ {
+  "kod": "B8",
+  "tur": "Bilgi",
+  "metin": "İşletim sisteminin genel özelliklerini açıklar.",
+  "modul": "M2"
+ },
+ {
+  "kod": "B9",
+  "tur": "Bilgi",
+  "metin": "İşletim sisteminin genel sorunlarını açıklar.",
+  "modul": "M2"
+ },
+ {
+  "kod": "B10",
+  "tur": "Bilgi",
+  "metin": "İşletim sistemi donanımsal çakışmaları açıklar.",
+  "modul": "M2"
+ },
+ {
+  "kod": "S1",
+  "tur": "Beceri",
+  "metin": "BIOS setup giriş yapabilir.",
+  "modul": "M3"
+ },
+ {
+  "kod": "S2",
+  "tur": "Beceri",
+  "metin": "BIOS ayarlarını ihtiyaca göre yapılandırabilir.",
+  "modul": "M3"
+ },
+ {
+  "kod": "S3",
+  "tur": "Beceri",
+  "metin": "İşletim sistemi kurulumunu yapar.",
+  "modul": "M1/M4"
+ },
+ {
+  "kod": "S4",
+  "tur": "Beceri",
+  "metin": "İşletim sistemi kullanımını ihtiyaca göre özelleştirebilir.",
+  "modul": "M2"
+ },
+ {
+  "kod": "S5",
+  "tur": "Beceri",
+  "metin": "İşletim sisteminin güvenliğini sağlayabilir.",
+  "modul": "M2"
+ },
+ {
+  "kod": "S6",
+  "tur": "Beceri",
+  "metin": "İhtiyaca göre gerekli yardımcı programları yükleyebilir.",
+  "modul": "M2"
+ },
+ {
+  "kod": "S7",
+  "tur": "Beceri",
+  "metin": "İşletim sisteminin genel özelliklerini gösterir.",
+  "modul": "M2"
+ },
+ {
+  "kod": "S8",
+  "tur": "Beceri",
+  "metin": "İşletim sisteminin genel sorunlarını çözer.",
+  "modul": "M2"
+ },
+ {
+  "kod": "S9",
+  "tur": "Beceri",
+  "metin": "İşletim sisteminin donanımsal çakışmalarını giderir.",
+  "modul": "M2"
+ },
+ {
+  "kod": "Y1",
+  "tur": "Yeterlilik",
+  "metin": "Bilgisayarda kurulum öncesi hazırlıkları yapabilir.",
+  "modul": "M1"
+ },
+ {
+  "kod": "Y2",
+  "tur": "Yeterlilik",
+  "metin": "İhtiyaca göre güncel işletim sistemi veya açık kaynak işletim sistemini uygun medya aracılığı ile bilgisayara yükler.",
+  "modul": "M1/M4"
+ },
+ {
+  "kod": "Y3",
+  "tur": "Yeterlilik",
+  "metin": "Yüklenen işletim sisteminin güvenli kullanımı için gerekli yardımcı programları yükleyerek bilgisayarı ihtiyaca göre kişiselleştirir.",
+  "modul": "M2"
+ },
+ {
+  "kod": "Y4",
+  "tur": "Yeterlilik",
+  "metin": "İşletim sisteminin genel sorunlarını doğru bir şekilde giderebilir.",
+  "modul": "M2"
+ }
+]
