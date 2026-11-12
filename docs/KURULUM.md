@@ -25,7 +25,7 @@ Veritabanı adını, kullanıcı adını ve şifreyi not edin. Tablolar ilk iste
 /home/u123456789/domains/isistem.mkcaglar.com/public_html/api/config.php     ← alternatif
 ```
 
-Uygulama önce `public_html`'in bir üstündeki `isletimsistemi-config.php` dosyasını arar, bulamazsa `api/config.php` dosyasına bakar.
+Uygulama sırasıyla şunlara bakar: `public_html`'in yanındaki `isletimsistemi-config.php`, aynı yerdeki `config.php`, son olarak `public_html/api/config.php`.
 
 | Ayar | Açıklama |
 |---|---|
