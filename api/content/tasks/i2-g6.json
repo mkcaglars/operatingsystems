@@ -1,0 +1,239 @@
+{
+ "id": "i2-g6",
+ "istasyon": "i2",
+ "baslik": "Bip kodlarıyla arıza bulma",
+ "arayuz": "bip-kodlari",
+ "kazanimlar": [
+  "B3",
+  "B9",
+  "S8"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Servise açılmayan üç bilgisayar geldi. Hiçbirinde görüntü yok; yalnızca bip sesleri duyuluyor. Laboratuvarda ses olmadığı için bip dizileri ekranda gösteriliyor. Her bilgisayarın bip kodunu tabloyla karşılaştırıp arızalı bileşeni bul.",
+ "ogren": [
+  "POST sırasında bir donanım hatası bulunursa ekran çalışmadan önce bip sesleriyle haber verilir.",
+  "Bip kodları uzun (▬) ve kısa (•) seslerden oluşur; anlamları BIOS üreticisine göre değişir. Teşhis için anakartın kılavuzundaki tablo kullanılır.",
+  "En sık görülen neden, temizlik ya da montaj sonrası yuvasına tam oturmamış RAM veya ekran kartıdır."
+ ],
+ "ipuclari": [
+  "Önce bip dizisindeki uzun ve kısa sesleri say.",
+  "Tablodaki satırla birebir eşleştir: '1 uzun, 3 kısa' ile '3 kısa' farklıdır."
+ ],
+ "veri": {
+  "tablo": {
+   "uretici": "AMI BIOS",
+   "satirlar": [
+    {
+     "bip": "1 kısa",
+     "anlam": "Bellek yenileme (DRAM refresh) hatası"
+    },
+    {
+     "bip": "2 kısa",
+     "anlam": "Bellek eşlik (parity) hatası"
+    },
+    {
+     "bip": "3 kısa",
+     "anlam": "İlk 64 KB bellek hatası"
+    },
+    {
+     "bip": "5 kısa",
+     "anlam": "İşlemci hatası"
+    },
+    {
+     "bip": "6 kısa",
+     "anlam": "Klavye denetleyicisi hatası"
+    },
+    {
+     "bip": "8 kısa",
+     "anlam": "Ekran kartı belleği hatası"
+    },
+    {
+     "bip": "1 uzun, 3 kısa",
+     "anlam": "Bellek (RAM) testi başarısız"
+    },
+    {
+     "bip": "1 uzun, 8 kısa",
+     "anlam": "Ekran kartı testi başarısız"
+    }
+   ]
+  },
+  "vakalar": [
+   {
+    "id": "a",
+    "ad": "Bilgisayar A",
+    "bip": [
+     "u",
+     "k",
+     "k",
+     "k"
+    ],
+    "ekran": "siyah",
+    "belirti": "Kasa içi temizlendikten sonra bilgisayar açılmıyor, ekran siyah.",
+    "dogru": "ram"
+   },
+   {
+    "id": "b",
+    "ad": "Bilgisayar B",
+    "bip": [
+     "u",
+     "k",
+     "k",
+     "k",
+     "k",
+     "k",
+     "k",
+     "k",
+     "k"
+    ],
+    "ekran": "siyah",
+    "belirti": "Yeni bir ekran kartı takıldıktan sonra görüntü gelmiyor.",
+    "dogru": "gpu"
+   },
+   {
+    "id": "c",
+    "ad": "Bilgisayar C",
+    "bip": [
+     "k",
+     "k",
+     "k",
+     "k",
+     "k"
+    ],
+    "ekran": "siyah",
+    "belirti": "İşlemci soğutucusu değiştirildikten sonra bilgisayar açılmıyor.",
+    "dogru": "cpu"
+   }
+  ],
+  "secenekler": [
+   {
+    "id": "ram",
+    "metin": "RAM — yerine tam oturmamış olabilir; çıkarıp yeniden takılmalı"
+   },
+   {
+    "id": "gpu",
+    "metin": "Ekran kartı — yuvasına tam oturmamış ya da arızalı"
+   },
+   {
+    "id": "cpu",
+    "metin": "İşlemci — yerine oturmamış ya da arızalı"
+   },
+   {
+    "id": "psu",
+    "metin": "Güç kaynağı"
+   },
+   {
+    "id": "disk",
+    "metin": "Sabit disk / SSD"
+   },
+   {
+    "id": "klavye",
+    "metin": "Klavye"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "uretici",
+    "soru": "Bip kodlarının anlamı neye göre değişir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "bios",
+      "metin": "BIOS üreticisine (AMI, Award, Phoenix…)",
+      "dogru": true
+     },
+     {
+      "id": "os",
+      "metin": "Kurulu işletim sistemine",
+      "dogru": false,
+      "aciklama": "Bip sesleri işletim sistemi yüklenmeden, POST sırasında çıkar."
+     },
+     {
+      "id": "monitor",
+      "metin": "Monitörün markasına",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "a",
+   "aciklama": "Bilgisayar A: RAM arızası doğru bulundu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B9",
+    "S8"
+   ],
+   "kural": {
+    "path": "teshis.a",
+    "eq": "ram"
+   }
+  },
+  {
+   "id": "b",
+   "aciklama": "Bilgisayar B: ekran kartı arızası doğru bulundu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B9",
+    "S8"
+   ],
+   "kural": {
+    "path": "teshis.b",
+    "eq": "gpu"
+   }
+  },
+  {
+   "id": "c",
+   "aciklama": "Bilgisayar C: işlemci arızası doğru bulundu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B9",
+    "S8"
+   ],
+   "kural": {
+    "path": "teshis.c",
+    "eq": "cpu"
+   }
+  },
+  {
+   "id": "q-uretici",
+   "aciklama": "Soru: Bip kodlarının anlamı neye göre değişir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B3"
+   ],
+   "kural": {
+    "path": "cevaplar.uretici",
+    "eq": "bios"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "deneme",
+   "aciklama": "Teşhisler çok kez değiştirildi (tahminle seçim)",
+   "ceza": 10,
+   "kural": {
+    "event": "bip.teshis",
+    "count": {
+     "gte": 10
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "teshis": {
+    "a": "ram",
+    "b": "gpu",
+    "c": "cpu"
+   },
+   "cevaplar": {
+    "uretici": "bios"
+   }
+  },
+  "events": []
+ }
+}

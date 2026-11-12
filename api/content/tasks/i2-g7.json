@@ -1,0 +1,238 @@
+{
+ "id": "i2-g7",
+ "istasyon": "i2",
+ "baslik": "Saat neden sıfırlanıyor?",
+ "arayuz": "bios",
+ "kazanimlar": [
+  "B9",
+  "S8",
+  "S2"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "Muhasebe bürosundaki bilgisayarın tarihi her sabah 01.01.2009'a dönüyor ve açılışta bir uyarı çıkıyor. Sorunun nedenini bul ve gider, sonra BIOS'ta tarihi ve saati doğru ayarla. Bugün 2 Mart 2026, saat 09:40.",
+ "ogren": [
+  "BIOS ayarları ve gerçek zamanlı saat, anakarttaki 3 V CR2032 düğme pille beslenir. Pil bitince bilgisayarın fişi çekildiğinde tarih, saat ve ayarlar sıfırlanır.",
+  "Açılışta 'CMOS Battery Low' ya da 'CMOS Date/Time Not Set' uyarısı pilin bittiğini gösterir.",
+  "Pil değiştirilirken bilgisayar kapalı olmalıdır. Pil çıkarılınca BIOS ayarları sıfırlanır; bu yüzden tarih ve saat pil değiştirildikten SONRA ayarlanır."
+ ],
+ "ipuclari": [
+  "Açılış ekranındaki uyarıyı oku: hangi parça 'Low' diyor?",
+  "Pili değiştirmek için önce bilgisayarı kapat.",
+  "Tarih ve saat Main sekmesinde (System Date / System Time)."
+ ],
+ "veri": {
+  "cmos": {
+   "tarih": "2009-01-01",
+   "saat": "00:00:12",
+   "bootOrder": [
+    "ssd",
+    "usb",
+    "pxe"
+   ],
+   "sata": "AHCI",
+   "vt": false,
+   "ses": true,
+   "lan": true,
+   "fastBoot": false,
+   "usbBoot": true,
+   "csm": false,
+   "adminSifre": false,
+   "secureBoot": true,
+   "tpm": true
+  },
+  "aygitlar": [
+   {
+    "id": "ssd",
+    "ad": "Windows Boot Manager (Samsung SSD 870 EVO 500GB)"
+   },
+   {
+    "id": "usb",
+    "ad": "UEFI: SanDisk Cruzer Blade 32GB, Partition 1"
+   },
+   {
+    "id": "pxe",
+    "ad": "UEFI: PXE IPv4 Realtek PCIe GbE Family Controller"
+   }
+  ],
+  "usbTakili": false,
+  "diskSata": "AHCI",
+  "bilgi": {
+   "anakart": "ASUS PRIME B560M-A",
+   "bios": "1601 x64",
+   "islemci": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+   "bellek": "16384 MB (DDR4)"
+  },
+  "postHata": {
+   "mesaj": "CMOS Battery Low\nCMOS Date/Time Not Set",
+   "tus": "F1",
+   "kosul": {
+    "path": "cmos.tarih",
+    "eq": "2009-01-01"
+   }
+  },
+  "donanim": [
+   {
+    "id": "pil",
+    "ad": "CMOS pilini (CR2032) değiştir",
+    "gorsel": "cmos-pil",
+    "aciklama": "Anakart üzerindeki 3 V CR2032 lityum düğme pil.",
+    "sifirla": {
+     "tarih": "2009-01-01",
+     "saat": "00:00:00"
+    }
+   }
+  ],
+  "sorular": [
+   {
+    "id": "neden",
+    "soru": "Saatin ve tarihin her açılışta sıfırlanmasının nedeni nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "pil",
+      "metin": "Anakarttaki CMOS pili bitmiş",
+      "dogru": true,
+      "aciklama": "CMOS pili bitince BIOS ayarları ve saat, bilgisayarın fişi çekildiğinde silinir."
+     },
+     {
+      "id": "os",
+      "metin": "İşletim sistemi bozulmuş",
+      "dogru": false,
+      "aciklama": "Uyarı, işletim sistemi yüklenmeden POST sırasında çıkıyor."
+     },
+     {
+      "id": "ram",
+      "metin": "RAM arızalı",
+      "dogru": false
+     },
+     {
+      "id": "psu",
+      "metin": "Güç kaynağı arızalı",
+      "dogru": false
+     },
+     {
+      "id": "virus",
+      "metin": "Virüs bulaşmış",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "neden",
+   "aciklama": "Sorunun nedeni doğru bulundu (CMOS pili)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.neden",
+    "eq": "pil"
+   }
+  },
+  {
+   "id": "pil",
+   "aciklama": "CMOS pili değiştirildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "event": "donanim.pil"
+   }
+  },
+  {
+   "id": "tarih",
+   "aciklama": "Tarih doğru ayarlandı (02.03.2026)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S2"
+   ],
+   "kural": {
+    "path": "cmos.tarih",
+    "eq": "2026-03-02"
+   }
+  },
+  {
+   "id": "saat",
+   "aciklama": "Saat doğru ayarlandı (09:4x)",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S2"
+   ],
+   "kural": {
+    "path": "cmos.saat",
+    "includes": "09:4"
+   }
+  },
+  {
+   "id": "sira",
+   "aciklama": "Önce pil değiştirildi, sonra ayarlar kaydedildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "before": [
+     "donanim.pil",
+     "bios.kaydet"
+    ]
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "ekran": "os",
+   "cmos": {
+    "tarih": "2026-03-02",
+    "saat": "09:41:00",
+    "bootOrder": [
+     "ssd",
+     "usb",
+     "pxe"
+    ],
+    "sata": "AHCI",
+    "vt": false,
+    "ses": true,
+    "lan": true,
+    "fastBoot": false,
+    "usbBoot": true,
+    "csm": false,
+    "adminSifre": false,
+    "secureBoot": true,
+    "tpm": true
+   },
+   "setup": null,
+   "sifreDeger": null,
+   "sonAcilis": "os",
+   "donanim": {
+    "pil": true
+   },
+   "cevaplar": {
+    "neden": "pil"
+   }
+  },
+  "events": [
+   {
+    "type": "pc.guc",
+    "t": 100
+   },
+   {
+    "type": "donanim.pil",
+    "t": 3000
+   },
+   {
+    "type": "setup.gir",
+    "t": 6000
+   },
+   {
+    "type": "bios.kaydet",
+    "t": 15000
+   }
+  ]
+ }
+}

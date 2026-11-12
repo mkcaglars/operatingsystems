@@ -306,5 +306,27 @@
     ]
    }
   }
- ]
+ ],
+ "test_cozum": {
+  "state": {
+   "hazirlik": {
+    "secilen": [
+     "yedek",
+     "donanim",
+     "gereksinim",
+     "surucu",
+     "lisans",
+     "medya",
+     "guc"
+    ]
+   },
+   "gereksinim": {
+    "karar": "uygun-degil",
+    "eksikler": [
+     "tpm"
+    ]
+   }
+  },
+  "events": []
+ }
 }

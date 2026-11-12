@@ -1,0 +1,228 @@
+{
+ "id": "i2-g5",
+ "istasyon": "i2",
+ "baslik": "BIOS güvenliği",
+ "arayuz": "bios",
+ "kazanimlar": [
+  "S2",
+  "S5"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Laboratuvarda bazı öğrenciler BIOS ayarlarını değiştiriyor ve USB bellekten başka sistemler açıyor. BIOS'a yönetici parolası koy ve USB'den önyüklemeyi kapat. Kaydettikten sonra Setup'a yeniden girerek parolanın çalıştığını dene.",
+ "ogren": [
+  "Bilgisayar açılırken ekranda kısa bir süre 'Press DEL or F2 to enter setup' gibi bir yazı çıkar. Bu sırada doğru tuşa basılırsa BIOS Setup açılır; basılmazsa işletim sistemi yüklenir.",
+  "Security sekmesindeki Administrator Password, Setup'a girişi parolayla korur.",
+  "Boot sekmesindeki USB Boot kapatılırsa bilgisayar USB bellekten açılmaz.",
+  "Güvenli Önyükleme (Secure Boot) ve TPM güvenlik özellikleridir; kapatılmamalıdır."
+ ],
+ "ipuclari": [
+  "Parola Security sekmesinde.",
+  "USB Boot ayarı Boot sekmesinde.",
+  "Kaydettikten sonra açılışta yeniden Del'e bas: parola sorulmalı."
+ ],
+ "veri": {
+  "cmos": {
+   "tarih": "2026-03-02",
+   "saat": "09:40:00",
+   "bootOrder": [
+    "ssd",
+    "usb",
+    "pxe"
+   ],
+   "sata": "AHCI",
+   "vt": false,
+   "ses": true,
+   "lan": true,
+   "fastBoot": false,
+   "usbBoot": true,
+   "csm": false,
+   "adminSifre": false,
+   "secureBoot": true,
+   "tpm": true
+  },
+  "aygitlar": [
+   {
+    "id": "ssd",
+    "ad": "Windows Boot Manager (Samsung SSD 870 EVO 500GB)"
+   },
+   {
+    "id": "usb",
+    "ad": "UEFI: SanDisk Cruzer Blade 32GB, Partition 1"
+   },
+   {
+    "id": "pxe",
+    "ad": "UEFI: PXE IPv4 Realtek PCIe GbE Family Controller"
+   }
+  ],
+  "usbTakili": true,
+  "diskSata": "AHCI",
+  "bilgi": {
+   "anakart": "ASUS PRIME B560M-A",
+   "bios": "1601 x64",
+   "islemci": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+   "bellek": "16384 MB (DDR4)"
+  },
+  "sorular": [
+   {
+    "id": "unut",
+    "soru": "BIOS yönetici parolası unutulursa genellikle ne yapılır?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "cmos",
+      "metin": "Bilgisayar kapatılıp CMOS pili çıkarılır ya da anakarttaki 'Clear CMOS' jumper'ı kullanılır",
+      "dogru": true,
+      "aciklama": "Bu işlem tüm BIOS ayarlarını da sıfırlar."
+     },
+     {
+      "id": "format",
+      "metin": "Disk biçimlendirilir",
+      "dogru": false,
+      "aciklama": "BIOS parolası diskte değil, anakartta saklanır."
+     },
+     {
+      "id": "windows",
+      "metin": "Windows parolası değiştirilir",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "sifre",
+   "aciklama": "Yönetici parolası konuldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5",
+    "S2"
+   ],
+   "kural": {
+    "path": "cmos.adminSifre",
+    "eq": true
+   }
+  },
+  {
+   "id": "usb",
+   "aciklama": "USB'den önyükleme kapatıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5",
+    "S2"
+   ],
+   "kural": {
+    "path": "cmos.usbBoot",
+    "eq": false
+   }
+  },
+  {
+   "id": "kaydet",
+   "aciklama": "Ayarlar kaydedildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S2"
+   ],
+   "kural": {
+    "event": "bios.kaydet"
+   }
+  },
+  {
+   "id": "dene",
+   "aciklama": "Setup'a parolayla yeniden girildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "event": "setup.sifre",
+    "where": {
+     "dogru": true
+    }
+   }
+  },
+  {
+   "id": "q-unut",
+   "aciklama": "Soru: BIOS yönetici parolası unutulursa genellikle ne yapılır?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.unut",
+    "eq": "cmos"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "secure",
+   "aciklama": "Güvenli Önyükleme kapatıldı: güvenlik azaldı",
+   "ceza": 15,
+   "kural": {
+    "path": "cmos.secureBoot",
+    "eq": false
+   }
+  },
+  {
+   "id": "tpm",
+   "aciklama": "TPM kapatıldı",
+   "ceza": 10,
+   "kural": {
+    "path": "cmos.tpm",
+    "eq": false
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "ekran": "os",
+   "cmos": {
+    "tarih": "2026-03-02",
+    "saat": "09:40:00",
+    "bootOrder": [
+     "ssd",
+     "usb",
+     "pxe"
+    ],
+    "sata": "AHCI",
+    "vt": false,
+    "ses": true,
+    "lan": true,
+    "fastBoot": false,
+    "usbBoot": false,
+    "csm": false,
+    "adminSifre": true,
+    "secureBoot": true,
+    "tpm": true
+   },
+   "setup": null,
+   "sifreDeger": "lab123",
+   "sonAcilis": "os",
+   "donanim": {},
+   "cevaplar": {
+    "unut": "cmos"
+   }
+  },
+  "events": [
+   {
+    "type": "setup.gir",
+    "t": 900
+   },
+   {
+    "type": "bios.kaydet",
+    "t": 5000
+   },
+   {
+    "type": "setup.sifre",
+    "t": 9000,
+    "dogru": true
+   },
+   {
+    "type": "setup.gir",
+    "t": 9000
+   }
+  ]
+ }
+}

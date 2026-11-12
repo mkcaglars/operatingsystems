@@ -1,0 +1,356 @@
+{
+ "id": "i1-g3",
+ "istasyon": "i1",
+ "baslik": "UPS seçimi ve güç hesabı",
+ "arayuz": "ups-secimi",
+ "kazanimlar": [
+  "B2"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "İdari bürodaki bilgisayar için UPS alınacak. Binada gerilim sık sık dalgalanıyor ve kısa kesintiler oluyor. Bütçe sınırlı: gereğinden büyük ve pahalı bir model istenmiyor. UPS'e bağlanacak cihazları seç, gücü hesapla ve en uygun modeli seç.",
+ "ogren": [
+  "UPS (kesintisiz güç kaynağı) elektrik kesildiğinde cihazları kısa süre aküyle çalıştırır ve ani gerilim değişimlerine karşı korur.",
+  "Lazer yazıcılar ısınırken çok yüksek güç çeker; UPS'in akü çıkışına bağlanmaz.",
+  "UPS gücü VA ile verilir. Gereken en az VA değeri, cihazların toplam watt değerinin yaklaşık 1,6 katıdır. UPS'in watt değeri de toplam gücü karşılamalıdır.",
+  "Türler: Offline (ucuz, kesintide kısa geçiş), Line-interactive (gerilim dalgalanmasını düzenler — AVR), Online (geçiş süresi yok, pahalı, sunucular için)."
+ ],
+ "ipuclari": [
+  "Isınırken çok yüksek güç çeken cihaz UPS'e bağlanmaz.",
+  "Toplam güç = seçilen cihazların watt değerlerinin toplamı. VA için bu değeri 1,6 ile çarp.",
+  "Gerilim dalgalanması için AVR özelliği olan türe bak; watt değeri de toplamı karşılamalı."
+ ],
+ "veri": {
+  "cihazlar": [
+   {
+    "id": "pc",
+    "ad": "Masaüstü bilgisayar",
+    "watt": 350
+   },
+   {
+    "id": "monitor",
+    "ad": "Monitör",
+    "watt": 30
+   },
+   {
+    "id": "modem",
+    "ad": "Modem / router",
+    "watt": 15
+   },
+   {
+    "id": "yazici",
+    "ad": "Lazer yazıcı",
+    "watt": 600,
+    "not": "ısınırken çok yüksek güç çeker"
+   }
+  ],
+  "katsayi": 1.6,
+  "modeller": [
+   {
+    "id": "a",
+    "ad": "PowerSafe 650 Offline",
+    "tur": "Offline",
+    "va": 650,
+    "w": 360,
+    "ozellikler": [
+     "Kesintide aküye geçiş: 6–10 ms",
+     "Voltaj düzenleme (AVR) yok"
+    ],
+    "fiyat": "1.900 TL",
+    "gorsel": "ups-offline"
+   },
+   {
+    "id": "b",
+    "ad": "PowerSafe 650 LI",
+    "tur": "Line-interactive",
+    "va": 650,
+    "w": 360,
+    "ozellikler": [
+     "AVR (otomatik voltaj düzenleme)",
+     "2 akü çıkışı"
+    ],
+    "fiyat": "2.600 TL",
+    "gorsel": "ups-line-interactive"
+   },
+   {
+    "id": "c",
+    "ad": "PowerSafe 1000 LI",
+    "tur": "Line-interactive",
+    "va": 1000,
+    "w": 600,
+    "ozellikler": [
+     "AVR (otomatik voltaj düzenleme)",
+     "LCD ekran",
+     "4 akü + 2 koruma çıkışı"
+    ],
+    "fiyat": "3.900 TL",
+    "gorsel": "ups-line-interactive"
+   },
+   {
+    "id": "d",
+    "ad": "PowerSafe 1000 Offline",
+    "tur": "Offline",
+    "va": 1000,
+    "w": 600,
+    "ozellikler": [
+     "Kesintide aküye geçiş: 6–10 ms",
+     "Voltaj düzenleme (AVR) yok"
+    ],
+    "fiyat": "2.900 TL",
+    "gorsel": "ups-offline"
+   },
+   {
+    "id": "e",
+    "ad": "ProLine 3000 Online",
+    "tur": "Online (çift dönüşüm)",
+    "va": 3000,
+    "w": 2700,
+    "ozellikler": [
+     "Geçiş süresi 0 ms",
+     "Sunucu odaları için",
+     "Kule/rack"
+    ],
+    "fiyat": "24.500 TL",
+    "gorsel": "ups-online"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "gorev",
+    "soru": "UPS'in görevleri hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "aku",
+      "metin": "Elektrik kesildiğinde aküden güç sağlar",
+      "dogru": true
+     },
+     {
+      "id": "ani",
+      "metin": "Ani gerilim yükselmelerine ve dalgalanmalara karşı korur",
+      "dogru": true
+     },
+     {
+      "id": "zaman",
+      "metin": "Belgeleri kaydedip bilgisayarı güvenli kapatmak için zaman kazandırır",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "Bilgisayarı hızlandırır",
+      "dogru": false
+     },
+     {
+      "id": "virus",
+      "metin": "Virüslerden korur",
+      "dogru": false,
+      "aciklama": "Virüslere karşı antivirüs yazılımı kullanılır."
+     }
+    ]
+   },
+   {
+    "id": "online",
+    "soru": "Hangi UPS türü elektrik kesildiğinde hiç geçiş süresi olmadan (0 ms) çalışmaya devam eder?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "online",
+      "metin": "Online (çift dönüşümlü)",
+      "dogru": true,
+      "aciklama": "Online UPS cihazları sürekli aküden/inverterden besler; sunucu odalarında kullanılır."
+     },
+     {
+      "id": "offline",
+      "metin": "Offline (standby)",
+      "dogru": false,
+      "aciklama": "Offline UPS kesintide birkaç milisaniyede aküye geçer."
+     },
+     {
+      "id": "li",
+      "metin": "Line-interactive",
+      "dogru": false,
+      "aciklama": "Line-interactive UPS gerilimi düzenler (AVR) ama kesintide kısa bir geçiş süresi vardır."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "pc",
+   "aciklama": "Bilgisayar UPS'e bağlanacak",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "ups.cihazlar",
+    "includes": "pc"
+   }
+  },
+  {
+   "id": "monitor",
+   "aciklama": "Monitör UPS'e bağlanacak",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "ups.cihazlar",
+    "includes": "monitor"
+   }
+  },
+  {
+   "id": "modem",
+   "aciklama": "Modem UPS'e bağlanacak (internet kesilmesin)",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "ups.cihazlar",
+    "includes": "modem"
+   }
+  },
+  {
+   "id": "yazici",
+   "aciklama": "Lazer yazıcı UPS'e bağlanmayacak",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "ups.cihazlar",
+      "len_gte": 1
+     },
+     {
+      "path": "ups.cihazlar",
+      "excludes": "yazici"
+     }
+    ]
+   }
+  },
+  {
+   "id": "toplam",
+   "aciklama": "Toplam güç doğru hesaplandı (395 W)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "ups.toplamW",
+    "eq": 395
+   }
+  },
+  {
+   "id": "va",
+   "aciklama": "Gereken VA doğru hesaplandı (632 VA)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "ups.va",
+    "gte": 630,
+    "lte": 635
+   }
+  },
+  {
+   "id": "model",
+   "aciklama": "Uygun model seçildi (1000 VA line-interactive)",
+   "agirlik": 3,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "ups.model",
+    "eq": "c"
+   }
+  },
+  {
+   "id": "q-gorev",
+   "aciklama": "Soru: UPS'in görevleri hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.gorev",
+      "includes": "aku"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "includes": "ani"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "includes": "zaman"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "len_eq": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-online",
+   "aciklama": "Soru: Hangi UPS türü elektrik kesildiğinde hiç geçiş süresi olmadan (0 ms) çalışmaya devam eder?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B2"
+   ],
+   "kural": {
+    "path": "cevaplar.online",
+    "eq": "online"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "yazici",
+   "aciklama": "Lazer yazıcı UPS'e bağlanacaktı: UPS aşırı yüklenir",
+   "ceza": 20,
+   "kural": {
+    "path": "ups.cihazlar",
+    "includes": "yazici"
+   }
+  },
+  {
+   "id": "pahali",
+   "aciklama": "Gereğinden büyük ve pahalı UPS seçildi",
+   "ceza": 15,
+   "kural": {
+    "path": "ups.model",
+    "eq": "e"
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "ups": {
+    "cihazlar": [
+     "pc",
+     "monitor",
+     "modem"
+    ],
+    "toplamW": 395,
+    "va": 632,
+    "model": "c"
+   },
+   "cevaplar": {
+    "gorev": [
+     "aku",
+     "ani",
+     "zaman"
+    ],
+    "online": "online"
+   }
+  },
+  "events": []
+ }
+}

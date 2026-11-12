@@ -1,0 +1,214 @@
+{
+ "id": "i2-g4",
+ "istasyon": "i2",
+ "baslik": "Sanallaştırmayı açma",
+ "arayuz": "bios",
+ "kazanimlar": [
+  "S2"
+ ],
+ "sure_hedef": 300,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bilişim öğretmeni derste sanal makine (VirtualBox) kullanacak ama 'VT-x is disabled in the BIOS' hatası alıyor. BIOS'ta sanallaştırmayı aç, kaydet ve Windows'un sorunsuz açıldığını kontrol et.",
+ "ogren": [
+  "Bilgisayar açılırken ekranda kısa bir süre 'Press DEL or F2 to enter setup' gibi bir yazı çıkar. Bu sırada doğru tuşa basılırsa BIOS Setup açılır; basılmazsa işletim sistemi yüklenir.",
+  "Sanallaştırma ayarı genellikle Advanced > CPU Configuration altında 'Intel Virtualization Technology' (AMD'de SVM Mode) adıyla bulunur.",
+  "SATA modu gibi disk ayarları işletim sistemi kurulduktan sonra değiştirilirse Windows açılmayabilir (INACCESSIBLE BOOT DEVICE)."
+ ],
+ "ipuclari": [
+  "Advanced sekmesine bak.",
+  "Intel Virtualization Technology satırında Enter'a bas, Enabled seç.",
+  "F10 ile kaydet."
+ ],
+ "veri": {
+  "cmos": {
+   "tarih": "2026-03-02",
+   "saat": "09:40:00",
+   "bootOrder": [
+    "ssd",
+    "usb",
+    "pxe"
+   ],
+   "sata": "AHCI",
+   "vt": false,
+   "ses": true,
+   "lan": true,
+   "fastBoot": false,
+   "usbBoot": true,
+   "csm": false,
+   "adminSifre": false,
+   "secureBoot": true,
+   "tpm": true
+  },
+  "aygitlar": [
+   {
+    "id": "ssd",
+    "ad": "Windows Boot Manager (Samsung SSD 870 EVO 500GB)"
+   },
+   {
+    "id": "usb",
+    "ad": "UEFI: SanDisk Cruzer Blade 32GB, Partition 1"
+   },
+   {
+    "id": "pxe",
+    "ad": "UEFI: PXE IPv4 Realtek PCIe GbE Family Controller"
+   }
+  ],
+  "usbTakili": false,
+  "diskSata": "AHCI",
+  "bilgi": {
+   "anakart": "ASUS PRIME B560M-A",
+   "bios": "1601 x64",
+   "islemci": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+   "bellek": "16384 MB (DDR4)"
+  },
+  "sorular": [
+   {
+    "id": "vt",
+    "soru": "Sanallaştırma (Intel VT-x / AMD-V) ne işe yarar?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "vm",
+      "metin": "Bir bilgisayarda sanal makineler içinde başka işletim sistemlerini çalıştırmaya yarar",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "İnternet hızını artırır",
+      "dogru": false
+     },
+     {
+      "id": "ekran",
+      "metin": "Ekran çözünürlüğünü artırır",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "vt",
+   "aciklama": "Sanallaştırma açıldı",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S2"
+   ],
+   "kural": {
+    "path": "cmos.vt",
+    "eq": true
+   }
+  },
+  {
+   "id": "kaydet",
+   "aciklama": "Ayarlar kaydedildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S2"
+   ],
+   "kural": {
+    "event": "bios.kaydet"
+   }
+  },
+  {
+   "id": "acilis",
+   "aciklama": "Windows sorunsuz açıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S2"
+   ],
+   "kural": {
+    "path": "sonAcilis",
+    "eq": "os"
+   }
+  },
+  {
+   "id": "q-vt",
+   "aciklama": "Soru: Sanallaştırma (Intel VT-x / AMD-V) ne işe yarar?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S2"
+   ],
+   "kural": {
+    "path": "cevaplar.vt",
+    "eq": "vm"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sata",
+   "aciklama": "SATA modu değiştirildi: Windows açılmaz",
+   "ceza": 25,
+   "kural": {
+    "path": "cmos.sata",
+    "neq": "AHCI"
+   }
+  },
+  {
+   "id": "secure",
+   "aciklama": "Güvenli Önyükleme kapatıldı",
+   "ceza": 10,
+   "kural": {
+    "path": "cmos.secureBoot",
+    "eq": false
+   }
+  },
+  {
+   "id": "tpm",
+   "aciklama": "TPM kapatıldı",
+   "ceza": 10,
+   "kural": {
+    "path": "cmos.tpm",
+    "eq": false
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "ekran": "os",
+   "cmos": {
+    "tarih": "2026-03-02",
+    "saat": "09:40:00",
+    "bootOrder": [
+     "ssd",
+     "usb",
+     "pxe"
+    ],
+    "sata": "AHCI",
+    "vt": true,
+    "ses": true,
+    "lan": true,
+    "fastBoot": false,
+    "usbBoot": true,
+    "csm": false,
+    "adminSifre": false,
+    "secureBoot": true,
+    "tpm": true
+   },
+   "setup": null,
+   "sifreDeger": null,
+   "sonAcilis": "os",
+   "donanim": {},
+   "cevaplar": {
+    "vt": "vm"
+   }
+  },
+  "events": [
+   {
+    "type": "setup.gir",
+    "t": 900
+   },
+   {
+    "type": "bios.set",
+    "t": 3000,
+    "anahtar": "vt",
+    "deger": true
+   },
+   {
+    "type": "bios.kaydet",
+    "t": 4000
+   }
+  ]
+ }
+}
