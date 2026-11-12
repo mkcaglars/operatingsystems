@@ -1,0 +1,165 @@
+{
+ "id": "i8-g3",
+ "istasyon": "i8",
+ "baslik": "WinRAR kurulumu",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S6",
+  "Y3"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Muhasebe bürosu sıkıştırılmış RAR dosyaları alıyor. WinRAR'ı resmî sitesinden bilgisayara uygun sürümle (64 bit) indir ve kur; RAR ve ZIP dosyalarıyla ilişkilendir. 'Crack' sitelerinden uzak dur.",
+ "ogren": [
+  "Sıkıştırma programları dosyaları küçültür ve tek arşivde toplar (ZIP, RAR, 7Z).",
+  "Programın 32 bit ya da 64 bit sürümü, işletim sisteminin sistem türüne göre seçilir (Ayarlar › Sistem › Hakkında).",
+  "WinRAR paylaşımlı yazılımdır: deneme süresinden sonra lisans alınır. Lisansı 'kıran' crack dosyaları yasa dışıdır ve zararlı içerir."
+ ],
+ "ipuclari": [
+  "Edge'de 'winrar' ara; win-rar.com resmî sitesidir.",
+  "Bilgisayar 64 bit: x64 sürümünü indir."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "edge",
+   "dosya",
+   "ayarlar"
+  ],
+  "baslangicUygulama": "edge",
+  "sorular": [
+   {
+    "id": "lisans",
+    "soru": "WinRAR'ın lisans türü nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "share",
+      "metin": "Paylaşımlı yazılım (shareware): deneme süresinden sonra lisans satın alınmalı",
+      "dogru": true
+     },
+     {
+      "id": "acik",
+      "metin": "Açık kaynaklı ücretsiz yazılım",
+      "dogru": false
+     },
+     {
+      "id": "freeware",
+      "metin": "Tamamen ücretsiz yazılım (freeware)",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "kur",
+   "aciklama": "WinRAR resmî kaynaktan kuruldu",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "winrar"
+     },
+     {
+      "path": "pc.sahteKaynakli",
+      "excludes": "winrar"
+     }
+    ]
+   }
+  },
+  {
+   "id": "x64",
+   "aciklama": "64 bit sürüm indirildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "event": "indirme",
+    "where": {
+     "dosya": "winrar-x64-701tr.exe"
+    }
+   }
+  },
+  {
+   "id": "iliski",
+   "aciklama": "RAR ve ZIP ilişkilendirildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.bilesenler.winrar",
+      "includes": "rar"
+     },
+     {
+      "path": "pc.bilesenler.winrar",
+      "includes": "zip"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-lisans",
+   "aciklama": "Soru: WinRAR'ın lisans türü nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "cevaplar.lisans",
+    "eq": "share"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "crack",
+   "aciklama": "Crack sitesinden dosya indirildi",
+   "ceza": 30,
+   "kural": {
+    "event": "indirme",
+    "where": {
+     "kaynak": "sahte"
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "kurulu": [
+     "winrar"
+    ],
+    "sahteKaynakli": [],
+    "bilesenler": {
+     "winrar": [
+      "rar",
+      "zip",
+      "7z"
+     ]
+    }
+   },
+   "cevaplar": {
+    "lisans": "share"
+   }
+  },
+  "events": [
+   {
+    "type": "indirme",
+    "t": 1,
+    "dosya": "winrar-x64-701tr.exe",
+    "kaynak": "resmi",
+    "kurulum": "winrar"
+   }
+  ]
+ },
+ "istege_bagli": "winrar"
+}

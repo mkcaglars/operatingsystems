@@ -370,7 +370,16 @@ try {
             $taskId = str_arg('task_id', 40);
             $mode = (string)arg('mode', 'uygula');
             if (!in_array($mode, ['ogren', 'uygula', 'degerlendir'], true)) fail('Geçersiz mod.');
-            if (!load_task($taskId)) fail('Görev bulunamadı.', 404);
+            $taskDef = load_task($taskId);
+            if (!$taskDef) fail('Görev bulunamadı.', 404);
+            // İsteğe bağlı yazılım görevleri yalnızca öğretmen sınıf için açtıysa yapılabilir
+            if (!empty($taskDef['istege_bagli']) && $u['role'] === 'ogrenci') {
+                $acik = false;
+                foreach (q('SELECT c.settings FROM classes c JOIN class_students cs ON cs.class_id = c.id WHERE cs.student_id = ?', [$u['id']])->fetchAll(PDO::FETCH_COLUMN) as $json) {
+                    if (!empty(class_settings($json)['istege_bagli'][$taskDef['istege_bagli']])) $acik = true;
+                }
+                if (!$acik) fail('Bu isteğe bağlı görev öğretmeniniz tarafından açılmadı.', 403);
+            }
             if ($mode === 'degerlendir' && $u['role'] === 'ogrenci') {
                 $open = false;
                 foreach (q('SELECT c.settings FROM classes c JOIN class_students cs ON cs.class_id = c.id WHERE cs.student_id = ?', [$u['id']])->fetchAll(PDO::FETCH_COLUMN) as $json) {

@@ -1,0 +1,207 @@
+{
+ "id": "i6-g2",
+ "istasyon": "i6",
+ "baslik": "Sistem bilgisi ve kişiselleştirme",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S7",
+  "S4",
+  "B7"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Laboratuvar envanteri hazırlanıyor. Ayarlar › Sistem › Hakkında bölümünden bilgisayarın özelliklerini bul ve soruları yanıtla. Sonra bilgisayarı okulun görünüm kuralına göre kişiselleştir: masaüstü arka planı 'Girne Limanı', mod 'Koyu' olsun.",
+ "ogren": [
+  "Ayarlar › Sistem › Hakkında: cihaz adı, işlemci, RAM, sistem türü (32/64 bit) ve Windows sürümü burada görülür.",
+  "Kişiselleştirme bölümünden arka plan, renkler (açık/koyu mod), kilit ekranı, temalar ve görev çubuğu ayarlanır."
+ ],
+ "ipuclari": [
+  "Başlat › Ayarlar › Sistem › Hakkında.",
+  "Kişiselleştirme › Arka plan ve Kişiselleştirme › Renkler."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "ayarlar",
+   "gorev",
+   "dosya"
+  ],
+  "sorular": [
+   {
+    "id": "cpu",
+    "soru": "Bu bilgisayarın işlemcisi hangisidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "i5",
+      "metin": "Intel Core i5-10400",
+      "dogru": true
+     },
+     {
+      "id": "i7",
+      "metin": "Intel Core i7-12700",
+      "dogru": false
+     },
+     {
+      "id": "ryzen",
+      "metin": "AMD Ryzen 5 5600",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "ram",
+    "soru": "Yüklü RAM ne kadar?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "16",
+      "metin": "16 GB",
+      "dogru": true
+     },
+     {
+      "id": "8",
+      "metin": "8 GB",
+      "dogru": false
+     },
+     {
+      "id": "32",
+      "metin": "32 GB",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "tur",
+    "soru": "Sistem türü nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "64",
+      "metin": "64 bit işletim sistemi, x64 tabanlı işlemci",
+      "dogru": true
+     },
+     {
+      "id": "32",
+      "metin": "32 bit işletim sistemi",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "surum",
+    "soru": "Windows sürümü ve versiyonu hangisidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "pro",
+      "metin": "Windows 11 Pro, 24H2",
+      "dogru": true
+     },
+     {
+      "id": "home",
+      "metin": "Windows 11 Home, 23H2",
+      "dogru": false
+     },
+     {
+      "id": "w10",
+      "metin": "Windows 10 Pro, 22H2",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "arkaplan",
+   "aciklama": "Arka plan Girne Limanı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "path": "pc.ekran.arkaPlan",
+    "eq": "girne"
+   }
+  },
+  {
+   "id": "tema",
+   "aciklama": "Mod koyu",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4",
+    "B7"
+   ],
+   "kural": {
+    "path": "pc.ekran.tema",
+    "eq": "koyu"
+   }
+  },
+  {
+   "id": "q-cpu",
+   "aciklama": "Soru: Bu bilgisayarın işlemcisi hangisidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.cpu",
+    "eq": "i5"
+   }
+  },
+  {
+   "id": "q-ram",
+   "aciklama": "Soru: Yüklü RAM ne kadar?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.ram",
+    "eq": "16"
+   }
+  },
+  {
+   "id": "q-tur",
+   "aciklama": "Soru: Sistem türü nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.tur",
+    "eq": "64"
+   }
+  },
+  {
+   "id": "q-surum",
+   "aciklama": "Soru: Windows sürümü ve versiyonu hangisidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.surum",
+    "eq": "pro"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "ekran": {
+     "arkaPlan": "girne",
+     "tema": "koyu"
+    }
+   },
+   "cevaplar": {
+    "cpu": "i5",
+    "ram": "16",
+    "tur": "64",
+    "surum": "pro"
+   }
+  },
+  "events": []
+ }
+}

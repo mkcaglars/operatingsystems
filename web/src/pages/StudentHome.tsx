@@ -6,7 +6,7 @@ import { levelOf, LEVEL_LABEL } from '../core/scoring';
 
 interface Status {
   en_iyi: { task_id: string; mode: string; score: number }[];
-  ayarlar: { degerlendirme_acik: boolean };
+  ayarlar: { degerlendirme_acik: boolean; istege_bagli: Record<string, boolean> };
 }
 
 export default function StudentHome() {
@@ -34,7 +34,7 @@ export default function StudentHome() {
         </p>
         <div className="station-grid">
           {stations.map((s) => {
-            const list = tasksOf(s.id);
+            const list = tasksOf(s.id).filter((t) => !t.istege_bagli || !status || status.ayarlar.istege_bagli?.[t.istege_bagli]);
             return (
               <section key={s.id} className={'station-card' + (list.length ? '' : ' soon')}>
                 <header>
@@ -58,6 +58,7 @@ export default function StudentHome() {
                       return (
                         <li key={t.id}>
                           <a href={`#/gorev/${t.id}`}>{t.baslik}</a>
+                          {t.istege_bagli && <span className="tag">isteğe bağlı</span>}
                           {b !== null && <span className={'level ' + levelOf(b)}>{b} · {LEVEL_LABEL[levelOf(b)]}</span>}
                         </li>
                       );

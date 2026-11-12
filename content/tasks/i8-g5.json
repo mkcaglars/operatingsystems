@@ -1,0 +1,165 @@
+{
+ "id": "i8-g5",
+ "istasyon": "i8",
+ "baslik": "Adobe Photoshop kurulumu",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "B6",
+  "S6"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Grafik atölyesindeki bilgisayara Photoshop kurulacak. Resmî Adobe sitesinden Creative Cloud'u indir; kurulumda sistem gereksinimlerini kontrol et ve okulun Adobe hesabıyla (sağdaki not) oturum açarak Photoshop'u kur.",
+ "ogren": [
+  "Photoshop gibi profesyonel programlar yüksek sistem gereksinimleri ister: 64 bit işletim sistemi, en az 8 GB RAM, DirectX 12 destekli ve en az 1,5 GB belleği olan ekran kartı.",
+  "Adobe programları abonelikle (Creative Cloud) kullanılır; okullar kurumsal hesap alabilir.",
+  "Photoshop'un Linux sürümü yoktur."
+ ],
+ "ipuclari": [
+  "Edge'de 'photoshop' ara; adobe.com resmî sitedir.",
+  "Kurulumda hesap bilgilerini sağdaki nottan gir."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "edge",
+   "dosya",
+   "ayarlar"
+  ],
+  "baslangicUygulama": "edge",
+  "adobeHesap": {
+   "eposta": "grafik@okul.edu",
+   "parola": "Adobe-2026"
+  },
+  "notlar": [
+   "🔑 Okulun Adobe hesabı: grafik@okul.edu — Parola: Adobe-2026 (kurgusal)"
+  ],
+  "sorular": [
+   {
+    "id": "ram",
+    "soru": "Photoshop için en az ne kadar RAM gerekir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "8",
+      "metin": "8 GB (16 GB önerilir)",
+      "dogru": true
+     },
+     {
+      "id": "2",
+      "metin": "2 GB",
+      "dogru": false
+     },
+     {
+      "id": "64",
+      "metin": "64 GB",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "lisans",
+    "soru": "Photoshop'un lisans modeli nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "abone",
+      "metin": "Abonelik (Creative Cloud) — okul ya da kişisel hesapla",
+      "dogru": true
+     },
+     {
+      "id": "ucretsiz",
+      "metin": "Tamamen ücretsiz",
+      "dogru": false
+     },
+     {
+      "id": "acik",
+      "metin": "Açık kaynak",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "kur",
+   "aciklama": "Photoshop kuruldu ve hesapla etkinleştirildi",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "photoshop"
+     },
+     {
+      "path": "pc.etkinUygulamalar",
+      "includes": "photoshop"
+     },
+     {
+      "path": "pc.sahteKaynakli",
+      "excludes": "photoshop"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-ram",
+   "aciklama": "Soru: Photoshop için en az ne kadar RAM gerekir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B6"
+   ],
+   "kural": {
+    "path": "cevaplar.ram",
+    "eq": "8"
+   }
+  },
+  {
+   "id": "q-lisans",
+   "aciklama": "Soru: Photoshop'un lisans modeli nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B6"
+   ],
+   "kural": {
+    "path": "cevaplar.lisans",
+    "eq": "abone"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "crack",
+   "aciklama": "Crack sitesinden dosya indirildi",
+   "ceza": 30,
+   "kural": {
+    "event": "indirme",
+    "where": {
+     "kaynak": "sahte"
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "kurulu": [
+     "photoshop"
+    ],
+    "etkinUygulamalar": [
+     "photoshop"
+    ],
+    "sahteKaynakli": []
+   },
+   "cevaplar": {
+    "ram": "8",
+    "lisans": "abone"
+   }
+  },
+  "events": []
+ },
+ "istege_bagli": "photoshop"
+}

@@ -1,0 +1,151 @@
+{
+ "id": "i6-g4",
+ "istasyon": "i6",
+ "baslik": "Laboratuvar güç ve başlangıç ayarları",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S4",
+  "B7"
+ ],
+ "sure_hedef": 300,
+ "ipucu_cezasi": 5,
+ "senaryo": "Okul laboratuvarındaki bilgisayarlar ders sırasında uykuya geçiyor ve geç açılıyor. Ayarla: ekran 10 dakika sonra kapansın, bilgisayar hiçbir zaman uyku moduna geçmesin. Oturum açılınca kendiliğinden başlayan Microsoft Teams ve OneDrive'ı Ayarlar › Uygulamalar › Başlangıç bölümünden kapat.",
+ "ogren": [
+  "Ayarlar › Sistem › Güç: ekranın ve bilgisayarın ne zaman kapanacağı ya da uykuya geçeceği ayarlanır.",
+  "Ayarlar › Uygulamalar › Başlangıç: oturum açılınca otomatik başlayan uygulamalar açılıp kapatılır (Görev Yöneticisi'ndeki Başlangıç sekmesiyle aynı iş)."
+ ],
+ "ipuclari": [
+  "Sistem › Güç › Ekran ve uyku.",
+  "Uyku için 'Hiçbir zaman'ı seç."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "ayarlar",
+   "gorev"
+  ],
+  "sorular": [
+   {
+    "id": "uyku",
+    "soru": "Uyku modu nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "dusuk",
+      "metin": "Bilgisayar düşük güçte bekler; açık belgeler bellekte durur, hızla kaldığı yerden devam edilir",
+      "dogru": true
+     },
+     {
+      "id": "kapat",
+      "metin": "Bilgisayarı tamamen kapatır",
+      "dogru": false
+     },
+     {
+      "id": "ekran",
+      "metin": "Yalnızca ekranı kapatır",
+      "dogru": false,
+      "aciklama": "Bu 'ekranı kapat' ayarıdır."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "ekran",
+   "aciklama": "Ekran 10 dakikada kapanıyor",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "path": "pc.guc.ekranKapat",
+    "eq": 10
+   }
+  },
+  {
+   "id": "uyku",
+   "aciklama": "Uyku: hiçbir zaman",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "path": "pc.guc.uyku",
+    "eq": 0
+   }
+  },
+  {
+   "id": "teams",
+   "aciklama": "Teams açılışta başlamıyor",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4",
+    "B7"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acikBaslangic",
+      "includes": "security"
+     },
+     {
+      "path": "pc.acikBaslangic",
+      "excludes": "teams"
+     }
+    ]
+   }
+  },
+  {
+   "id": "onedrive",
+   "aciklama": "OneDrive açılışta başlamıyor",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4",
+    "B7"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acikBaslangic",
+      "includes": "security"
+     },
+     {
+      "path": "pc.acikBaslangic",
+      "excludes": "onedrive"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-uyku",
+   "aciklama": "Soru: Uyku modu nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "path": "cevaplar.uyku",
+    "eq": "dusuk"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "guc": {
+     "ekranKapat": 10,
+     "uyku": 0
+    },
+    "acikBaslangic": [
+     "security",
+     "realtek"
+    ]
+   },
+   "cevaplar": {
+    "uyku": "dusuk"
+   }
+  },
+  "events": []
+ }
+}

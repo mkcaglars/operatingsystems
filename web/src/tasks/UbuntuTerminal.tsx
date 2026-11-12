@@ -1,12 +1,14 @@
 // İ5 terminal görevleri: Ubuntu masaüstü + terminal + sorular. Görev, kabuk durumunu (sh) ve komut olaylarını denetler.
 import Sorular, { type Soru } from '../components/Sorular';
 import Terminal from '../components/Terminal';
-import { defaultShell, type ShellState } from '../core/shell';
+import { defaultShell, exec, type ShellState } from '../core/shell';
 import type { TaskDef } from '../core/types';
 import type { TaskUIProps } from './registry';
 
 interface Veri {
   canli?: boolean;
+  /** ev dizinine eklenecek dosyalar (ör. İndirilenler/google-chrome-stable_current_amd64.deb) */
+  ekDosyalar?: string[];
   kopya?: { komut: string; aciklama: string }[];
   sorular?: Soru[];
 }
@@ -17,7 +19,10 @@ interface State {
 
 export const initialUbuntuTerminal = (task: TaskDef): State => {
   const v = task.veri as unknown as Veri;
-  return { sh: v.canli ? defaultShell('ubuntu', 'ubuntu') : defaultShell(), cevaplar: {} };
+  let sh = v.canli ? defaultShell('ubuntu', 'ubuntu') : defaultShell();
+  for (const f of v.ekDosyalar ?? []) sh = exec(sh, `touch ${f}`).state;
+  sh = { ...sh, history: [] };
+  return { sh, cevaplar: {} };
 };
 
 const DOCK = [

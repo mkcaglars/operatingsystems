@@ -1,0 +1,157 @@
+{
+ "id": "i8-g7",
+ "istasyon": "i8",
+ "baslik": "Ubuntu'ya Chrome kurma (.deb)",
+ "arayuz": "ubuntu-terminal",
+ "kazanimlar": [
+  "S6",
+  "B5"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Ubuntu kurulu öğretmen bilgisayarına Google Chrome kurulacak. Chrome'un resmî .deb paketi İndirilenler klasörüne indirildi. Önce paket listesini güncelle, sonra paketi apt ile kur.",
+ "ogren": [
+  "Ubuntu'da yazılımlar depodan (App Center ya da 'sudo apt install') ya da üreticinin .deb paketinden kurulur.",
+  "Bir .deb paketi 'sudo apt install ./paket.deb' komutuyla kurulur; apt eksik bağımlılıkları da getirir. Başındaki './' komutun bir dosyayı kastettiğini gösterir.",
+  "Microsoft Office ve Photoshop Linux'ta doğrudan çalışmaz; .docx belgeler LibreOffice ile açılır."
+ ],
+ "ipuclari": [
+  "cd İndirilenler",
+  "sudo apt update",
+  "sudo apt install ./google-chrome-stable_current_amd64.deb (Tab tuşu adı tamamlar)"
+ ],
+ "veri": {
+  "ekDosyalar": [
+   "İndirilenler/google-chrome-stable_current_amd64.deb"
+  ],
+  "kopya": [
+   {
+    "komut": "cd İndirilenler",
+    "aciklama": "İndirilenler klasörüne geç"
+   },
+   {
+    "komut": "sudo apt update",
+    "aciklama": "Paket listesini yenile"
+   },
+   {
+    "komut": "sudo apt install ./<dosya>.deb",
+    "aciklama": ".deb paketini kur"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "deb",
+    "soru": "'.deb' dosyası nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "paket",
+      "metin": "Debian/Ubuntu için yazılım paketi (Windows'taki kurulum dosyasına benzer)",
+      "dogru": true
+     },
+     {
+      "id": "belge",
+      "metin": "Bir belge türü",
+      "dogru": false
+     },
+     {
+      "id": "zip",
+      "metin": "Sıkıştırılmış fotoğraf",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "office",
+    "soru": "Ubuntu'da Microsoft Word belgeleri (.docx) hangi programla açılıp düzenlenebilir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "libre",
+      "metin": "LibreOffice Writer",
+      "dogru": true
+     },
+     {
+      "id": "yok",
+      "metin": "Hiçbiriyle açılamaz",
+      "dogru": false
+     },
+     {
+      "id": "photoshop",
+      "metin": "Photoshop",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "guncel",
+   "aciklama": "Paket listesi güncellendi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "sh.apt.guncel",
+    "eq": true
+   }
+  },
+  {
+   "id": "chrome",
+   "aciklama": "Chrome .deb paketinden kuruldu",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S6",
+    "B5"
+   ],
+   "kural": {
+    "path": "sh.apt.kurulu",
+    "includes": "google-chrome-stable"
+   }
+  },
+  {
+   "id": "q-deb",
+   "aciklama": "Soru: '.deb' dosyası nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.deb",
+    "eq": "paket"
+   }
+  },
+  {
+   "id": "q-office",
+   "aciklama": "Soru: Ubuntu'da Microsoft Word belgeleri (.docx) hangi programla açılıp düzenlenebilir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.office",
+    "eq": "libre"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "sh": {
+    "apt": {
+     "guncel": true,
+     "kurulu": [
+      "google-chrome-stable"
+     ]
+    }
+   },
+   "cevaplar": {
+    "deb": "paket",
+    "office": "libre"
+   }
+  },
+  "events": []
+ }
+}

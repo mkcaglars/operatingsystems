@@ -209,6 +209,15 @@ try {
     const s = await st.api('POST', 'attempts/submit', { attempt_id: a.data.attempt_id, events: [], final_state: fullState });
     assert.equal(s.data.sonuc.puan, 100);
   });
+  await step('isteğe bağlı yazılım görevi yalnızca öğretmen açınca başlatılabilir', async () => {
+    assert.equal((await st.api('POST', 'attempts/start', { task_id: 'i8-g3', mode: 'uygula' })).status, 403);
+    const cls = (await t1.api('GET', 'classes')).data[0];
+    await t1.api('POST', 'classes/update', { id: classId, settings: { ...cls.settings, istege_bagli: { ...cls.settings.istege_bagli, winrar: true } } });
+    assert.equal((await st.api('POST', 'attempts/start', { task_id: 'i8-g3', mode: 'uygula' })).status, 200);
+    assert.equal((await st.api('POST', 'attempts/start', { task_id: 'i8-g5', mode: 'uygula' })).status, 403);
+    const s2 = await st.api('GET', 'tasks/status');
+    assert.equal(s2.data.ayarlar.istege_bagli.winrar, true);
+  });
   await step('durum kaydetme ve sürüm çakışması', async () => {
     assert.equal((await st.api('POST', 'state/save', { scope: 'vm', data: { a: 1 }, version: 0 })).data.version, 1);
     assert.equal((await st.api('POST', 'state/save', { scope: 'vm', data: { a: 2 }, version: 1 })).data.version, 2);

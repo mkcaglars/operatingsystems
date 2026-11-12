@@ -1,0 +1,272 @@
+// Sanal Windows 11 bilgisayarının durumu (İ6–İ8). Saf veri + yardımcı fonksiyonlar; arayüz win/ altında.
+// Kurallar bu durumun yolları üzerinden denetlenir (ör. "pc.guc.uyku", "pc.kurulu", "pc.dosyalar").
+
+export type Profil = 'etki' | 'ozel' | 'ortak';
+
+export interface Surec {
+  id: string;
+  ad: string;
+  cpu: number;
+  ram: number; // MB
+  sistem?: boolean;
+}
+export interface Baslangic {
+  id: string;
+  ad: string;
+  yayinci: string;
+  etki: 'Yüksek' | 'Orta' | 'Düşük';
+  acik: boolean;
+}
+export interface Aygit {
+  id: string;
+  kategori: string;
+  ad: string;
+  durum: 'ok' | 'surucu-yok' | 'devre-disi';
+  /** sürücü yokken görünen ad (ör. "Ethernet Denetleyicisi") */
+  bilinmeyenAd?: string;
+  /** doğru sürücü klasörünün kimliği */
+  surucu?: string;
+}
+export interface Uygulama {
+  id: string;
+  ad: string;
+  yayinci: string;
+  surum: string;
+  boyutMB: number;
+  bilesenler?: string[];
+  etkin?: boolean;
+  bozuk?: boolean;
+  kaynak?: 'resmi' | 'sahte';
+  dil?: string;
+}
+export interface DosyaGirdi {
+  tur: 'klasor' | 'dosya';
+  gizli?: boolean;
+  boyut?: string;
+  /** zararlı içerik adı (Defender bulur) */
+  tehdit?: string;
+  /** çalıştırılınca açılacak kurulum (katalog kimliği) */
+  kurulum?: string;
+  kaynak?: 'resmi' | 'sahte';
+  /** indirme sayfasında işaretli bırakılan ek teklifler (ör. McAfee) */
+  ekTeklifler?: string[];
+}
+
+export interface WinPc {
+  cihaz: { ad: string; islemci: string; ram: string; depolama: string; ekranKarti: string; sistemTuru: string; surum: string; yapi: string; kullanici: string };
+  ekran: { cozunurluk: string; olcek: number; metin: number; imlec: number; kontrast: boolean; tema: 'acik' | 'koyu'; arkaPlan: string };
+  fare: { birincil: 'sol' | 'sag'; ciftTik: number; hiz: number };
+  guc: { ekranKapat: number; uyku: number };
+  baslangic: Baslangic[];
+  surecler: Surec[];
+  explorer: { uzanti: boolean; gizli: boolean };
+  fs: Record<string, DosyaGirdi>;
+  aygitlar: Aygit[];
+  guvenlik: {
+    gercekZaman: boolean;
+    bulut: boolean;
+    kurcalama: boolean;
+    tanimlarGuncel: boolean;
+    smartScreen: boolean;
+    denetimliKlasor: boolean;
+    korunan: string[];
+    duvar: Record<Profil, boolean>;
+    karantina: string[];
+    izinVerilen: string[];
+    sonTarama: '' | 'hizli' | 'tam' | 'ozel' | 'cevrimdisi';
+  };
+  hesaplar: { ad: string; tur: 'yonetici' | 'standart'; parola: boolean }[];
+  geriYukleme: string[];
+  uygulamalar: Uygulama[];
+  varsayilan: { tarayici: string; pdf: string };
+  zararli: string[];
+  belirti: { reklam: boolean };
+  // ---- Kurallar için türetilmiş alanlar ----
+  dosyalar: string[];
+  kurulu: string[];
+  etkinUygulamalar: string[];
+  bozukUygulamalar: string[];
+  sorunluAygitlar: string[];
+  acikBaslangic: string[];
+  surecAdlari: string[];
+  yoneticiler: string[];
+  standartlar: string[];
+  duvarKapali: Profil[];
+  uyariSayisi: number;
+  sahteKaynakli: string[];
+  bilesenler: Record<string, string[]>;
+}
+
+export const KULLANICI = 'C:/Kullanıcılar/Ogrenci';
+
+export function defaultPc(): WinPc {
+  return derive({
+    cihaz: {
+      ad: 'LAB-PC-07',
+      islemci: 'Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz',
+      ram: '16,0 GB (15,8 GB kullanılabilir)',
+      depolama: '476 GB SSD (Samsung SSD 870 EVO)',
+      ekranKarti: 'NVIDIA GeForce GTX 1650 (4 GB)',
+      sistemTuru: '64 bit işletim sistemi, x64 tabanlı işlemci',
+      surum: 'Windows 11 Pro',
+      yapi: '24H2 (İşletim sistemi derlemesi 26100.2314)',
+      kullanici: 'Ogrenci',
+    },
+    ekran: { cozunurluk: '1920 × 1080 (Önerilen)', olcek: 100, metin: 100, imlec: 1, kontrast: false, tema: 'acik', arkaPlan: 'bloom' },
+    fare: { birincil: 'sol', ciftTik: 5, hiz: 10 },
+    guc: { ekranKapat: 5, uyku: 15 },
+    baslangic: [
+      { id: 'onedrive', ad: 'Microsoft OneDrive', yayinci: 'Microsoft Corporation', etki: 'Yüksek', acik: true },
+      { id: 'teams', ad: 'Microsoft Teams', yayinci: 'Microsoft', etki: 'Yüksek', acik: true },
+      { id: 'security', ad: 'Windows Security notification icon', yayinci: 'Microsoft Corporation', etki: 'Düşük', acik: true },
+      { id: 'realtek', ad: 'Realtek HD Audio Universal Service', yayinci: 'Realtek Semiconductor', etki: 'Düşük', acik: true },
+    ],
+    surecler: [
+      { id: 'explorer', ad: 'Windows Gezgini', cpu: 0.6, ram: 92, sistem: true },
+      { id: 'msedge', ad: 'Microsoft Edge (6)', cpu: 1.2, ram: 610 },
+      { id: 'antimalware', ad: 'Antimalware Service Executable', cpu: 0.4, ram: 180, sistem: true },
+      { id: 'teams', ad: 'Microsoft Teams', cpu: 0.8, ram: 420 },
+      { id: 'onedrive', ad: 'Microsoft OneDrive', cpu: 0.1, ram: 64 },
+      { id: 'host', ad: 'Hizmet Ana Bilgisayarı: Yerel Sistem (14)', cpu: 0.3, ram: 120, sistem: true },
+    ],
+    explorer: { uzanti: false, gizli: false },
+    fs: {
+      'C:': { tur: 'klasor' },
+      [KULLANICI]: { tur: 'klasor' },
+      [`${KULLANICI}/Masaüstü`]: { tur: 'klasor' },
+      [`${KULLANICI}/Belgeler`]: { tur: 'klasor' },
+      [`${KULLANICI}/Belgeler/ders-notlari.docx`]: { tur: 'dosya', boyut: '24 KB' },
+      [`${KULLANICI}/İndirilenler`]: { tur: 'klasor' },
+      [`${KULLANICI}/Resimler`]: { tur: 'klasor' },
+      [`${KULLANICI}/Resimler/girne.jpg`]: { tur: 'dosya', boyut: '2,1 MB' },
+      [`${KULLANICI}/AppData`]: { tur: 'klasor', gizli: true },
+    },
+    aygitlar: [
+      { id: 'cpu', kategori: 'İşlemciler', ad: 'Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz', durum: 'ok' },
+      { id: 'disk', kategori: 'Disk sürücüleri', ad: 'Samsung SSD 870 EVO 500GB', durum: 'ok' },
+      { id: 'gpu', kategori: 'Görüntü bağdaştırıcıları', ad: 'NVIDIA GeForce GTX 1650', durum: 'ok' },
+      { id: 'lan', kategori: 'Ağ bağdaştırıcıları', ad: 'Realtek PCIe GbE Family Controller', durum: 'ok' },
+      { id: 'ses', kategori: 'Ses, video ve oyun denetleyicileri', ad: 'Realtek High Definition Audio', durum: 'ok' },
+      { id: 'klavye', kategori: 'Klavyeler', ad: 'HID Klavye Aygıtı', durum: 'ok' },
+      { id: 'fare', kategori: 'Fareler ve diğer işaret aygıtları', ad: 'HID uyumlu fare', durum: 'ok' },
+    ],
+    guvenlik: {
+      gercekZaman: true,
+      bulut: true,
+      kurcalama: true,
+      tanimlarGuncel: true,
+      smartScreen: true,
+      denetimliKlasor: false,
+      korunan: [],
+      duvar: { etki: true, ozel: true, ortak: true },
+      karantina: [],
+      izinVerilen: [],
+      sonTarama: '',
+    },
+    hesaplar: [
+      { ad: 'Ogretmen', tur: 'yonetici', parola: true },
+      { ad: 'Ogrenci', tur: 'yonetici', parola: true },
+    ],
+    geriYukleme: [],
+    uygulamalar: [
+      { id: 'edge', ad: 'Microsoft Edge', yayinci: 'Microsoft Corporation', surum: '130.0.2849.80', boyutMB: 520 },
+      { id: 'teams', ad: 'Microsoft Teams', yayinci: 'Microsoft Corporation', surum: '24295.605', boyutMB: 410 },
+    ],
+    varsayilan: { tarayici: 'edge', pdf: 'edge' },
+    zararli: [],
+    belirti: { reklam: false },
+    dosyalar: [],
+    kurulu: [],
+    etkinUygulamalar: [],
+    bozukUygulamalar: [],
+    sorunluAygitlar: [],
+    acikBaslangic: [],
+    surecAdlari: [],
+    yoneticiler: [],
+    standartlar: [],
+    duvarKapali: [],
+    uyariSayisi: 0,
+    sahteKaynakli: [],
+    bilesenler: {},
+  });
+}
+
+/** Görev verisindeki yamayı varsayılan bilgisayara uygular (diziler tamamen değiştirilir, nesneler birleştirilir). */
+export function pcWith(patch: Record<string, unknown> | undefined): WinPc {
+  const base = defaultPc() as unknown as Record<string, unknown>;
+  const merge = (a: unknown, b: unknown): unknown => {
+    if (b === undefined) return a;
+    if (b === null || typeof b !== 'object' || Array.isArray(b) || a === null || typeof a !== 'object' || Array.isArray(a)) return b;
+    const out: Record<string, unknown> = { ...(a as Record<string, unknown>) };
+    for (const [k, v] of Object.entries(b as Record<string, unknown>)) out[k] = merge((a as Record<string, unknown>)[k], v);
+    return out;
+  };
+  return derive(merge(base, patch ?? {}) as WinPc);
+}
+
+/** Kurallar için türetilmiş alanları yeniden hesaplar */
+export function derive(pc: WinPc): WinPc {
+  const g = pc.guvenlik;
+  pc.dosyalar = Object.keys(pc.fs).sort();
+  pc.kurulu = pc.uygulamalar.map((u) => u.id);
+  pc.etkinUygulamalar = pc.uygulamalar.filter((u) => u.etkin).map((u) => u.id);
+  pc.bozukUygulamalar = pc.uygulamalar.filter((u) => u.bozuk).map((u) => u.id);
+  pc.sorunluAygitlar = pc.aygitlar.filter((a) => a.durum !== 'ok').map((a) => a.id);
+  pc.acikBaslangic = pc.baslangic.filter((b) => b.acik).map((b) => b.id);
+  pc.surecAdlari = pc.surecler.map((s) => s.id);
+  pc.yoneticiler = pc.hesaplar.filter((h) => h.tur === 'yonetici').map((h) => h.ad);
+  pc.standartlar = pc.hesaplar.filter((h) => h.tur === 'standart').map((h) => h.ad);
+  pc.duvarKapali = (Object.keys(g.duvar) as Profil[]).filter((k) => !g.duvar[k]);
+  pc.uyariSayisi = guvenlikUyarilari(pc).length;
+  pc.sahteKaynakli = pc.uygulamalar.filter((u) => u.kaynak === 'sahte').map((u) => u.id);
+  pc.bilesenler = Object.fromEntries(pc.uygulamalar.filter((u) => u.bilesenler).map((u) => [u.id, [...u.bilesenler!]]));
+  return pc;
+}
+
+export function guvenlikUyarilari(pc: WinPc): { bolum: string; metin: string }[] {
+  const g = pc.guvenlik;
+  const out: { bolum: string; metin: string }[] = [];
+  if (!g.gercekZaman) out.push({ bolum: 'virus', metin: 'Gerçek zamanlı koruma kapalı. Cihazınız savunmasız olabilir.' });
+  if (!g.tanimlarGuncel) out.push({ bolum: 'virus', metin: 'Koruma güncelleştirmeleri eski.' });
+  if (!g.bulut) out.push({ bolum: 'virus', metin: 'Bulut tabanlı koruma kapalı.' });
+  if (!g.kurcalama) out.push({ bolum: 'virus', metin: 'Kurcalama koruması kapalı.' });
+  for (const p of ['etki', 'ozel', 'ortak'] as Profil[]) if (!g.duvar[p]) out.push({ bolum: 'duvar', metin: `${PROFIL_AD[p]} ağ güvenlik duvarı kapalı.` });
+  if (!g.smartScreen) out.push({ bolum: 'smart', metin: 'SmartScreen kapalı: istenmeyen uygulamalar engellenmiyor.' });
+  if (bulunanTehditler(pc).length) out.push({ bolum: 'virus', metin: 'Tehditler bulundu. Eylem başlatın.' });
+  return out;
+}
+
+/** Son taramanın bulduğu, henüz eylem uygulanmamış tehditler.
+ *  Hızlı tarama yalnızca sık kullanılan konumlara bakar (D: sürücüsü ve arşiv içleri hariç); tam tarama her yere. */
+export function bulunanTehditler(pc: WinPc): [string, DosyaGirdi][] {
+  const g = pc.guvenlik;
+  if (!g.sonTarama) return [];
+  return Object.entries(pc.fs)
+    .filter(([p, f]) => f.tehdit && !g.karantina.includes(p) && !g.izinVerilen.includes(p))
+    .filter(([p]) => g.sonTarama !== 'hizli' || (!p.startsWith('D:') && !p.includes('.zip/')));
+}
+
+export const PROFIL_AD: Record<Profil, string> = { etki: 'Etki alanı', ozel: 'Özel', ortak: 'Ortak' };
+
+export function adOf(path: string): string {
+  return path.slice(path.lastIndexOf('/') + 1);
+}
+export function parentOf(path: string): string {
+  const i = path.lastIndexOf('/');
+  return i < 0 ? '' : path.slice(0, i);
+}
+export function children(pc: WinPc, dir: string): string[] {
+  return Object.keys(pc.fs)
+    .filter((p) => parentOf(p) === dir)
+    .sort((a, b) => (pc.fs[a].tur === pc.fs[b].tur ? adOf(a).localeCompare(adOf(b), 'tr') : pc.fs[a].tur === 'klasor' ? -1 : 1));
+}
+/** Uzantılar gizliyse dosya adı uzantısız gösterilir (Windows varsayılanı) */
+export function gorunenAd(pc: WinPc, path: string): string {
+  const ad = adOf(path);
+  if (pc.fs[path]?.tur === 'dosya' && !pc.explorer.uzanti) return ad.replace(/\.[^.]+$/, '');
+  return ad;
+}
+
+export function clonePc(pc: WinPc): WinPc {
+  return JSON.parse(JSON.stringify(pc));
+}
