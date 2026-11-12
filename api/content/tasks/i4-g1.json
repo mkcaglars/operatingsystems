@@ -1,0 +1,258 @@
+{
+ "id": "i4-g1",
+ "istasyon": "i4",
+ "baslik": "Windows 11 kurulum USB'si",
+ "arayuz": "medya-araci",
+ "kazanimlar": [
+  "Y2"
+ ],
+ "sure_hedef": 300,
+ "ipucu_cezasi": 5,
+ "senaryo": "Laboratuvardaki yeni bilgisayara Windows 11 kurulacak. Rufus ile 32 GB'lık USB belleğe Windows 11 kurulum medyası hazırla. Bilgisayara yedeklerin bulunduğu harici disk de takılı; ona dokunma!",
+ "ogren": [
+  "Kurulum medyası, işletim sisteminin ISO kalıbının önyüklenebilir şekilde USB belleğe (ya da DVD'ye) yazılmasıyla hazırlanır. Rufus bu iş için kullanılan ücretsiz bir araçtır.",
+  "Hedef bilgisayar UEFI ise bölüm düzeni GPT, eski (Legacy) BIOS ise MBR seçilir. Yanlış seçimde bilgisayar USB'den açılmaz.",
+  "Yazma işlemi seçilen aygıttaki TÜM verileri siler. Aygıt seçerken yedek disklerine dikkat edilir!"
+ ],
+ "ipuclari": [
+  "Aygıt listesinde iki disk var: hangisi boş USB bellek?",
+  "Hedef bilgisayarın bellenimine bak: UEFI ise GPT, eski BIOS ise MBR."
+ ],
+ "veri": {
+  "aygitlar": [
+   {
+    "id": "usb",
+    "ad": "SANDISK (E:) [32 GB]"
+   },
+   {
+    "id": "harici",
+    "ad": "WD Elements (F:) [1 TB] — Yedekler"
+   }
+  ],
+  "isolar": [
+   {
+    "id": "win11",
+    "ad": "Win11_24H2_Turkish_x64.iso",
+    "boyut": "5,4 GB"
+   },
+   {
+    "id": "ubuntu",
+    "ad": "ubuntu-24.04.1-desktop-amd64.iso",
+    "boyut": "5,8 GB"
+   }
+  ],
+  "hedefPc": {
+   "ad": "Hedef bilgisayar — Laboratuvar PC",
+   "satirlar": [
+    {
+     "ad": "Bellenim",
+     "deger": "UEFI (CSM kapalı)"
+    },
+    {
+     "ad": "Güvenli Önyükleme",
+     "deger": "Açık"
+    },
+    {
+     "ad": "TPM",
+     "deger": "2.0"
+    },
+    {
+     "ad": "Disk",
+     "deger": "500 GB NVMe SSD"
+    }
+   ]
+  },
+  "sorular": [
+   {
+    "id": "iso",
+    "soru": "ISO dosyası nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kalip",
+      "metin": "Bir CD/DVD'nin tüm içeriğini tek dosyada tutan disk kalıbı",
+      "dogru": true
+     },
+     {
+      "id": "program",
+      "metin": "Kurulmuş bir program",
+      "dogru": false
+     },
+     {
+      "id": "surucu",
+      "metin": "Bir donanım sürücüsü",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "usb",
+    "soru": "Kurulum için DVD yerine USB bellek kullanmanın avantajları hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "hiz",
+      "metin": "Daha hızlıdır",
+      "dogru": true
+     },
+     {
+      "id": "dvdyok",
+      "metin": "DVD sürücüsü olmayan bilgisayarlarda da kullanılabilir",
+      "dogru": true
+     },
+     {
+      "id": "tekrar",
+      "metin": "Yeniden yazılabilir",
+      "dogru": true
+     },
+     {
+      "id": "bios",
+      "metin": "BIOS ayarı gerektirmez",
+      "dogru": false,
+      "aciklama": "Önyükleme sırası ya da önyükleme menüsü yine gerekir."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "aygit",
+   "aciklama": "Doğru aygıt (USB bellek) seçildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "yazilan.aygit",
+    "eq": "usb"
+   }
+  },
+  {
+   "id": "iso",
+   "aciklama": "Doğru ISO seçildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "yazilan.iso",
+    "eq": "win11"
+   }
+  },
+  {
+   "id": "bolum",
+   "aciklama": "Bölüm düzeni GPT (UEFI)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "yazilan.bolum",
+    "eq": "GPT"
+   }
+  },
+  {
+   "id": "bitti",
+   "aciklama": "USB bellek hazırlandı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "medya.durum",
+    "eq": "bitti"
+   }
+  },
+  {
+   "id": "q-iso",
+   "aciklama": "Soru: ISO dosyası nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "path": "cevaplar.iso",
+    "eq": "kalip"
+   }
+  },
+  {
+   "id": "q-usb",
+   "aciklama": "Soru: Kurulum için DVD yerine USB bellek kullanmanın avantajları hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.usb",
+      "includes": "hiz"
+     },
+     {
+      "path": "cevaplar.usb",
+      "includes": "dvdyok"
+     },
+     {
+      "path": "cevaplar.usb",
+      "includes": "tekrar"
+     },
+     {
+      "path": "cevaplar.usb",
+      "len_eq": 3
+     }
+    ]
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "yedek",
+   "aciklama": "Yedeklerin bulunduğu harici disk biçimlendirildi!",
+   "ceza": 50,
+   "kural": {
+    "event": "medya.baslat",
+    "where": {
+     "aygit": "harici"
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "medya": {
+    "aygit": "usb",
+    "iso": "win11",
+    "bolum": "GPT",
+    "hedef": "UEFI",
+    "dosya": "NTFS",
+    "etiket": "",
+    "durum": "bitti"
+   },
+   "yazilan": {
+    "aygit": "usb",
+    "iso": "win11",
+    "bolum": "GPT",
+    "hedef": "UEFI"
+   },
+   "cevaplar": {
+    "iso": "kalip",
+    "usb": [
+     "hiz",
+     "dvdyok",
+     "tekrar"
+    ]
+   }
+  },
+  "events": [
+   {
+    "type": "medya.baslat",
+    "t": 1,
+    "aygit": "usb",
+    "iso": "win11",
+    "bolum": "GPT",
+    "hedef": "UEFI"
+   }
+  ]
+ }
+}
