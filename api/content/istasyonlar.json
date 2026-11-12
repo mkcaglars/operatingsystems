@@ -1,0 +1,111 @@
+[
+ {
+  "id": "i1",
+  "kod": "İ1",
+  "ad": "Donanım Masası ve Hazırlık",
+  "aciklama": "Klavye, fare ve UPS seçimi; bağlantılar; kurulum öncesi hazırlık.",
+  "kazanimlar": [
+   "B1",
+   "B2",
+   "Y1"
+  ],
+  "faz": "F2"
+ },
+ {
+  "id": "i2",
+  "kod": "İ2",
+  "ad": "POST ve BIOS/UEFI",
+  "aciklama": "Açılış, bip kodları, BIOS Setup'a giriş ve ayarlar.",
+  "kazanimlar": [
+   "B3",
+   "S1",
+   "S2"
+  ],
+  "faz": "F2"
+ },
+ {
+  "id": "i3",
+  "kod": "İ3",
+  "ad": "İşletim Sistemi Seçimi",
+  "aciklama": "İşletim sistemi çeşitleri, açık kaynak, kurulum gereksinimleri.",
+  "kazanimlar": [
+   "B4",
+   "B5",
+   "B6"
+  ],
+  "faz": "F3"
+ },
+ {
+  "id": "i4",
+  "kod": "İ4",
+  "ad": "Windows 11 Kurulumu",
+  "aciklama": "Kurulum medyası hazırlama, Windows 11 kurulumu ve ilk açılış.",
+  "kazanimlar": [
+   "S3",
+   "Y2"
+  ],
+  "faz": "F3"
+ },
+ {
+  "id": "i5",
+  "kod": "İ5",
+  "ad": "Ubuntu Kurulumu",
+  "aciklama": "Ubuntu kurulumu, bölümleme, terminal ve paket yönetimi.",
+  "kazanimlar": [
+   "B5",
+   "S3",
+   "Y2"
+  ],
+  "faz": "F3"
+ },
+ {
+  "id": "i6",
+  "kod": "İ6",
+  "ad": "Ayarlar ve Kişiselleştirme",
+  "aciklama": "Denetim Masası, Ayarlar, Görev Yöneticisi, Dosya Gezgini.",
+  "kazanimlar": [
+   "B7",
+   "B8",
+   "S4",
+   "S7"
+  ],
+  "faz": "F4"
+ },
+ {
+  "id": "i7",
+  "kod": "İ7",
+  "ad": "Sürücüler ve Windows Güvenliği",
+  "aciklama": "Sürücüler, Microsoft Defender, güvenlik duvarı, hesaplar.",
+  "kazanimlar": [
+   "S5",
+   "S6",
+   "Y3"
+  ],
+  "faz": "F4"
+ },
+ {
+  "id": "i8",
+  "kod": "İ8",
+  "ad": "Uygulama Yazılımları",
+  "aciklama": "Microsoft Office, Google Chrome ve isteğe bağlı programlar.",
+  "kazanimlar": [
+   "S6",
+   "Y3"
+  ],
+  "faz": "F4"
+ },
+ {
+  "id": "i9",
+  "kod": "İ9",
+  "ad": "Arıza Giderme",
+  "aciklama": "Genel sorunlar, donanımsal çakışmalar, format ve yeniden kurulum.",
+  "kazanimlar": [
+   "B9",
+   "B10",
+   "S8",
+   "S9",
+   "Y4"
+  ],
+  "faz": "F5"
+ }
+]

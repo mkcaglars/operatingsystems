@@ -1,0 +1,310 @@
+{
+ "id": "i1-g5",
+ "istasyon": "i1",
+ "baslik": "Kurulum öncesi hazırlık",
+ "senaryo": "Okulun idari bürosundaki bilgisayara Windows 11 kurulacak. Bilgisayarda müdür yardımcısının önemli belgeleri var. Kurulumdan önce yapılması gerekenleri seç, sonra bilgisayarın Windows 11 gereksinimlerini karşılayıp karşılamadığına karar ver.",
+ "kazanimlar": [
+  "Y1",
+  "B6"
+ ],
+ "arayuz": "kurulum-oncesi",
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "ogren": [
+  "İşletim sistemi kurulurken disk biçimlendirilebilir. Bu yüzden önemli dosyalar kurulumdan ÖNCE harici bir diske ya da buluta yedeklenir.",
+  "Bilgisayarın donanım bilgileri (işlemci, RAM, disk, ekran kartı) not alınır. Böylece hem gereksinimler kontrol edilir hem de doğru sürücüler bulunur.",
+  "Kurulumdan sonra ağ kartının sürücüsü yoksa internete bağlanılamaz. Ağ sürücüsü önceden indirilip bir USB belleğe konur.",
+  "Ürün anahtarı (lisans) ve önyüklenebilir kurulum USB'si hazır olmalıdır. Kurulum sırasında elektrik kesilirse sistem bozulabilir; bilgisayar UPS'e bağlanır.",
+  "Windows 11 için en az: 1 GHz, 2 çekirdekli 64 bit işlemci; 4 GB RAM; 64 GB depolama; UEFI ve Güvenli Önyükleme; TPM 2.0; DirectX 12 uyumlu ekran kartı gerekir."
+ ],
+ "ipuclari": [
+  "Kurulum sırasında disk biçimlendirilebilir. Müdür yardımcısının belgeleri o sırada nerede olmalı?",
+  "Kurulum bittiğinde internet yoksa ağ kartının sürücüsünü nereden bulacaksın?",
+  "Gereksinim tablosundaki her satırı bilgisayarın değeriyle tek tek karşılaştır. TPM sürümüne dikkat et."
+ ],
+ "veri": {
+  "maddeler": [
+   {
+    "id": "yedek",
+    "metin": "Önemli belgeleri harici diske yedekle",
+    "dogru": true,
+    "aciklama": "Kurulumda disk biçimlendirilebilir; yedeksiz veriler kaybolur."
+   },
+   {
+    "id": "kisayol",
+    "metin": "Masaüstündeki kısayolları sil",
+    "dogru": false,
+    "aciklama": "Kurulum için gerekli değildir."
+   },
+   {
+    "id": "donanim",
+    "metin": "Donanım bilgilerini (işlemci, RAM, disk, ekran kartı) not al",
+    "dogru": true,
+    "aciklama": "Gereksinim kontrolü ve sürücüler için gerekir."
+   },
+   {
+    "id": "crack",
+    "metin": "İnternetten lisans kırma (crack) aracı indir",
+    "dogru": false,
+    "aciklama": "Yasa dışıdır ve kötü amaçlı yazılım bulaştırabilir."
+   },
+   {
+    "id": "gereksinim",
+    "metin": "Windows 11 sistem gereksinimlerini kontrol et",
+    "dogru": true,
+    "aciklama": "Bilgisayar gereksinimleri karşılamıyorsa kurulum yapılamaz."
+   },
+   {
+    "id": "surucu",
+    "metin": "Ağ kartı sürücüsünü önceden indirip USB belleğe koy",
+    "dogru": true,
+    "aciklama": "Kurulumdan sonra internete bağlanabilmek için gerekir."
+   },
+   {
+    "id": "parlaklik",
+    "metin": "Ekran parlaklığını en yükseğe ayarla",
+    "dogru": false,
+    "aciklama": "Kurulumla ilgisi yoktur."
+   },
+   {
+    "id": "lisans",
+    "metin": "Ürün anahtarını (lisans etiketini) hazırla",
+    "dogru": true,
+    "aciklama": "Kurulumda veya sonrasında etkinleştirme için gerekir."
+   },
+   {
+    "id": "usb-sil",
+    "metin": "Okuldaki bütün USB bellekleri biçimlendir",
+    "dogru": false,
+    "aciklama": "Gereksizdir; başkalarının verileri silinir."
+   },
+   {
+    "id": "medya",
+    "metin": "Önyüklenebilir Windows 11 kurulum USB'si hazırla",
+    "dogru": true,
+    "aciklama": "Kurulum bu medyadan başlatılır."
+   },
+   {
+    "id": "guc",
+    "metin": "Bilgisayarı UPS'e bağla",
+    "dogru": true,
+    "aciklama": "Kurulum sırasında elektrik kesilirse sistem bozulabilir."
+   }
+  ],
+  "bilgisayar": [
+   {
+    "id": "islemci",
+    "ad": "İşlemci",
+    "deger": "Intel Core i5-10400 — 6 çekirdek, 2,9 GHz, 64 bit"
+   },
+   {
+    "id": "ram",
+    "ad": "Bellek (RAM)",
+    "deger": "8 GB"
+   },
+   {
+    "id": "depolama",
+    "ad": "Depolama",
+    "deger": "256 GB SSD"
+   },
+   {
+    "id": "bellenim",
+    "ad": "Sistem bellenimi",
+    "deger": "UEFI, Güvenli Önyükleme destekli"
+   },
+   {
+    "id": "tpm",
+    "ad": "Güvenilir Platform Modülü",
+    "deger": "TPM 1.2"
+   },
+   {
+    "id": "ekran",
+    "ad": "Ekran kartı",
+    "deger": "DirectX 12 / WDDM 2.0 uyumlu tümleşik grafik"
+   }
+  ],
+  "gereksinimler": [
+   {
+    "id": "islemci",
+    "ad": "İşlemci",
+    "deger": "1 GHz veya üstü, en az 2 çekirdek, 64 bit"
+   },
+   {
+    "id": "ram",
+    "ad": "Bellek (RAM)",
+    "deger": "4 GB"
+   },
+   {
+    "id": "depolama",
+    "ad": "Depolama",
+    "deger": "64 GB veya üstü"
+   },
+   {
+    "id": "bellenim",
+    "ad": "Sistem bellenimi",
+    "deger": "UEFI, Güvenli Önyükleme destekli"
+   },
+   {
+    "id": "tpm",
+    "ad": "Güvenilir Platform Modülü",
+    "deger": "TPM 2.0"
+   },
+   {
+    "id": "ekran",
+    "ad": "Ekran kartı",
+    "deger": "DirectX 12 / WDDM 2.0 uyumlu"
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "yedek",
+   "aciklama": "Önemli belgeler yedeklendi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "yedek"
+   }
+  },
+  {
+   "id": "donanim",
+   "aciklama": "Donanım bilgileri not alındı",
+   "kazanimlar": [
+    "Y1",
+    "B6"
+   ],
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "donanim"
+   }
+  },
+  {
+   "id": "gereksinim",
+   "aciklama": "Sistem gereksinimleri kontrol edildi",
+   "kazanimlar": [
+    "Y1",
+    "B6"
+   ],
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "gereksinim"
+   }
+  },
+  {
+   "id": "surucu",
+   "aciklama": "Ağ sürücüsü önceden hazırlandı",
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "surucu"
+   }
+  },
+  {
+   "id": "lisans",
+   "aciklama": "Ürün anahtarı hazırlandı",
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "lisans"
+   }
+  },
+  {
+   "id": "medya",
+   "aciklama": "Kurulum USB'si hazırlandı",
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "medya"
+   }
+  },
+  {
+   "id": "guc",
+   "aciklama": "UPS ile güç güvencesi sağlandı",
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "guc"
+   }
+  },
+  {
+   "id": "karar",
+   "aciklama": "Bilgisayarın Windows 11'e uygun olmadığına doğru karar verildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B6"
+   ],
+   "kural": {
+    "path": "gereksinim.karar",
+    "eq": "uygun-degil"
+   }
+  },
+  {
+   "id": "eksik",
+   "aciklama": "Eksik gereksinim (TPM 2.0) doğru bulundu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "B6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "gereksinim.eksikler",
+      "includes": "tpm"
+     },
+     {
+      "path": "gereksinim.eksikler",
+      "len_eq": 1
+     }
+    ]
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "crack",
+   "aciklama": "Lisans kırma aracı seçildi (yasa dışı ve tehlikeli)",
+   "ceza": 40,
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "crack"
+   }
+  },
+  {
+   "id": "usb-sil",
+   "aciklama": "Gereksiz yere başkalarının verileri silinecekti",
+   "ceza": 20,
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "usb-sil"
+   }
+  },
+  {
+   "id": "gereksiz",
+   "aciklama": "Kurulumla ilgisi olmayan işlem seçildi",
+   "ceza": 10,
+   "kural": {
+    "any": [
+     {
+      "path": "hazirlik.secilen",
+      "includes": "kisayol"
+     },
+     {
+      "path": "hazirlik.secilen",
+      "includes": "parlaklik"
+     }
+    ]
+   }
+  }
+ ]
+}
