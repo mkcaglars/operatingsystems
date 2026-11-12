@@ -31,9 +31,8 @@ adımlarına, kullanımına yönelik bilgi, beceri ve yeterlilik kazandırmak.
 - Sunucu işletim sistemleri (Windows Server, Linux sunucu) — kazanımlarda yer almadığı için kapsam dışıdır.
 
 ### Görsel ve içerik ilkeleri (kararlaştırıldı)
-- **Tamamen gerçekçi görsel stil:** Donanım için **açık lisanslı fotoğraflar** (Wikimedia Commons vb., CC BY / CC BY-SA /
-  CC0); her görselin kaynağı, yazarı ve lisansı `assets/KAYNAKLAR.md` dosyasında ve sitedeki "Görsel Kaynakları" sayfasında
-  belirtilir. Donanım Windows 11, Ubuntu, BIOS/UEFI, Office ve Chrome
+- **Tamamen gerçekçi görsel stil:** Donanım ve ortam görselleri **projeye özel yapay zekâ ile üretilir**
+  (liste ve promptlar: `docs/GORSEL_PROMPTLARI.md`); lisans/atıf sorunu yoktur. Donanım Windows 11, Ubuntu, BIOS/UEFI, Office ve Chrome
   ekranları gerçeğine olabildiğince yakın canlandırılır. **Gerçek ürün adları ve logoları** kullanılır (eğitim amaçlı,
   yalnızca giriş yapan kullanıcılara açık kapalı sistem).
 - **Kapalı kaynak sistem: Windows 11.** **Açık kaynak ana dağıtım: Ubuntu** (Pardus, Linux Mint vb. yalnızca İ3'te
@@ -554,7 +553,7 @@ seçildi: **simülasyon tamamen tarayıcıda**, sunucu yalnızca **ince bir PHP 
   tabloları, bip kodu tabloları, kurgusal ürün anahtarı kalıpları. Yeni görev eklemek kod gerektirmez.
 - **Kaldığı yerden devam:** Sanal makine durumu düzenli aralıklarla sunucuya kaydedilir; öğrenci başka bilgisayardan
   girince kaldığı yerden devam eder.
-- **Gerçekçi görseller:** Donanım için açık lisanslı fotoğraflar (WebP'ye dönüştürülmüş, tembel yükleme, atıf listesiyle); işletim sistemi
+- **Gerçekçi görseller:** Donanım için projeye özel üretilmiş gerçekçi görseller (WebP/şeffaf PNG, tembel yükleme); işletim sistemi
   ve uygulama ekranları HTML/CSS ile canlandırılır (gerçek logolar, Windows 11 için Segoe UI/Fluent görünümü,
   Ubuntu için Ubuntu yazı tipi). Toplam sayfa ağırlığı istasyon bazında bölünür (her istasyon ayrı yüklenir).
 - **Dağıtım:** GitHub'a gönderilen her sürüm, GitHub Actions ile derlenip Hostinger'a (FTP/SFTP veya hPanel Git) yüklenir.
@@ -631,7 +630,7 @@ Kullanıcı portalda "İşletim Sistemleri" bağlantısına tıklar
 
 | Faz | İçerik | Çıktı |
 |---|---|---|
-| F0 | Bu dokümanın onayı; görsel kaynaklarının belirlenmesi | Onaylı tasarım |
+| F0 | Bu dokümanın onayı; görsellerin üretilmesi | Onaylı tasarım |
 | F1 | Proje iskeleti, PHP API + MySQL, kurulum sihirbazı, giriş (portal token + kullanıcı adı/şifre), çoklu öğretmen, öğretmen panelinde öğrenci/sınıf yönetimi, simülasyon çekirdeği, kural motoru (TS+PHP), Hostinger'a otomatik dağıtım | isletimsistemi.mkcaglar.com'da çalışan iskelet |
 | F2 | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
 | F3 | İ3 Seçim + İ4 Windows 11 kurulumu + İ5 Ubuntu kurulumu (terminal) | Kurulum modülleri |
@@ -681,7 +680,7 @@ tarafından değiştirilebilir.
 | 13 | Portal | **portal.mkcaglar.com** (portal dışı giriş de açık) |
 | 14 | Yazılımlar | Temel: Microsoft Office, Google Chrome; ayrıca **Windows Güvenliği (Defender) ayarları**. İsteğe bağlı (öğretmen açar/kapatır): WinRAR, Adobe Acrobat Reader, Adobe Photoshop. Başka yazılım yok |
 | 15 | Format | Öğrenci sorunlu bilgisayara her zaman format atıp yeniden kurabilir (yedek almazsa veri kaybı) |
-| 16 | Fotoğraflar | Açık lisanslı fotoğraflar, atıflarıyla |
+| 16 | Fotoğraflar | Yapay zekâ ile projeye özel üretilen gerçekçi görseller (`docs/GORSEL_PROMPTLARI.md`) |
 
 ## 11. Kalan Açık Konular
 
