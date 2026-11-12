@@ -1,0 +1,237 @@
+{
+ "id": "i3-g4",
+ "istasyon": "i3",
+ "baslik": "İhtiyaca göre işletim sistemi seçimi",
+ "arayuz": "bilgi",
+ "kazanimlar": [
+  "B4",
+  "B5"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bilişim servisine üç farklı kurumdan istek geldi. Her kurumun ihtiyacına en uygun işletim sistemini seç; seçiminin avantaj ve dezavantajını belirt.",
+ "ogren": [
+  "İşletim sistemi seçilirken bakılır: kullanılacak programlar, donanım (gereksinimler), maliyet (lisans), güvenlik, destek ve kullanıcıların alışkanlığı.",
+  "Özel bir program yalnızca bir işletim sisteminde çalışıyorsa seçimi o belirler.",
+  "Eski donanım ve sınırlı bütçede hafif, açık kaynak Linux dağıtımları iyi bir seçenektir."
+ ],
+ "ipuclari": [
+  "Önce kullanılacak programlara bak: hangi işletim sisteminde çalışıyorlar?",
+  "Eski BIOS ve TPM'siz bilgisayara Windows 11 kurulamaz."
+ ],
+ "veri": {
+  "sorular": [
+   {
+    "id": "s1",
+    "soru": "Senaryo 1 — Okul laboratuvarı: 24 eski bilgisayar (4 GB RAM, TPM yok, eski BIOS), lisans bütçesi yok. Hangisi kurulmalı?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "linux",
+      "metin": "Ubuntu ya da Pardus gibi açık kaynak bir dağıtım",
+      "dogru": true
+     },
+     {
+      "id": "win11",
+      "metin": "Windows 11",
+      "dogru": false,
+      "aciklama": "TPM ve UEFI olmadığı için kurulamaz; lisans da gerekir."
+     },
+     {
+      "id": "macos",
+      "metin": "macOS",
+      "dogru": false,
+      "aciklama": "macOS yalnızca Apple bilgisayarlarda kullanılır."
+     }
+    ]
+   },
+   {
+    "id": "s1a",
+    "soru": "Senaryo 1'deki seçimin avantajları hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "ucret",
+      "metin": "Lisans ücreti ödenmez",
+      "dogru": true
+     },
+     {
+      "id": "eski",
+      "metin": "Eski donanımda çalışabilir",
+      "dogru": true
+     },
+     {
+      "id": "photoshop",
+      "metin": "Photoshop doğrudan çalışır",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "s2",
+    "soru": "Senaryo 2 — Grafik tasarım ofisi: yeni PC'ler alındı; Adobe Photoshop ve Illustrator kullanılacak. Hangisi kurulmalı?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "win11",
+      "metin": "Windows 11",
+      "dogru": true,
+      "aciklama": "Adobe programları Windows'ta (ve macOS'ta) çalışır; ofiste PC olduğu için Windows 11."
+     },
+     {
+      "id": "linux",
+      "metin": "Ubuntu",
+      "dogru": false,
+      "aciklama": "Adobe Photoshop ve Illustrator'ın Linux sürümü yoktur."
+     },
+     {
+      "id": "android",
+      "metin": "Android",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "s3",
+    "soru": "Senaryo 3 — Muhasebe bürosu: kullandıkları muhasebe programı yalnızca Windows'ta çalışıyor. Hangisi kurulmalı?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "win11",
+      "metin": "Windows 11",
+      "dogru": true
+     },
+     {
+      "id": "linux",
+      "metin": "Pardus",
+      "dogru": false,
+      "aciklama": "Program Windows'a özel olduğu için doğrudan çalışmaz."
+     },
+     {
+      "id": "ios",
+      "metin": "iOS",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "s3d",
+    "soru": "Windows 11 seçiminin bu senaryodaki dezavantajı nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "lisans",
+      "metin": "Her bilgisayar için lisans ücreti ödenmesi gerekir",
+      "dogru": true
+     },
+     {
+      "id": "program",
+      "metin": "Muhasebe programı çalışmaz",
+      "dogru": false
+     },
+     {
+      "id": "turkce",
+      "metin": "Türkçe kullanılamaz",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "q-s1",
+   "aciklama": "Soru: Senaryo 1 — Okul laboratuvarı: 24 eski bilgisayar (4 GB RAM, TPM yok, eski BIOS), lisans bütçesi yok. Hangisi kurulmalı?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.s1",
+    "eq": "linux"
+   }
+  },
+  {
+   "id": "q-s1a",
+   "aciklama": "Soru: Senaryo 1'deki seçimin avantajları hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.s1a",
+      "includes": "ucret"
+     },
+     {
+      "path": "cevaplar.s1a",
+      "includes": "eski"
+     },
+     {
+      "path": "cevaplar.s1a",
+      "len_eq": 2
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-s2",
+   "aciklama": "Soru: Senaryo 2 — Grafik tasarım ofisi: yeni PC'ler alındı; Adobe Photoshop ve Illustrator kullanılacak. Hangisi kurulmalı?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.s2",
+    "eq": "win11"
+   }
+  },
+  {
+   "id": "q-s3",
+   "aciklama": "Soru: Senaryo 3 — Muhasebe bürosu: kullandıkları muhasebe programı yalnızca Windows'ta çalışıyor. Hangisi kurulmalı?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.s3",
+    "eq": "win11"
+   }
+  },
+  {
+   "id": "q-s3d",
+   "aciklama": "Soru: Windows 11 seçiminin bu senaryodaki dezavantajı nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.s3d",
+    "eq": "lisans"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "sira": [],
+   "cevaplar": {
+    "s1": "linux",
+    "s1a": [
+     "ucret",
+     "eski"
+    ],
+    "s2": "win11",
+    "s3": "win11",
+    "s3d": "lisans"
+   }
+  },
+  "events": []
+ }
+}

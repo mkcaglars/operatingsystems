@@ -1,0 +1,420 @@
+{
+ "id": "i3-g1",
+ "istasyon": "i3",
+ "baslik": "İşletim sistemlerini sınıflandırma",
+ "arayuz": "eslestirme",
+ "kazanimlar": [
+  "B4",
+  "B5"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bilişim panosu için bir işletim sistemleri tablosu hazırlanıyor. Her işletim sisteminin kullanım alanını ve açık/kapalı kaynak olup olmadığını işaretle.",
+ "ogren": [
+  "İşletim sistemleri kullanım alanına göre: masaüstü (kişisel bilgisayar), sunucu (ağdaki hizmetleri çalıştıran güçlü bilgisayarlar), mobil (telefon, tablet) ve gömülü (çamaşır makinesi, akıllı saat, araç sistemleri) olarak ayrılır.",
+  "Kapalı kaynak kodlu işletim sistemlerinin kaynak kodu gizlidir ve lisans ücretiyle kullanılır (Windows, macOS, iOS).",
+  "Açık kaynak kodlu sistemlerin kaynak kodu herkese açıktır; incelenebilir, değiştirilebilir ve dağıtılabilir (Ubuntu, Pardus ve diğer Linux dağıtımları, Android'in temeli AOSP, FreeRTOS)."
+ ],
+ "ipuclari": [
+  "Telefon ve tabletlerde çalışanlar 'mobil'dir.",
+  "Apple ve Microsoft'un işletim sistemlerinin kaynak kodu gizlidir.",
+  "Linux tabanlı dağıtımlar açık kaynaktır."
+ ],
+ "veri": {
+  "boyutlar": [
+   {
+    "id": "alan",
+    "ad": "Kullanım alanı",
+    "gruplar": [
+     {
+      "id": "masaustu",
+      "ad": "Masaüstü"
+     },
+     {
+      "id": "sunucu",
+      "ad": "Sunucu"
+     },
+     {
+      "id": "mobil",
+      "ad": "Mobil"
+     },
+     {
+      "id": "gomulu",
+      "ad": "Gömülü"
+     }
+    ]
+   },
+   {
+    "id": "lisans",
+    "ad": "Kaynak kodu",
+    "gruplar": [
+     {
+      "id": "acik",
+      "ad": "Açık"
+     },
+     {
+      "id": "kapali",
+      "ad": "Kapalı"
+     }
+    ]
+   }
+  ],
+  "ogeler": [
+   {
+    "id": "windows11",
+    "ad": "Windows 11",
+    "aciklama": "Microsoft",
+    "gorsel": "logo-windows11",
+    "dogru": {
+     "alan": "masaustu",
+     "lisans": "kapali"
+    }
+   },
+   {
+    "id": "macos",
+    "ad": "macOS",
+    "aciklama": "Apple",
+    "gorsel": "logo-macos",
+    "dogru": {
+     "alan": "masaustu",
+     "lisans": "kapali"
+    }
+   },
+   {
+    "id": "ubuntu",
+    "ad": "Ubuntu",
+    "aciklama": "Canonical",
+    "gorsel": "logo-ubuntu",
+    "dogru": {
+     "alan": "masaustu",
+     "lisans": "acik"
+    }
+   },
+   {
+    "id": "pardus",
+    "ad": "Pardus",
+    "aciklama": "TÜBİTAK ULAKBİM",
+    "gorsel": "logo-pardus",
+    "dogru": {
+     "alan": "masaustu",
+     "lisans": "acik"
+    }
+   },
+   {
+    "id": "android",
+    "ad": "Android",
+    "aciklama": "Google (AOSP)",
+    "gorsel": "logo-android",
+    "dogru": {
+     "alan": "mobil",
+     "lisans": "acik"
+    }
+   },
+   {
+    "id": "ios",
+    "ad": "iOS",
+    "aciklama": "Apple",
+    "gorsel": "logo-ios",
+    "dogru": {
+     "alan": "mobil",
+     "lisans": "kapali"
+    }
+   },
+   {
+    "id": "winserver",
+    "ad": "Windows Server 2025",
+    "aciklama": "Microsoft",
+    "gorsel": "logo-winserver",
+    "dogru": {
+     "alan": "sunucu",
+     "lisans": "kapali"
+    }
+   },
+   {
+    "id": "freertos",
+    "ad": "FreeRTOS",
+    "aciklama": "Çamaşır makinesi, akıllı saat gibi cihazlar",
+    "gorsel": "logo-freertos",
+    "dogru": {
+     "alan": "gomulu",
+     "lisans": "acik"
+    }
+   }
+  ],
+  "sorular": [
+   {
+    "id": "gorev",
+    "soru": "İşletim sisteminin görevleri hangileridir?",
+    "coklu": true,
+    "secenekler": [
+     {
+      "id": "donanim",
+      "metin": "Donanımı (işlemci, bellek, diskler, aygıtlar) yönetir",
+      "dogru": true
+     },
+     {
+      "id": "kopru",
+      "metin": "Kullanıcı ve uygulamalarla donanım arasında köprü kurar",
+      "dogru": true
+     },
+     {
+      "id": "dosya",
+      "metin": "Dosya ve klasörleri yönetir",
+      "dogru": true
+     },
+     {
+      "id": "belge",
+      "metin": "Mektup ve rapor yazar",
+      "dogru": false,
+      "aciklama": "Bu, kelime işlemci gibi bir uygulama yazılımının işidir."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "windows11",
+   "aciklama": "Windows 11 doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.windows11",
+      "eq": "masaustu"
+     },
+     {
+      "path": "atama.lisans.windows11",
+      "eq": "kapali"
+     }
+    ]
+   }
+  },
+  {
+   "id": "macos",
+   "aciklama": "macOS doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.macos",
+      "eq": "masaustu"
+     },
+     {
+      "path": "atama.lisans.macos",
+      "eq": "kapali"
+     }
+    ]
+   }
+  },
+  {
+   "id": "ubuntu",
+   "aciklama": "Ubuntu doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.ubuntu",
+      "eq": "masaustu"
+     },
+     {
+      "path": "atama.lisans.ubuntu",
+      "eq": "acik"
+     }
+    ]
+   }
+  },
+  {
+   "id": "pardus",
+   "aciklama": "Pardus doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.pardus",
+      "eq": "masaustu"
+     },
+     {
+      "path": "atama.lisans.pardus",
+      "eq": "acik"
+     }
+    ]
+   }
+  },
+  {
+   "id": "android",
+   "aciklama": "Android doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.android",
+      "eq": "mobil"
+     },
+     {
+      "path": "atama.lisans.android",
+      "eq": "acik"
+     }
+    ]
+   }
+  },
+  {
+   "id": "ios",
+   "aciklama": "iOS doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.ios",
+      "eq": "mobil"
+     },
+     {
+      "path": "atama.lisans.ios",
+      "eq": "kapali"
+     }
+    ]
+   }
+  },
+  {
+   "id": "winserver",
+   "aciklama": "Windows Server 2025 doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.winserver",
+      "eq": "sunucu"
+     },
+     {
+      "path": "atama.lisans.winserver",
+      "eq": "kapali"
+     }
+    ]
+   }
+  },
+  {
+   "id": "freertos",
+   "aciklama": "FreeRTOS doğru sınıflandırıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4",
+    "B5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "atama.alan.freertos",
+      "eq": "gomulu"
+     },
+     {
+      "path": "atama.lisans.freertos",
+      "eq": "acik"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-gorev",
+   "aciklama": "Soru: İşletim sisteminin görevleri hangileridir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "cevaplar.gorev",
+      "includes": "donanim"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "includes": "kopru"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "includes": "dosya"
+     },
+     {
+      "path": "cevaplar.gorev",
+      "len_eq": 3
+     }
+    ]
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "deneme",
+   "aciklama": "Seçimler çok kez değiştirildi (tahminle seçim)",
+   "ceza": 10,
+   "kural": {
+    "event": "atama",
+    "count": {
+     "gte": 40
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "atama": {
+    "alan": {
+     "windows11": "masaustu",
+     "macos": "masaustu",
+     "ubuntu": "masaustu",
+     "pardus": "masaustu",
+     "android": "mobil",
+     "ios": "mobil",
+     "winserver": "sunucu",
+     "freertos": "gomulu"
+    },
+    "lisans": {
+     "windows11": "kapali",
+     "macos": "kapali",
+     "ubuntu": "acik",
+     "pardus": "acik",
+     "android": "acik",
+     "ios": "kapali",
+     "winserver": "kapali",
+     "freertos": "acik"
+    }
+   },
+   "cevaplar": {
+    "gorev": [
+     "donanim",
+     "kopru",
+     "dosya"
+    ]
+   }
+  },
+  "events": []
+ }
+}

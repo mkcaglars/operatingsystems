@@ -1,0 +1,233 @@
+{
+ "id": "i5-g5",
+ "istasyon": "i5",
+ "baslik": "Terminalde dosya yönetimi",
+ "arayuz": "ubuntu-terminal",
+ "kazanimlar": [
+  "B8",
+  "S7",
+  "B5"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Ev dizininde düzen sağla: 1) Belgeler içinde 'Proje' adlı bir klasör oluştur. 2) İndirilenler'deki rapor.txt dosyasını Proje klasörüne TAŞI. 3) Belgeler'deki notlar.txt dosyasının Proje klasörüne bir KOPYASINI al. 4) Masaüstü'ndeki gecici.tmp dosyasını sil.",
+ "ogren": [
+  "Linux'ta her şey kök dizin (/) altındadır. Kullanıcının dosyaları ev dizinindedir: /home/<kullanıcı> (kısaca ~).",
+  "pwd: bulunduğun dizin; ls: içerik; cd: dizin değiştir; mkdir: klasör oluştur; cp: kopyala; mv: taşı ya da yeniden adlandır; rm: sil.",
+  "Yollar göreli (Belgeler/Proje) ya da mutlak (/home/ogrenci/Belgeler/Proje) yazılabilir. '..' bir üst dizindir."
+ ],
+ "ipuclari": [
+  "mkdir Belgeler/Proje",
+  "mv İndirilenler/rapor.txt Belgeler/Proje/",
+  "cp Belgeler/notlar.txt Belgeler/Proje/   ve   rm Masaüstü/gecici.tmp"
+ ],
+ "veri": {
+  "kopya": [
+   {
+    "komut": "ls",
+    "aciklama": "Dizin içeriğini listeler"
+   },
+   {
+    "komut": "cd <dizin>",
+    "aciklama": "Dizin değiştirir"
+   },
+   {
+    "komut": "mkdir <ad>",
+    "aciklama": "Klasör oluşturur"
+   },
+   {
+    "komut": "mv <kaynak> <hedef>",
+    "aciklama": "Taşır"
+   },
+   {
+    "komut": "cp <kaynak> <hedef>",
+    "aciklama": "Kopyalar"
+   },
+   {
+    "komut": "rm <dosya>",
+    "aciklama": "Siler"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "mv",
+    "soru": "'mv' ile 'cp' arasındaki fark nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "dogru",
+      "metin": "mv taşır (kaynakta kalmaz), cp kopyalar (kaynakta da kalır)",
+      "dogru": true
+     },
+     {
+      "id": "ters",
+      "metin": "mv kopyalar, cp taşır",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "rm",
+    "soru": "'rm -r' komutu neden dikkatle kullanılmalıdır?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "geri",
+      "metin": "Klasörü içindekilerle birlikte siler ve çöp kutusuna atmaz; geri alınamaz",
+      "dogru": true
+     },
+     {
+      "id": "yavas",
+      "metin": "Çok yavaş çalışır",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "klasor",
+   "aciklama": "Belgeler/Proje klasörü oluşturuldu",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B8",
+    "S7"
+   ],
+   "kural": {
+    "path": "sh.dosyalar",
+    "includes": "/home/ogrenci/Belgeler/Proje/"
+   }
+  },
+  {
+   "id": "tasi",
+   "aciklama": "rapor.txt Proje klasörüne taşındı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "sh.dosyalar",
+      "includes": "/home/ogrenci/Belgeler/Proje/rapor.txt"
+     },
+     {
+      "path": "sh.dosyalar",
+      "excludes": "/home/ogrenci/İndirilenler/rapor.txt"
+     }
+    ]
+   }
+  },
+  {
+   "id": "kopya",
+   "aciklama": "notlar.txt Proje klasörüne kopyalandı (aslı da yerinde)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "sh.dosyalar",
+      "includes": "/home/ogrenci/Belgeler/Proje/notlar.txt"
+     },
+     {
+      "path": "sh.dosyalar",
+      "includes": "/home/ogrenci/Belgeler/notlar.txt"
+     }
+    ]
+   }
+  },
+  {
+   "id": "sil",
+   "aciklama": "gecici.tmp silindi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "sh.dosyalar",
+      "includes": "/home/ogrenci/Masaüstü/"
+     },
+     {
+      "path": "sh.dosyalar",
+      "excludes": "/home/ogrenci/Masaüstü/gecici.tmp"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-mv",
+   "aciklama": "Soru: 'mv' ile 'cp' arasındaki fark nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B8"
+   ],
+   "kural": {
+    "path": "cevaplar.mv",
+    "eq": "dogru"
+   }
+  },
+  {
+   "id": "q-rm",
+   "aciklama": "Soru: 'rm -r' komutu neden dikkatle kullanılmalıdır?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B8"
+   ],
+   "kural": {
+    "path": "cevaplar.rm",
+    "eq": "geri"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "fazla",
+   "aciklama": "Başka dosya ya da klasörler de silindi",
+   "ceza": 20,
+   "kural": {
+    "any": [
+     {
+      "path": "sh.dosyalar",
+      "excludes": "/home/ogrenci/Resimler/"
+     },
+     {
+      "path": "sh.dosyalar",
+      "excludes": "/home/ogrenci/Müzik/"
+     },
+     {
+      "path": "sh.dosyalar",
+      "excludes": "/home/ogrenci/Videolar/"
+     }
+    ]
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "sh": {
+    "dosyalar": [
+     "/home/ogrenci/Belgeler/",
+     "/home/ogrenci/Belgeler/Proje/",
+     "/home/ogrenci/Belgeler/Proje/rapor.txt",
+     "/home/ogrenci/Belgeler/Proje/notlar.txt",
+     "/home/ogrenci/Belgeler/notlar.txt",
+     "/home/ogrenci/Masaüstü/",
+     "/home/ogrenci/Resimler/",
+     "/home/ogrenci/Müzik/",
+     "/home/ogrenci/Videolar/",
+     "/home/ogrenci/İndirilenler/"
+    ]
+   },
+   "cevaplar": {
+    "mv": "dogru",
+    "rm": "geri"
+   }
+  },
+  "events": []
+ }
+}

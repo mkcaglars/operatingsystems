@@ -1,0 +1,258 @@
+{
+ "id": "i5-g2",
+ "istasyon": "i5",
+ "baslik": "Ubuntu kurulumu (ayrı /home)",
+ "arayuz": "ubuntu-kurulum",
+ "kazanimlar": [
+  "S3",
+  "Y2",
+  "B5"
+ ],
+ "sure_hedef": 720,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bilişim öğretmeninin yeni bilgisayarına Ubuntu 24.04 kur. Disk boş (500 GB). Elle bölümleme yap: EFI sistem bölümü 1 GB, kök (/) 60 GB ext4, /home kalan alanın tamamı ext4. Klavye Türkçe, saat dilimi Lefkoşa. Hesap: adı 'Bilişim Öğretmeni', bilgisayar adı 'ogretmen-pc', kullanıcı adı 'ogretmen'.",
+ "ogren": [
+  "Ubuntu kurulumunda disk için üç yol vardır: diski silip kurmak, başka bir sistemle birlikte kurmak ya da elle bölümlemek.",
+  "Elle bölümlemede UEFI bilgisayar için bir EFI sistem bölümü (FAT32, /boot/efi, ~1 GB), sistem için kök bölüm (/, ext4) gerekir. /home ayrı bölüm olursa yeniden kurulumda kişisel dosyalar korunabilir.",
+  "ext4, Linux'un standart dosya sistemidir. Windows NTFS, USB bellekler genellikle FAT32/exFAT kullanır.",
+  "Kullanıcı adı küçük harfle yazılır; boşluk ve Türkçe karakter içermez."
+ ],
+ "ipuclari": [
+  "Disk ekranında 'Elle kurulum'u seç.",
+  "Boş alanı seç, ＋ ile önce 1 GB 'EFI sistem bölümü', sonra 60 GB ext4 '/' oluştur.",
+  "Kalan boş alanın tamamını ext4 '/home' yap."
+ ],
+ "veri": {
+  "disk": {
+   "ad": "/dev/sda — Samsung SSD 870 EVO 500GB",
+   "boyutGB": 476.9,
+   "bolumler": [
+    {
+     "id": "bos",
+     "ad": "boş alan",
+     "boyutGB": 476.9,
+     "fs": "bos",
+     "baglama": null,
+     "bicimlendir": false
+    }
+   ]
+  },
+  "sorular": [
+   {
+    "id": "home",
+    "soru": "/home bölümünü ayrı oluşturmanın yararı nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "koru",
+      "metin": "İşletim sistemi yeniden kurulduğunda kişisel dosyalar korunabilir",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "İnternet hızını artırır",
+      "dogru": false
+     },
+     {
+      "id": "zorunlu",
+      "metin": "Ubuntu ayrı /home olmadan kurulamaz",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "efi",
+    "soru": "EFI sistem bölümü (/boot/efi) ne işe yarar?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "onyukleme",
+      "metin": "UEFI bilgisayarda önyükleyici (GRUB) dosyalarını tutar",
+      "dogru": true
+     },
+     {
+      "id": "yedek",
+      "metin": "Yedek dosyaları tutar",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "klavye",
+   "aciklama": "Klavye düzeni Türkçe",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "ayar.klavye",
+    "eq": "Türkçe"
+   }
+  },
+  {
+   "id": "efi",
+   "aciklama": "EFI sistem bölümü (FAT32, /boot/efi) oluşturuldu",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "ozet.efi.fs",
+    "eq": "fat32"
+   }
+  },
+  {
+   "id": "kok",
+   "aciklama": "Kök (/) bölümü ext4, en az 25 GB",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S3",
+    "Y2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "ozet.kok.fs",
+      "eq": "ext4"
+     },
+     {
+      "path": "ozet.kok.boyutGB",
+      "gte": 25
+     }
+    ]
+   }
+  },
+  {
+   "id": "home",
+   "aciklama": "/home ayrı ext4 bölüm (100 GB'tan büyük)",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S3",
+    "Y2"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "ozet.home.fs",
+      "eq": "ext4"
+     },
+     {
+      "path": "ozet.home.boyutGB",
+      "gte": 100
+     }
+    ]
+   }
+  },
+  {
+   "id": "hesap",
+   "aciklama": "Hesap bilgileri doğru (ogretmen@ogretmen-pc)",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "hesap.kullanici",
+      "eq": "ogretmen"
+     },
+     {
+      "path": "hesap.bilgisayar",
+      "eq": "ogretmen-pc"
+     },
+     {
+      "path": "hesap.parola",
+      "eq": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "saat",
+   "aciklama": "Saat dilimi Lefkoşa",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S3"
+   ],
+   "kural": {
+    "path": "ayar.saatDilimi",
+    "eq": "Europe/Nicosia"
+   }
+  },
+  {
+   "id": "kurulum",
+   "aciklama": "Kurulum tamamlandı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S3",
+    "Y2"
+   ],
+   "kural": {
+    "path": "kurulum",
+    "eq": "tamam"
+   }
+  },
+  {
+   "id": "q-home",
+   "aciklama": "Soru: /home bölümünü ayrı oluşturmanın yararı nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.home",
+    "eq": "koru"
+   }
+  },
+  {
+   "id": "q-efi",
+   "aciklama": "Soru: EFI sistem bölümü (/boot/efi) ne işe yarar?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "path": "cevaplar.efi",
+    "eq": "onyukleme"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "ayar": {
+    "klavye": "Türkçe",
+    "saatDilimi": "Europe/Nicosia"
+   },
+   "ozet": {
+    "efi": {
+     "fs": "fat32",
+     "boyutGB": 1
+    },
+    "kok": {
+     "fs": "ext4",
+     "boyutGB": 60
+    },
+    "home": {
+     "fs": "ext4",
+     "boyutGB": 415.9
+    },
+    "windowsKorundu": true
+   },
+   "hesap": {
+    "kullanici": "ogretmen",
+    "bilgisayar": "ogretmen-pc",
+    "parola": true
+   },
+   "kurulum": "tamam",
+   "cevaplar": {
+    "home": "koru",
+    "efi": "onyukleme"
+   }
+  },
+  "events": []
+ }
+}

@@ -1,0 +1,277 @@
+{
+ "id": "i5-g1",
+ "istasyon": "i5",
+ "baslik": "Canlı oturumda donanımı tanıma",
+ "arayuz": "ubuntu-terminal",
+ "kazanimlar": [
+  "B5",
+  "Y1"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Ubuntu kurulum USB'si ile bilgisayarı 'Ubuntu'yu kurmadan dene' (canlı oturum) modunda açtın. Kurmadan önce donanımın tanındığını kontrol et: terminalde komutlarla RAM'i, diskleri ve ağ kartını bul, soruları yanıtla.",
+ "ogren": [
+  "Canlı (live) oturum, Ubuntu'yu bilgisayara kurmadan USB bellekten çalıştırır. Kurulumdan önce donanımın (ağ, ses, ekran) çalışıp çalışmadığı böyle denenir.",
+  "Terminal, komutlarla çalışılan penceredir. 'lsblk' diskleri, 'free -h' belleği, 'lspci' PCI aygıtlarını (ekran ve ağ kartı), 'uname -a' çekirdek sürümünü gösterir.",
+  "Linux'ta diskler sda, sdb… (NVMe disklerde nvme0n1) adlarıyla görünür. sda1, sda2 bölümlerdir."
+ ],
+ "ipuclari": [
+  "RAM için 'free -h' yaz ve 'toplam' sütununa bak.",
+  "Diskler için 'lsblk', ağ kartı için 'lspci' komutunu kullan."
+ ],
+ "veri": {
+  "canli": true,
+  "kopya": [
+   {
+    "komut": "lsblk",
+    "aciklama": "Diskleri ve bölümleri listeler"
+   },
+   {
+    "komut": "free -h",
+    "aciklama": "Bellek (RAM) kullanımını gösterir"
+   },
+   {
+    "komut": "lspci",
+    "aciklama": "Ekran kartı, ağ kartı gibi PCI aygıtlarını listeler"
+   },
+   {
+    "komut": "uname -a",
+    "aciklama": "Çekirdek (kernel) sürümünü gösterir"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "ram",
+    "soru": "Bu bilgisayarda toplam ne kadar RAM var?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "8",
+      "metin": "Yaklaşık 8 GB (7,6 GiB)",
+      "dogru": true
+     },
+     {
+      "id": "4",
+      "metin": "4 GB",
+      "dogru": false
+     },
+     {
+      "id": "16",
+      "metin": "16 GB",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "ag",
+    "soru": "Ağ kartının (Ethernet controller) üreticisi hangisidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "realtek",
+      "metin": "Realtek",
+      "dogru": true
+     },
+     {
+      "id": "intel",
+      "metin": "Intel",
+      "dogru": false,
+      "aciklama": "Intel bu bilgisayarda ekran kartının (UHD Graphics 630) üreticisi."
+     },
+     {
+      "id": "broadcom",
+      "metin": "Broadcom",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "disk",
+    "soru": "Bilgisayarın asıl diski (sda) kaç GB?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "238",
+      "metin": "238,5 GB",
+      "dogru": true
+     },
+     {
+      "id": "28",
+      "metin": "28,9 GB",
+      "dogru": false,
+      "aciklama": "Bu, sdb: canlı oturumun çalıştığı USB bellek."
+     },
+     {
+      "id": "1000",
+      "metin": "1 TB",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "usb",
+    "soru": "Canlı oturumun çalıştığı USB bellek hangi aygıt adıyla görünüyor?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "sdb",
+      "metin": "sdb",
+      "dogru": true
+     },
+     {
+      "id": "sda",
+      "metin": "sda",
+      "dogru": false
+     },
+     {
+      "id": "nvme",
+      "metin": "nvme0n1",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "lsblk",
+   "aciklama": "Diskler lsblk ile listelendi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "event": "komut",
+    "where": {
+     "ad": "lsblk"
+    }
+   }
+  },
+  {
+   "id": "free",
+   "aciklama": "Bellek free ile gösterildi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "event": "komut",
+    "where": {
+     "ad": "free"
+    }
+   }
+  },
+  {
+   "id": "lspci",
+   "aciklama": "PCI aygıtları lspci ile listelendi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B5"
+   ],
+   "kural": {
+    "event": "komut",
+    "where": {
+     "ad": "lspci"
+    }
+   }
+  },
+  {
+   "id": "q-ram",
+   "aciklama": "Soru: Bu bilgisayarda toplam ne kadar RAM var?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "cevaplar.ram",
+    "eq": "8"
+   }
+  },
+  {
+   "id": "q-ag",
+   "aciklama": "Soru: Ağ kartının (Ethernet controller) üreticisi hangisidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "cevaplar.ag",
+    "eq": "realtek"
+   }
+  },
+  {
+   "id": "q-disk",
+   "aciklama": "Soru: Bilgisayarın asıl diski (sda) kaç GB?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "cevaplar.disk",
+    "eq": "238"
+   }
+  },
+  {
+   "id": "q-usb",
+   "aciklama": "Soru: Canlı oturumun çalıştığı USB bellek hangi aygıt adıyla görünüyor?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "cevaplar.usb",
+    "eq": "sdb"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "hata",
+   "aciklama": "Çok sayıda hatalı komut yazıldı",
+   "ceza": 10,
+   "kural": {
+    "event": "komut",
+    "where": {
+     "kod": 127
+    },
+    "count": {
+     "gte": 8
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "sh": {},
+   "cevaplar": {
+    "ram": "8",
+    "ag": "realtek",
+    "disk": "238",
+    "usb": "sdb"
+   }
+  },
+  "events": [
+   {
+    "type": "komut",
+    "t": 1,
+    "ad": "lsblk",
+    "satir": "lsblk",
+    "kod": 0
+   },
+   {
+    "type": "komut",
+    "t": 2,
+    "ad": "free",
+    "satir": "free -h",
+    "kod": 0
+   },
+   {
+    "type": "komut",
+    "t": 3,
+    "ad": "lspci",
+    "satir": "lspci",
+    "kod": 0
+   }
+  ]
+ }
+}

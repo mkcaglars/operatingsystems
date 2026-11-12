@@ -10,6 +10,11 @@ import Kesinti, { initialKesinti } from './Kesinti';
 import Siralama, { initialSiralama } from './Siralama';
 import BipKodlari, { initialBipKodlari } from './BipKodlari';
 import PcBios, { initialPcBios } from './PcBios';
+import Eslestirme, { initialEslestirme } from './Eslestirme';
+import MedyaAraci, { initialMedyaAraci } from './MedyaAraci';
+import WinSetup, { initialWinSetup } from './WinSetup';
+import UbuntuKur, { initialUbuntuKur } from './UbuntuKur';
+import UbuntuTerminal, { initialUbuntuTerminal } from './UbuntuTerminal';
 
 export interface TaskUIProps {
   task: TaskDef;
@@ -33,4 +38,10 @@ export const taskUIs: Record<string, TaskUI> = {
   siralama: { initial: initialSiralama, Component: Siralama },
   'bip-kodlari': { initial: initialBipKodlari, Component: BipKodlari },
   bios: { initial: initialPcBios, Component: PcBios },
+  bilgi: { initial: initialSiralama, Component: Siralama },
+  eslestirme: { initial: initialEslestirme, Component: Eslestirme },
+  'medya-araci': { initial: initialMedyaAraci, Component: MedyaAraci },
+  'windows-kurulum': { initial: initialWinSetup, Component: WinSetup },
+  'ubuntu-kurulum': { initial: initialUbuntuKur, Component: UbuntuKur },
+  'ubuntu-terminal': { initial: initialUbuntuTerminal, Component: UbuntuTerminal },
 };

@@ -1,10 +1,19 @@
-// Sıralama + sorular görevi (ör. İ2-G1 bilgisayarın açılış zinciri ve BIOS'un görevleri).
+// Bilgi görevi: isteğe bağlı bilgi kartları (tablolar), isteğe bağlı sıralama ve sorular.
+// Kullananlar: İ2-G1 (açılış zinciri), İ3 bilgi ve karar görevleri.
+import Photo from '../components/Photo';
 import Sorular, { type Soru } from '../components/Sorular';
 import type { TaskUIProps } from './registry';
 import type { TaskDef } from '../core/types';
 
+interface Kart {
+  baslik: string;
+  gorsel?: string;
+  alt?: string;
+  satirlar: { ad: string; deger: string }[];
+}
 interface Veri {
-  siralama: { baslik: string; aciklama?: string; ogeler: { id: string; metin: string }[]; dogruSira: string[] };
+  bilgiler?: Kart[];
+  siralama?: { baslik: string; aciklama?: string; ogeler: { id: string; metin: string }[]; dogruSira: string[] };
   sorular?: Soru[];
 }
 interface State {
@@ -12,13 +21,13 @@ interface State {
   cevaplar: Record<string, string | string[]>;
 }
 
-export const initialSiralama = (task: TaskDef): State => ({ sira: (task.veri as unknown as Veri).siralama.ogeler.map((o) => o.id), cevaplar: {} });
+export const initialSiralama = (task: TaskDef): State => ({ sira: (task.veri as unknown as Veri).siralama?.ogeler.map((o) => o.id) ?? [], cevaplar: {} });
 
 export default function Siralama({ task, mode, sim }: TaskUIProps) {
   const veri = task.veri as unknown as Veri;
   const s = sim.state as State;
   const learn = mode === 'ogren';
-  const metin = (id: string) => veri.siralama.ogeler.find((o) => o.id === id)?.metin ?? id;
+  const metin = (id: string) => veri.siralama?.ogeler.find((o) => o.id === id)?.metin ?? id;
 
   const tasi = (i: number, d: -1 | 1) => {
     const j = i + d;
@@ -32,29 +41,52 @@ export default function Siralama({ task, mode, sim }: TaskUIProps) {
 
   return (
     <div className="sr">
-      <section className="card">
-        <h4>{veri.siralama.baslik}</h4>
-        {veri.siralama.aciklama && <p className="small muted">{veri.siralama.aciklama}</p>}
-        <ol className="sr-list">
-          {s.sira.map((id, i) => {
-            const fb = learn ? (veri.siralama.dogruSira[i] === id ? 'good' : 'bad') : '';
-            return (
-              <li key={id} className={fb}>
-                <span className="sr-n">{i + 1}</span>
-                <span className="sr-t">{metin(id)}</span>
-                <span className="sr-btns">
-                  <button className="btn" onClick={() => tasi(i, -1)} disabled={i === 0} aria-label="Yukarı taşı">
-                    ▲
-                  </button>
-                  <button className="btn" onClick={() => tasi(i, 1)} disabled={i === s.sira.length - 1} aria-label="Aşağı taşı">
-                    ▼
-                  </button>
-                </span>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
+      {veri.bilgiler && (
+        <div className="sr-cards">
+          {veri.bilgiler.map((k) => (
+            <section key={k.baslik} className="doc sr-card">
+              {k.gorsel && <Photo name={k.gorsel} alt={k.baslik} className="sr-img" fallback={null} />}
+              <h4>{k.baslik}</h4>
+              {k.alt && <p className="small muted">{k.alt}</p>}
+              <table>
+                <tbody>
+                  {k.satirlar.map((r) => (
+                    <tr key={r.ad}>
+                      <th>{r.ad}</th>
+                      <td>{r.deger}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          ))}
+        </div>
+      )}
+      {veri.siralama && (
+        <section className="card">
+          <h4>{veri.siralama.baslik}</h4>
+          {veri.siralama.aciklama && <p className="small muted">{veri.siralama.aciklama}</p>}
+          <ol className="sr-list">
+            {s.sira.map((id, i) => {
+              const fb = learn ? (veri.siralama!.dogruSira[i] === id ? 'good' : 'bad') : '';
+              return (
+                <li key={id} className={fb}>
+                  <span className="sr-n">{i + 1}</span>
+                  <span className="sr-t">{metin(id)}</span>
+                  <span className="sr-btns">
+                    <button className="btn" onClick={() => tasi(i, -1)} disabled={i === 0} aria-label="Yukarı taşı">
+                      ▲
+                    </button>
+                    <button className="btn" onClick={() => tasi(i, 1)} disabled={i === s.sira.length - 1} aria-label="Aşağı taşı">
+                      ▼
+                    </button>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      )}
       {veri.sorular && <Sorular sorular={veri.sorular} sim={sim} learn={learn} />}
     </div>
   );
