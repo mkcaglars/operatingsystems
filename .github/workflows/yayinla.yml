@@ -3,7 +3,7 @@
 #
 # İsteğe bağlı FTP yüklemesi (Git yerine): Settings > Secrets and variables > Actions
 #   Secrets:   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
-#   Variables: FTP_DIR  (ör. "domains/isletimsistemi.mkcaglar.com/public_html/")
+#   Variables: FTP_DIR  (ör. "domains/isistem.mkcaglar.com/public_html/")
 name: Derle ve Yayınla
 
 on:
@@ -72,7 +72,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          server-dir: ${{ vars.FTP_DIR || 'domains/isletimsistemi.mkcaglar.com/public_html/' }}
+          server-dir: ${{ vars.FTP_DIR || 'domains/isistem.mkcaglar.com/public_html/' }}
           exclude: |
             **/.git*
             **/.git*/**

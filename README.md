@@ -1,7 +1,7 @@
 # İşletim Sistemleri Sanal Laboratuvarı
 
 9. sınıf Bilişim Teknolojileri **İşletim Sistemleri** dersinin 23 kazanımını uygulamalı olarak kazandıran ve ölçen,
-web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isletimsistemi.mkcaglar.com**
+web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mkcaglar.com**
 
 - Tasarım: [docs/TASARIM.md](docs/TASARIM.md)
 - Hostinger'a kurulum (Git ile otomatik yayın): [docs/KURULUM.md](docs/KURULUM.md)

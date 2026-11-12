@@ -1,12 +1,12 @@
-# Hostinger'a Kurulum (isletimsistemi.mkcaglar.com)
+# Hostinger'a Kurulum (isistem.mkcaglar.com)
 
 Hostinger **Web / Premium / Business** (paylaşımlı) paketi yeterlidir. Simülasyon öğrencinin tarayıcısında çalışır;
 sunucuda yalnızca **PHP 8.1+** ve **MySQL** gerekir. Kurulum, C# Form Stüdyosu ile aynı adımlardan oluşur.
 
 ## 1. Alt alan adı
 
-hPanel > **Alan Adları > Alt Alan Adları** bölümünden `isletimsistemi.mkcaglar.com` oluşturun. Klasörü genellikle
-`domains/isletimsistemi.mkcaglar.com/public_html` olur.
+hPanel > **Alan Adları > Alt Alan Adları** bölümünden `isistem.mkcaglar.com` oluşturun. Klasörü genellikle
+`domains/isistem.mkcaglar.com/public_html` olur.
 
 - **SSL:** hPanel > Güvenlik > SSL bölümünden alt alan adı için sertifikanın açık olduğundan emin olun.
 - **PHP sürümü:** hPanel > Gelişmiş > PHP Yapılandırması bölümünden **8.2 veya üstünü** seçin.
@@ -21,8 +21,8 @@ Veritabanı adını, kullanıcı adını ve şifreyi not edin. Tablolar ilk iste
 `server/api/config.example.php` dosyasını kopyalayıp düzenleyin. En güvenli yer, web'den erişilemeyen bir üst klasördür:
 
 ```
-/home/u123456789/domains/isletimsistemi.mkcaglar.com/isletimsistemi-config.php      ← önerilen
-/home/u123456789/domains/isletimsistemi.mkcaglar.com/public_html/api/config.php     ← alternatif
+/home/u123456789/domains/isistem.mkcaglar.com/isletimsistemi-config.php      ← önerilen
+/home/u123456789/domains/isistem.mkcaglar.com/public_html/api/config.php     ← alternatif
 ```
 
 Uygulama önce `public_html`'in bir üstündeki `isletimsistemi-config.php` dosyasını arar, bulamazsa `api/config.php` dosyasına bakar.
@@ -45,7 +45,7 @@ Site önce derlenmelidir (`npm run build`). Hostinger paylaşımlı hostingte de
 
 1. Önce `main` dalına bir gönderim yapın (ya da GitHub > Actions > **Derle ve Yayınla** > *Run workflow*).
    İş bitince depoda **`yayin`** dalı oluşur.
-2. hPanel'de `isletimsistemi.mkcaglar.com` sitesinin `public_html` klasörünü **boşaltın** (Hostinger'ın koyduğu
+2. hPanel'de `isistem.mkcaglar.com` sitesinin `public_html` klasörünü **boşaltın** (Hostinger'ın koyduğu
    `default.php` gibi dosyaları silin). Git kurulumu yalnızca boş klasöre yapılabilir. Ayar dosyası `public_html`'in
    **üstünde** durduğu için etkilenmez.
 3. hPanel > **Gelişmiş > Git** bölümünde *Depo oluştur*:
@@ -66,7 +66,7 @@ Site önce derlenmelidir (`npm run build`). Hostinger paylaşımlı hostingte de
 ### B) FTP ile (Git yerine)
 
 GitHub deposunda **Settings > Secrets and variables > Actions** bölümüne `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`
-gizli değerlerini ve `FTP_DIR` değişkenini (ör. `domains/isletimsistemi.mkcaglar.com/public_html/`) ekleyin. İş akışı
+gizli değerlerini ve `FTP_DIR` değişkenini (ör. `domains/isistem.mkcaglar.com/public_html/`) ekleyin. İş akışı
 derlenen siteyi FTP ile de yükler. A ve B'den yalnızca birini kullanın.
 
 ### C) Elle
@@ -83,7 +83,7 @@ Oluşan `dist/` klasörünün **içindekileri** hPanel Dosya Yöneticisi ile `pu
 
 ## 5. İlk kurulum: yönetici hesabı
 
-1. `https://isletimsistemi.mkcaglar.com/kurulum.php` adresini açın.
+1. `https://isistem.mkcaglar.com/kurulum.php` adresini açın.
 2. Ayar dosyasındaki **kurulum kodunu**, adınızı, kullanıcı adınızı ve şifrenizi girin.
 3. Yönetici hesabı açılır ve öğretmen paneline yönlendirilirsiniz. Bu sayfa bundan sonra kapanır.
 
@@ -93,7 +93,7 @@ Yönetici, **Öğretmenler** sayfasından öğretmen hesaplarını açar. Her ö
 ## 6. Deneme
 
 1. Ayarlarda geçici olarak `'test_portal' => true` yapın.
-2. `https://isletimsistemi.mkcaglar.com/test-portal.php` adresinden öğrenci olarak girin; öğrenci, portalın bildirdiği
+2. `https://isistem.mkcaglar.com/test-portal.php` adresinden öğrenci olarak girin; öğrenci, portalın bildirdiği
    sınıfa otomatik eklenir.
 3. Öğretmen olarak girip öğrencinin sınıfına katılın; **Canlı izleme** ve **Kazanım raporu** sekmelerini kontrol edin.
 4. Deneme bitince `'test_portal' => false` yapın.
