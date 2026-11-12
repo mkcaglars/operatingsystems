@@ -1,0 +1,543 @@
+{
+ "durum": {
+  "bios": {
+   "bootOrder": [
+    "usb",
+    "ssd"
+   ],
+   "secureBoot": true,
+   "vt": false,
+   "sifre": null
+  },
+  "hazirlik": {
+   "secilen": [
+    "yedek",
+    "lisans"
+   ]
+  },
+  "ad": "Pencere 11",
+  "sayi": 4,
+  "liste": [],
+  "nesne": {},
+  "bos": null
+ },
+ "olaylar": [
+  {
+   "type": "bios.enter",
+   "t": 100
+  },
+  {
+   "type": "bios.set",
+   "t": 200,
+   "key": "bootOrder"
+  },
+  {
+   "type": "bios.set",
+   "t": 300,
+   "key": "vt",
+   "value": true
+  },
+  {
+   "type": "bios.save",
+   "t": 400
+  }
+ ],
+ "kurallar": [
+  {
+   "ad": "eq dizi elemanı",
+   "kural": {
+    "path": "bios.bootOrder[0]",
+    "eq": "usb"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq nokta indeks",
+   "kural": {
+    "path": "bios.bootOrder.1",
+    "eq": "ssd"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq yanlış",
+   "kural": {
+    "path": "bios.bootOrder[0]",
+    "eq": "ssd"
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "eq bool",
+   "kural": {
+    "path": "bios.secureBoot",
+    "eq": true
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq tüm dizi",
+   "kural": {
+    "path": "bios.bootOrder",
+    "eq": [
+     "usb",
+     "ssd"
+    ]
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq dizi sıra farklı",
+   "kural": {
+    "path": "bios.bootOrder",
+    "eq": [
+     "ssd",
+     "usb"
+    ]
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "eq nesne",
+   "kural": {
+    "path": "hazirlik",
+    "eq": {
+     "secilen": [
+      "yedek",
+      "lisans"
+     ]
+    }
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq sayı float",
+   "kural": {
+    "path": "sayi",
+    "eq": 4.0
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq string-sayı farklı",
+   "kural": {
+    "path": "sayi",
+    "eq": "4"
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "eq null",
+   "kural": {
+    "path": "bos",
+    "eq": null
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq olmayan yol",
+   "kural": {
+    "path": "yok.burada",
+    "eq": null
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "neq",
+   "kural": {
+    "path": "ad",
+    "neq": "Ubuntu"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "neq olmayan yol geçer",
+   "kural": {
+    "path": "yok",
+    "neq": "x"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "in",
+   "kural": {
+    "path": "ad",
+    "in": [
+     "Ubuntu",
+     "Pencere 11"
+    ]
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "in yok",
+   "kural": {
+    "path": "ad",
+    "in": [
+     "Ubuntu"
+    ]
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "gte",
+   "kural": {
+    "path": "sayi",
+    "gte": 4
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "gt",
+   "kural": {
+    "path": "sayi",
+    "gt": 4
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "lt string değil",
+   "kural": {
+    "path": "ad",
+    "lt": 5
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "exists true",
+   "kural": {
+    "path": "bios.vt",
+    "exists": true
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "exists null",
+   "kural": {
+    "path": "bos",
+    "exists": false
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "exists olmayan",
+   "kural": {
+    "path": "yok",
+    "exists": false
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "includes dizi",
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "yedek"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "includes dizi yok",
+   "kural": {
+    "path": "hazirlik.secilen",
+    "includes": "crack"
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "includes string",
+   "kural": {
+    "path": "ad",
+    "includes": "11"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "includes nesne üzerinde",
+   "kural": {
+    "path": "bios",
+    "includes": "usb"
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "excludes",
+   "kural": {
+    "path": "hazirlik.secilen",
+    "excludes": "crack"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "excludes var",
+   "kural": {
+    "path": "hazirlik.secilen",
+    "excludes": "lisans"
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "len_eq",
+   "kural": {
+    "path": "hazirlik.secilen",
+    "len_eq": 2
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "len_gte string (Türkçe)",
+   "kural": {
+    "path": "ad",
+    "len_gte": 10
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "len boş dizi",
+   "kural": {
+    "path": "liste",
+    "len_eq": 0
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "eq boş dizi boş nesne",
+   "kural": {
+    "path": "nesne",
+    "eq": []
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "all",
+   "kural": {
+    "all": [
+     {
+      "path": "sayi",
+      "eq": 4
+     },
+     {
+      "path": "bios.vt",
+      "eq": false
+     }
+    ]
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "any",
+   "kural": {
+    "any": [
+     {
+      "path": "sayi",
+      "eq": 5
+     },
+     {
+      "path": "bios.vt",
+      "eq": false
+     }
+    ]
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "not",
+   "kural": {
+    "not": {
+     "path": "sayi",
+     "eq": 5
+    }
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "event var",
+   "kural": {
+    "event": "bios.save"
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "event where",
+   "kural": {
+    "event": "bios.set",
+    "where": {
+     "key": "vt",
+     "value": true
+    }
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "event where yanlış",
+   "kural": {
+    "event": "bios.set",
+    "where": {
+     "key": "vt",
+     "value": false
+    }
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "event where eksik alan",
+   "kural": {
+    "event": "bios.set",
+    "where": {
+     "value": true
+    },
+    "count": {
+     "eq": 1
+    }
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "event count",
+   "kural": {
+    "event": "bios.set",
+    "count": {
+     "eq": 2
+    }
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "event count gte",
+   "kural": {
+    "event": "bios.set",
+    "count": {
+     "gte": 3
+    }
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "event yok",
+   "kural": {
+    "event": "os.install"
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "event yok count eq 0",
+   "kural": {
+    "event": "os.install",
+    "count": {
+     "eq": 0
+    }
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "before",
+   "kural": {
+    "before": [
+     "bios.set",
+     "bios.save"
+    ]
+   },
+   "beklenen": true
+  },
+  {
+   "ad": "before ters",
+   "kural": {
+    "before": [
+     "bios.save",
+     "bios.set"
+    ]
+   },
+   "beklenen": false
+  },
+  {
+   "ad": "before ikinci yok",
+   "kural": {
+    "before": [
+     "bios.enter",
+     "os.install"
+    ]
+   },
+   "beklenen": true
+  }
+ ],
+ "gorev": {
+  "id": "t",
+  "istasyon": "i0",
+  "baslik": "x",
+  "senaryo": "x",
+  "arayuz": "x",
+  "veri": null,
+  "kazanimlar": [
+   "S2",
+   "B3",
+   "Y1"
+  ],
+  "sure_hedef": 100,
+  "ipucu_cezasi": 5,
+  "kriterler": [
+   {
+    "id": "a",
+    "aciklama": "a",
+    "agirlik": 2,
+    "kazanimlar": [
+     "S2"
+    ],
+    "kural": {
+     "path": "bios.bootOrder[0]",
+     "eq": "usb"
+    }
+   },
+   {
+    "id": "b",
+    "aciklama": "b",
+    "kazanimlar": [
+     "S2",
+     "B3"
+    ],
+    "kural": {
+     "path": "bios.vt",
+     "eq": true
+    }
+   },
+   {
+    "id": "c",
+    "aciklama": "c",
+    "kural": {
+     "event": "bios.save"
+    }
+   }
+  ],
+  "hatalar": [
+   {
+    "id": "h",
+    "aciklama": "h",
+    "ceza": 15,
+    "kural": {
+     "path": "bios.secureBoot",
+     "eq": true
+    }
+   }
+  ]
+ },
+ "puanlama": [
+  {
+   "ad": "süre içinde, ipucusuz",
+   "sure": 80,
+   "ipucu": 0
+  },
+  {
+   "ad": "süre aşımı",
+   "sure": 150,
+   "ipucu": 0
+  },
+  {
+   "ad": "çok geç + ipucu",
+   "sure": 400,
+   "ipucu": 2
+  },
+  {
+   "ad": "yarım saniye yuvarlama",
+   "sure": 117.5,
+   "ipucu": 1
+  }
+ ]
+}
