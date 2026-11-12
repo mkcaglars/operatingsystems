@@ -1,0 +1,273 @@
+{
+ "id": "i9-g1",
+ "istasyon": "i9",
+ "baslik": "Disk bulunamadı (SATA kablosu)",
+ "arayuz": "bios",
+ "kazanimlar": [
+  "B9",
+  "S8",
+  "Y4"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Servise gelen bilgisayar açılınca Windows yerine siyah ekranda 'Reboot and Select proper Boot device' yazıyor. Kullanıcı, bilgisayarı geçen hafta toz almak için açtıklarını söylüyor. Sorunu BIOS'ta teşhis et, gideriş işlemini yap ve Windows'un açıldığını gör. BIOS ayarlarını gereksiz yere değiştirme.",
+ "ogren": [
+  "'Reboot and Select proper Boot device' mesajı, BIOS'un önyükleme sırasındaki aygıtlarda başlatılabilir bir işletim sistemi bulamadığını gösterir.",
+  "Önce BIOS Setup'ta diskin görünüp görünmediğine bakılır (Advanced › Storage / SATA Port). Disk 'Not Present' ise sorun donanımsaldır: kablo, güç ya da disk arızası.",
+  "Kasa açılmadan önce bilgisayar kapatılır ve fişi çekilir. Gevşek SATA veri ya da güç kablosu yerine oturtulur.",
+  "Disk görünüyor ama açılmıyorsa önyükleme sırası, SATA modu ya da işletim sistemi bozulması araştırılır."
+ ],
+ "ipuclari": [
+  "Bilgisayarı aç; açılışta Setup tuşuna basıp Advanced sekmesinde SATA Port 1'e bak.",
+  "Disk 'Not Present' görünüyor: bilgisayarı kapat ve donanım panelinden SATA kablosunu yerine tak.",
+  "Bilgisayarı yeniden aç ve Windows'un yüklendiğini gör."
+ ],
+ "veri": {
+  "cmos": {
+   "tarih": "2026-03-02",
+   "saat": "09:40:00",
+   "bootOrder": [
+    "ssd",
+    "usb",
+    "pxe"
+   ],
+   "sata": "AHCI",
+   "vt": false,
+   "ses": true,
+   "lan": true,
+   "fastBoot": false,
+   "usbBoot": true,
+   "csm": false,
+   "adminSifre": false,
+   "secureBoot": true,
+   "tpm": true
+  },
+  "aygitlar": [
+   {
+    "id": "ssd",
+    "ad": "Windows Boot Manager (Samsung SSD 870 EVO 500GB)"
+   },
+   {
+    "id": "usb",
+    "ad": "UEFI: SanDisk Cruzer Blade 32GB, Partition 1"
+   },
+   {
+    "id": "pxe",
+    "ad": "UEFI: PXE IPv4 Realtek PCIe GbE Family Controller"
+   }
+  ],
+  "usbTakili": false,
+  "diskSata": "AHCI",
+  "bilgi": {
+   "anakart": "ASUS PRIME B560M-A",
+   "bios": "1601 x64",
+   "islemci": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+   "bellek": "16384 MB (DDR4)"
+  },
+  "diskYok": "kablo",
+  "donanim": [
+   {
+    "id": "kablo",
+    "ad": "SATA veri kablosunu yerine oturt",
+    "gorsel": "sata-kablo-gevsek",
+    "aciklama": "Kasa yan kapağını aç; SSD'nin SATA veri kablosu gevşemiş. Kabloyu hem diske hem anakarttaki SATA 1 yuvasına 'klik' sesi gelene kadar it."
+   }
+  ],
+  "sorular": [
+   {
+    "id": "mesaj",
+    "soru": "'Reboot and Select proper Boot device' mesajı neyi gösterir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "disk",
+      "metin": "BIOS, önyüklenebilir bir disk ya da medya bulamadı",
+      "dogru": true
+     },
+     {
+      "id": "virus",
+      "metin": "Windows'a virüs bulaştı",
+      "dogru": false,
+      "aciklama": "Bu mesaj işletim sistemi yüklenmeden önce, BIOS aşamasında çıkar."
+     },
+     {
+      "id": "ram",
+      "metin": "Bellek (RAM) arızalı",
+      "dogru": false,
+      "aciklama": "RAM arızası genellikle bip kodlarıyla bildirilir."
+     }
+    ]
+   },
+   {
+    "id": "once",
+    "soru": "Bilgisayarın içinde kablo takıp çıkarmadan önce ne yapılmalıdır?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kapat",
+      "metin": "Bilgisayar kapatılır ve güç kablosu çıkarılır",
+      "dogru": true
+     },
+     {
+      "id": "uyku",
+      "metin": "Bilgisayar uyku moduna alınır",
+      "dogru": false
+     },
+     {
+      "id": "gerek",
+      "metin": "Hiçbir şey; çalışırken takılabilir",
+      "dogru": false,
+      "aciklama": "SATA veri kablosu çalışırken takılıp çıkarılmamalı; elektrik çarpması ve donanım hasarı riski vardır."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "teshis",
+   "aciklama": "BIOS Setup'a girilip disk durumuna bakıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9",
+    "S8"
+   ],
+   "kural": {
+    "before": [
+     "setup.gir",
+     "donanim.kablo"
+    ]
+   }
+  },
+  {
+   "id": "kablo",
+   "aciklama": "SATA kablosu yerine takıldı",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "event": "donanim.kablo"
+   }
+  },
+  {
+   "id": "acilis",
+   "aciklama": "Windows açıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "path": "sonAcilis",
+    "eq": "os"
+   }
+  },
+  {
+   "id": "q-mesaj",
+   "aciklama": "Soru: 'Reboot and Select proper Boot device' mesajı neyi gösterir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.mesaj",
+    "eq": "disk"
+   }
+  },
+  {
+   "id": "q-once",
+   "aciklama": "Soru: Bilgisayarın içinde kablo takıp çıkarmadan önce ne yapılmalıdır?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "path": "cevaplar.once",
+    "eq": "kapat"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sata",
+   "aciklama": "SATA modu değiştirildi (Windows açılmaz hâle gelebilir)",
+   "ceza": 20,
+   "kural": {
+    "path": "cmos.sata",
+    "neq": "AHCI"
+   }
+  },
+  {
+   "id": "secure",
+   "aciklama": "Gereksiz yere Güvenli Önyükleme kapatıldı",
+   "ceza": 10,
+   "kural": {
+    "path": "cmos.secureBoot",
+    "eq": false
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "ekran": "os",
+   "cmos": {
+    "tarih": "2026-03-02",
+    "saat": "09:40:00",
+    "bootOrder": [
+     "ssd",
+     "usb",
+     "pxe"
+    ],
+    "sata": "AHCI",
+    "vt": false,
+    "ses": true,
+    "lan": true,
+    "fastBoot": false,
+    "usbBoot": true,
+    "csm": false,
+    "adminSifre": false,
+    "secureBoot": true,
+    "tpm": true
+   },
+   "setup": null,
+   "sifreDeger": null,
+   "sonAcilis": "os",
+   "donanim": {
+    "kablo": true
+   },
+   "cevaplar": {
+    "mesaj": "disk",
+    "once": "kapat"
+   }
+  },
+  "events": [
+   {
+    "type": "pc.guc",
+    "t": 500,
+    "acik": true
+   },
+   {
+    "type": "acilis",
+    "t": 4000,
+    "aygit": "yok",
+    "sonuc": "bootfail"
+   },
+   {
+    "type": "setup.gir",
+    "t": 8000
+   },
+   {
+    "type": "donanim.kablo",
+    "t": 20000
+   },
+   {
+    "type": "acilis",
+    "t": 30000,
+    "aygit": "ssd",
+    "sonuc": "os"
+   }
+  ]
+ }
+}

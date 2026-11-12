@@ -52,7 +52,7 @@ export default function App() {
   if (!user || first === 'giris') {
     page = user ? <Redirect to={isStaff(user) ? 'ogretmen' : ''} /> : <Login />;
   } else if (first === 'gorev' && route.path[1]) {
-    page = <TaskPage taskId={route.path[1]} />;
+    page = <TaskPage key={route.path[1]} taskId={route.path[1]} />;
   } else if (first === 'hesap') {
     page = <Account />;
   } else if (first === 'ogretmen') {

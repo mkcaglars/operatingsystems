@@ -9,6 +9,8 @@ interface Veri {
   canli?: boolean;
   /** ev dizinine eklenecek dosyalar (ör. İndirilenler/google-chrome-stable_current_amd64.deb) */
   ekDosyalar?: string[];
+  /** Arıza: GRUB menüsünde Windows yok (os-prober kapalı) */
+  grubArizasi?: boolean;
   kopya?: { komut: string; aciklama: string }[];
   sorular?: Soru[];
 }
@@ -21,7 +23,7 @@ export const initialUbuntuTerminal = (task: TaskDef): State => {
   const v = task.veri as unknown as Veri;
   let sh = v.canli ? defaultShell('ubuntu', 'ubuntu') : defaultShell();
   for (const f of v.ekDosyalar ?? []) sh = exec(sh, `touch ${f}`).state;
-  sh = { ...sh, history: [] };
+  sh = { ...sh, history: [], ...(v.grubArizasi ? { grub: { windows: false, osProber: false } } : {}) };
   return { sh, cevaplar: {} };
 };
 

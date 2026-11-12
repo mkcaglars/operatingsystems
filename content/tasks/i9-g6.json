@@ -1,0 +1,192 @@
+{
+ "id": "i9-g6",
+ "istasyon": "i9",
+ "baslik": "Çift önyüklemede Windows görünmüyor",
+ "arayuz": "ubuntu-terminal",
+ "kazanimlar": [
+  "B9",
+  "S8",
+  "Y4"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bu bilgisayarda Windows 11 ve Ubuntu birlikte kurulu. Ubuntu güncellemesinden sonra açılışta Windows seçeneği kayboldu; bilgisayar doğrudan Ubuntu'ya açılıyor. Windows silinmedi. Terminalden önyükleme menüsünü düzelt: os-prober'ı etkinleştir ve GRUB yapılandırmasını yeniden oluştur.",
+ "ogren": [
+  "Çift önyüklemeli (dual boot) bilgisayarda açılış menüsünü Ubuntu'nun önyükleyicisi GRUB gösterir.",
+  "GRUB, diğer işletim sistemlerini 'os-prober' aracıyla bulur. Yeni sürümlerde güvenlik nedeniyle os-prober varsayılan olarak kapalıdır (GRUB_DISABLE_OS_PROBER).",
+  "Ayarlar /etc/default/grub dosyasındadır; düzenledikten sonra 'sudo update-grub' ile menü yeniden oluşturulur.",
+  "Sistem dosyalarını düzenlemek root yetkisi ister: sudo nano /etc/default/grub."
+ ],
+ "ipuclari": [
+  "Önce durumu gör: cat /etc/default/grub ve sudo os-prober.",
+  "sudo nano /etc/default/grub ile GRUB_DISABLE_OS_PROBER=false satırını etkinleştir.",
+  "sudo update-grub çalıştır; çıktıda 'Found Windows Boot Manager' görmelisin."
+ ],
+ "veri": {
+  "grubArizasi": true,
+  "kopya": [
+   {
+    "komut": "cat /etc/default/grub",
+    "aciklama": "GRUB ayarlarını gösterir"
+   },
+   {
+    "komut": "sudo os-prober",
+    "aciklama": "Diğer işletim sistemlerini arar"
+   },
+   {
+    "komut": "sudo nano /etc/default/grub",
+    "aciklama": "GRUB ayar dosyasını düzenler"
+   },
+   {
+    "komut": "sudo update-grub",
+    "aciklama": "Önyükleme menüsünü yeniden oluşturur"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "grub",
+    "soru": "GRUB nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "onyukleyici",
+      "metin": "Ubuntu'nun önyükleyicisi: açılışta hangi işletim sisteminin başlatılacağını seçtiren menü",
+      "dogru": true
+     },
+     {
+      "id": "dosya",
+      "metin": "Bir dosya sistemi türü",
+      "dogru": false
+     },
+     {
+      "id": "paket",
+      "metin": "Paket yöneticisi",
+      "dogru": false,
+      "aciklama": "Ubuntu'nun paket yöneticisi apt'tir."
+     }
+    ]
+   },
+   {
+    "id": "guncelle",
+    "soru": "/etc/default/grub dosyası değiştirildikten sonra neden 'sudo update-grub' çalıştırılır?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "uret",
+      "metin": "Değişikliklerin önyükleme menüsüne (grub.cfg) yazılması için",
+      "dogru": true
+     },
+     {
+      "id": "indir",
+      "metin": "GRUB'un yeni sürümünü indirmek için",
+      "dogru": false
+     },
+     {
+      "id": "gerek",
+      "metin": "Gerekmez, değişiklik hemen geçerli olur",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "prober",
+   "aciklama": "os-prober etkinleştirildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "path": "sh.grub.osProber",
+    "eq": true
+   }
+  },
+  {
+   "id": "windows",
+   "aciklama": "Windows önyükleme menüsüne eklendi (update-grub)",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "path": "sh.grub.windows",
+    "eq": true
+   }
+  },
+  {
+   "id": "teshis",
+   "aciklama": "Önce durum incelendi (cat / os-prober)",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "any": [
+     {
+      "event": "komut",
+      "where": {
+       "ad": "os-prober"
+      }
+     },
+     {
+      "event": "komut",
+      "where": {
+       "ad": "cat"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-grub",
+   "aciklama": "Soru: GRUB nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.grub",
+    "eq": "onyukleyici"
+   }
+  },
+  {
+   "id": "q-guncelle",
+   "aciklama": "Soru: /etc/default/grub dosyası değiştirildikten sonra neden 'sudo update-grub' çalıştırılır?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "path": "cevaplar.guncelle",
+    "eq": "uret"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "sh": {
+    "grub": {
+     "windows": true,
+     "osProber": true
+    }
+   },
+   "cevaplar": {
+    "grub": "onyukleyici",
+    "guncelle": "uret"
+   }
+  },
+  "events": [
+   {
+    "type": "komut",
+    "t": 5000,
+    "ad": "cat",
+    "satir": "cat /etc/default/grub",
+    "kod": 0
+   }
+  ]
+ }
+}

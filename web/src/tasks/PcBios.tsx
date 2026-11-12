@@ -30,6 +30,8 @@ interface Veri {
   bilgi: { anakart: string; bios: string; islemci: string; bellek: string };
   postHata?: { mesaj: string; tus: string; kosul: Rule };
   donanim?: { id: string; ad: string; gorsel?: string; aciklama: string; sifirla?: Partial<Cmos> }[];
+  /** Bu donanım işlemi yapılana kadar disk (SSD) bağlı değildir (ör. gevşek SATA kablosu) */
+  diskYok?: string;
   sorular?: Soru[];
 }
 interface State {
@@ -65,7 +67,7 @@ const EN_DIS = [
 ];
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-function items(tab: number, c: Cmos, v: Veri): Item[] {
+function items(tab: number, c: Cmos, v: Veri, diskVar: boolean): Item[] {
   switch (tab) {
     case 0: {
       const d = new Date(c.tarih + 'T00:00:00');
@@ -85,6 +87,8 @@ function items(tab: number, c: Cmos, v: Veri): Item[] {
     case 1:
       return [
         { kind: 'head', label: 'Storage Configuration' },
+        { kind: 'info', label: 'SATA Port 1', value: diskVar ? 'Samsung SSD 870 EVO 500GB (500.1GB)' : 'Not Present' },
+        { kind: 'info', label: 'SATA Port 2', value: 'Not Present' },
         { kind: 'enum', label: 'SATA Mode Selection', key: 'sata', opts: ['AHCI', 'IDE', 'RAID'].map((x) => ({ v: x, l: x })), help: 'Determines how SATA controller(s) operate.', tr: 'SATA denetleyicisinin çalışma modu. İşletim sistemi kurulduktan sonra değiştirilirse sistem açılmayabilir.' },
         { kind: 'head', label: 'CPU Configuration' },
         { kind: 'enum', label: 'Intel Virtualization Technology', key: 'vt', opts: EN_DIS, help: 'When enabled, a VMM can utilize the additional hardware capabilities provided by Vanderpool Technology.', tr: 'Sanallaştırma (VT-x). Sanal makine yazılımları için açılır.' },
@@ -141,7 +145,8 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
   const postMs = mode === 'ogren' ? 7000 : mode === 'uygula' ? 4000 : 3000;
 
   const c = s.setup ?? s.cmos;
-  const list = useMemo(() => items(tab, c, veri), [tab, c, veri]);
+  const diskVar = !veri.diskYok || !!s.donanim[veri.diskYok];
+  const list = useMemo(() => items(tab, c, veri, diskVar), [tab, c, veri, diskVar]);
   const ad = (id: string) => veri.aygitlar.find((a) => a.id === id)?.ad ?? id;
 
   // ---------- Önyükleme ----------
@@ -157,6 +162,7 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
           break;
         }
       } else if (id === 'ssd') {
+        if (veri.diskYok && !st.donanim[veri.diskYok]) continue;
         aygit = id;
         sonuc = veri.diskSata && st.cmos.sata !== veri.diskSata ? 'bsod' : 'os';
         break;
@@ -371,12 +377,12 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
         return (
           <div className="bios-popup center">
             <div className="bp-title">Please select boot device:</div>
-            {veri.aygitlar.map((a) => (
+            {veri.aygitlar.filter((a) => a.id !== 'ssd' || diskVar).map((a) => (
               <button
                 key={a.id}
                 className="bp-opt"
                 onClick={() => {
-                  const sonuc: Ekran = a.id === 'usb' ? (veri.usbTakili && s.cmos.usbBoot ? 'kurulum' : 'bootfail') : a.id === 'ssd' ? (veri.diskSata && s.cmos.sata !== veri.diskSata ? 'bsod' : 'os') : 'bootfail';
+                  const sonuc: Ekran = a.id === 'usb' ? (veri.usbTakili && s.cmos.usbBoot ? 'kurulum' : 'bootfail') : a.id === 'ssd' ? (!diskVar ? 'bootfail' : veri.diskSata && s.cmos.sata !== veri.diskSata ? 'bsod' : 'os') : 'bootfail';
                   sim.act('bootmenu.sec', { aygit: a.id, sonuc }, (x: State) => ({ ...x, ekran: sonuc, sonAcilis: sonuc }));
                 }}
               >

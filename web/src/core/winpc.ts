@@ -21,7 +21,14 @@ export interface Aygit {
   id: string;
   kategori: string;
   ad: string;
-  durum: 'ok' | 'surucu-yok' | 'devre-disi';
+  durum: 'ok' | 'surucu-yok' | 'devre-disi' | 'cakisma';
+  /** Kod 12: kaynak çakışması yaşadığı aygıt (o devre dışı kalınca bu çalışır) */
+  cakisan?: string;
+  /** Yeni yüklenen hatalı sürücü: normal açılışta mavi ekran verir */
+  sorunluSurucu?: boolean;
+  /** "Sürücüyü Geri Al" ile dönülebilecek önceki sürüm */
+  oncekiSurucu?: string;
+  surucuSurum?: string;
   /** sürücü yokken görünen ad (ör. "Ethernet Denetleyicisi") */
   bilinmeyenAd?: string;
   /** doğru sürücü klasörünün kimliği */
@@ -81,6 +88,10 @@ export interface WinPc {
   varsayilan: { tarayici: string; pdf: string };
   zararli: string[];
   belirti: { reklam: boolean };
+  /** Açılış durumu: normal masaüstü, mavi ekran, Windows Kurtarma Ortamı, Güvenli Mod */
+  acilis: 'normal' | 'bsod' | 'kurtarma' | 'guvenli';
+  /** "Bu bilgisayarı sıfırla" yapıldı mı ve nasıl */
+  sifirlama: '' | 'koru' | 'hepsi';
   // ---- Kurallar için türetilmiş alanlar ----
   dosyalar: string[];
   kurulu: string[];
@@ -95,6 +106,8 @@ export interface WinPc {
   uyariSayisi: number;
   sahteKaynakli: string[];
   bilesenler: Record<string, string[]>;
+  devreDisi: string[];
+  internet: boolean;
 }
 
 export const KULLANICI = 'C:/Kullanıcılar/Ogrenci';
@@ -175,6 +188,8 @@ export function defaultPc(): WinPc {
     varsayilan: { tarayici: 'edge', pdf: 'edge' },
     zararli: [],
     belirti: { reklam: false },
+    acilis: 'normal',
+    sifirlama: '',
     dosyalar: [],
     kurulu: [],
     etkinUygulamalar: [],
@@ -188,6 +203,8 @@ export function defaultPc(): WinPc {
     uyariSayisi: 0,
     sahteKaynakli: [],
     bilesenler: {},
+    devreDisi: [],
+    internet: true,
   });
 }
 
@@ -211,7 +228,11 @@ export function derive(pc: WinPc): WinPc {
   pc.kurulu = pc.uygulamalar.map((u) => u.id);
   pc.etkinUygulamalar = pc.uygulamalar.filter((u) => u.etkin).map((u) => u.id);
   pc.bozukUygulamalar = pc.uygulamalar.filter((u) => u.bozuk).map((u) => u.id);
-  pc.sorunluAygitlar = pc.aygitlar.filter((a) => a.durum !== 'ok').map((a) => a.id);
+  // Kod 12: çakıştığı aygıt devre dışı bırakılınca kaynak serbest kalır
+  for (const a of pc.aygitlar) if (a.durum === 'cakisma' && a.cakisan && pc.aygitlar.find((b) => b.id === a.cakisan)?.durum === 'devre-disi') a.durum = 'ok';
+  pc.sorunluAygitlar = pc.aygitlar.filter((a) => a.durum === 'surucu-yok' || a.durum === 'cakisma' || a.sorunluSurucu).map((a) => a.id);
+  pc.devreDisi = pc.aygitlar.filter((a) => a.durum === 'devre-disi').map((a) => a.id);
+  pc.internet = pc.aygitlar.find((a) => a.id === 'lan')?.durum === 'ok';
   pc.acikBaslangic = pc.baslangic.filter((b) => b.acik).map((b) => b.id);
   pc.surecAdlari = pc.surecler.map((s) => s.id);
   pc.yoneticiler = pc.hesaplar.filter((h) => h.tur === 'yonetici').map((h) => h.ad);
@@ -269,4 +290,43 @@ export function gorunenAd(pc: WinPc, path: string): string {
 
 export function clonePc(pc: WinPc): WinPc {
   return JSON.parse(JSON.stringify(pc));
+}
+
+/** Yeniden başlatma: hatalı sürücü varsa normal açılış mavi ekranla biter */
+export function yenidenBaslat(pc: WinPc, mod: 'normal' | 'guvenli' = 'normal'): WinPc {
+  pc.acilis = mod === 'guvenli' ? 'guvenli' : pc.aygitlar.some((a) => a.sorunluSurucu) ? 'bsod' : 'normal';
+  return pc;
+}
+
+/** "Bu bilgisayarı sıfırla": Windows yeniden yüklenir. "koru": kişisel dosyalar kalır (profildeki zararlı da kalır);
+ *  "hepsi": kişisel dosyalar, programlar ve zararlılar silinir. D:, E: gibi diğer sürücülere dokunulmaz. */
+export function sifirla(pc0: WinPc, secenek: 'koru' | 'hepsi'): WinPc {
+  const pc = clonePc(pc0);
+  const temiz = defaultPc();
+  pc.uygulamalar = temiz.uygulamalar;
+  pc.baslangic = temiz.baslangic;
+  pc.surecler = temiz.surecler;
+  pc.guvenlik = temiz.guvenlik;
+  pc.varsayilan = temiz.varsayilan;
+  pc.ekran = temiz.ekran;
+  pc.fare = temiz.fare;
+  pc.guc = temiz.guc;
+  pc.explorer = temiz.explorer;
+  pc.geriYukleme = [];
+  for (const a of pc.aygitlar) a.sorunluSurucu = false;
+  for (const k of Object.keys(pc.fs)) if (k.startsWith('C:/Windows/System32/svchost32')) delete pc.fs[k];
+  if (secenek === 'hepsi') {
+    for (const k of Object.keys(pc.fs)) if (k.startsWith('C:')) delete pc.fs[k];
+    Object.assign(pc.fs, Object.fromEntries(Object.entries(temiz.fs).filter(([k]) => k.startsWith('C:'))));
+    pc.zararli = [];
+    pc.belirti = { reklam: false };
+  } else {
+    // profildeki zararlı geri gelir: dosyalarımı koru seçeneği bu tür bulaşmayı temizlemez
+    pc.zararli = pc.zararli.filter((z) => z === 'profil');
+    pc.belirti = { reklam: pc.zararli.length > 0 };
+    if (pc.zararli.length) pc.surecler.push({ id: 'profil', ad: 'WindowsUpdateHelper.exe', cpu: 31.0, ram: 640 });
+  }
+  pc.sifirlama = secenek;
+  pc.acilis = 'normal';
+  return derive(pc);
 }

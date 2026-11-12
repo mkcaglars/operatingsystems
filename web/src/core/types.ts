@@ -52,6 +52,16 @@ export interface Station {
   faz: string;
 }
 
+export interface Campaign {
+  id: string;
+  kod: string;
+  ad: string;
+  aciklama: string;
+  kazanimlar: string[];
+  /** Sırayla yapılacak görevler */
+  adimlar: string[];
+}
+
 export interface Outcome {
   kod: string;
   tur: 'Bilgi' | 'Beceri' | 'Yeterlilik';

@@ -19,6 +19,7 @@ export default function DosyaGezgini(ctx: AppCtx) {
   const [ad, setAd] = useState<{ path: string; value: string } | null>(null);
   const [gorunum, setGorunum] = useState(false);
   const [hata, setHata] = useState('');
+  const [pano, setPano] = useState<string | null>(null);
   const surucler = Object.keys(pc.fs).filter((p) => /^[A-Z]:$/.test(p));
   const ogeler = children(pc, yol).filter((p) => pc.explorer.gizli || !pc.fs[p].gizli);
 
@@ -79,6 +80,24 @@ export default function DosyaGezgini(ctx: AppCtx) {
     setAd(null);
   };
 
+  const yapistir = () => {
+    if (!pano || !pc.fs[pano]) return;
+    let hedef = `${yol}/${adOf(pano)}`;
+    if (yol === pano || yol.startsWith(pano + '/')) {
+      setHata('Hedef klasör, kaynak klasörün bir alt klasörü.');
+      return;
+    }
+    // Aynı klasöre yapıştırma → "- Kopya"; başka yerde aynı adlı öğe varsa Windows gibi birleştir/üzerine yaz
+    if (parentOf(pano) === yol) for (let i = 2; pc.fs[hedef]; i++) hedef = `${yol}/${adOf(pano).replace(/(\.[^.]+)?$/, ` - Kopya (${i})$1`)}`;
+    setHata('');
+    const kaynak = pano;
+    act('dosya.kopyala', { kaynak, hedef }, (p) => {
+      for (const k of Object.keys(p.fs)) if (k === kaynak || k.startsWith(kaynak + '/')) p.fs[hedef + k.slice(kaynak.length)] = { ...p.fs[k] };
+      return p;
+    });
+    setSec(hedef);
+  };
+
   const sil = () => {
     if (!sec) return;
     act('dosya.sil', { yol: sec }, (p) => {
@@ -98,6 +117,12 @@ export default function DosyaGezgini(ctx: AppCtx) {
         <span className="sep" />
         <button className="ws-link" disabled={!sec} onClick={() => sec && setAd({ path: sec, value: pc.explorer.uzanti || pc.fs[sec]?.tur === 'klasor' ? adOf(sec) : gorunenAd(pc, sec) })} title="Yeniden adlandır">
           ✎ Yeniden adlandır
+        </button>
+        <button className="ws-link" disabled={!sec} onClick={() => sec && (setPano(sec), ctx.log('dosya.pano', { yol: sec }))} title="Kopyala">
+          ⧉ Kopyala
+        </button>
+        <button className="ws-link" disabled={!pano} onClick={yapistir} title="Yapıştır">
+          📋 Yapıştır
         </button>
         <button className="ws-link" disabled={!sec} onClick={sil} title="Sil">
           🗑 Sil
@@ -136,7 +161,7 @@ export default function DosyaGezgini(ctx: AppCtx) {
           <div className="fe-nav-h">Bu bilgisayar</div>
           {surucler.map((d) => (
             <button key={d} className={yol === d ? 'on' : ''} onClick={() => (setYol(d), setSec(null))}>
-              💽 {d === 'C:' ? 'Yerel Disk (C:)' : d === 'D:' ? 'Veri (D:)' : `USB Sürücü (${d})`}
+              {d === 'C:' ? '💽 Yerel Disk (C:)' : d === 'D:' ? '💽 Veri (D:)' : `🔌 USB Sürücü (${d})`}
             </button>
           ))}
         </nav>
@@ -181,6 +206,7 @@ export default function DosyaGezgini(ctx: AppCtx) {
       </div>
       <div className="fe-status">
         {ogeler.length} öğe{sec ? ' · 1 öğe seçildi' : ''} — çift tıklayarak aç/çalıştır
+        {pano && <span className="fe-clip">Panoda: {adOf(pano)}</span>}
       </div>
     </div>
   );

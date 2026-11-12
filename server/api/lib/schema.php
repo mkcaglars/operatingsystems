@@ -2,7 +2,7 @@
 // Veritabanı tablolarını ilk kullanımda otomatik oluşturur (SQLite ve MySQL/MariaDB).
 declare(strict_types=1);
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 function schema_migrate(PDO $pdo): void
 {
@@ -72,6 +72,18 @@ function schema_migrate(PDO $pdo): void
             events $big NULL,
             final_state $big NULL)$eng",
         "CREATE INDEX " . ($sqlite ? 'IF NOT EXISTS ' : '') . "attempts_user_task ON attempts (user_id, task_id)",
+        // Servis biletleri: öğretmenin ders sırasında öğrenciye gönderdiği görev/arıza (sürüm 2)
+        "CREATE TABLE IF NOT EXISTS commands (
+            id $pk,
+            user_id INT NOT NULL,
+            class_id INT NOT NULL,
+            task_id VARCHAR(40) NOT NULL,
+            mesaj VARCHAR(255) NOT NULL DEFAULT '',
+            gonderen_id INT NOT NULL,
+            created_at VARCHAR(19) NOT NULL,
+            okundu TINYINT NOT NULL DEFAULT 0,
+            tamam TINYINT NOT NULL DEFAULT 0)$eng",
+        "CREATE INDEX " . ($sqlite ? 'IF NOT EXISTS ' : '') . "commands_user ON commands (user_id, tamam)",
         // Canlı izleme
         "CREATE TABLE IF NOT EXISTS presence (
             user_id INT PRIMARY KEY,

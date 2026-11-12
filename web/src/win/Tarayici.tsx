@@ -67,7 +67,7 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
     setUrl(u);
     setAdres(u.startsWith('ara:') ? '' : u);
     setModal(false);
-    ctx.log('tarayici.git', { url: u });
+    ctx.log('tarayici.git', { url: u, cevrimici: pc.internet });
   };
   const ara = (e: FormEvent) => {
     e.preventDefault();
@@ -108,6 +108,20 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
   };
 
   function sayfa() {
+    if (!pc.internet && url !== 'yeni')
+      return (
+        <div className="br-offline">
+          <div className="dino">{ctx.chrome ? '🦖' : '🏄'}</div>
+          <h2>İnternete bağlı değilsiniz</h2>
+          <p>Deneyebilecekleriniz:</p>
+          <ul>
+            <li>Ağ kablolarını, modemi ve yönlendiriciyi denetleme</li>
+            <li>Ağ bağdaştırıcısının etkin olduğunu denetleme</li>
+            <li>Windows Ağ Tanılama'yı çalıştırma</li>
+          </ul>
+          <p className="small muted">{ctx.chrome ? 'ERR_INTERNET_DISCONNECTED' : 'DNS_PROBE_FINISHED_NO_INTERNET'}</p>
+        </div>
+      );
     if (url === 'yeni')
       return (
         <div className="br-new">

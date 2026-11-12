@@ -1,9 +1,10 @@
 // Windows 11 Ayarlar uygulaması (sadeleştirilmiş, gerçek menü yapısına uygun).
 import { useState, type ReactNode } from 'react';
+import { sifirla } from '../core/winpc';
 import { Toggle, type AppCtx } from './Masaustu';
 
 type Sayfa =
-  | 'sistem' | 'ekran' | 'guc' | 'hakkinda'
+  | 'sistem' | 'ekran' | 'guc' | 'hakkinda' | 'kurtarma'
   | 'cihazlar' | 'fare'
   | 'kisisel' | 'arkaplan' | 'renkler'
   | 'uygulamalar' | 'yuklu' | 'varsayilan' | 'varsayilan-app' | 'baslangic'
@@ -23,7 +24,7 @@ const NAV: [Sayfa, string, string][] = [
 ];
 
 const KOK: Record<Sayfa, Sayfa> = {
-  sistem: 'sistem', ekran: 'sistem', guc: 'sistem', hakkinda: 'sistem',
+  sistem: 'sistem', ekran: 'sistem', guc: 'sistem', hakkinda: 'sistem', kurtarma: 'sistem',
   cihazlar: 'cihazlar', fare: 'cihazlar',
   kisisel: 'kisisel', arkaplan: 'kisisel', renkler: 'kisisel',
   uygulamalar: 'uygulamalar', yuklu: 'uygulamalar', varsayilan: 'uygulamalar', 'varsayilan-app': 'uygulamalar', baslangic: 'uygulamalar',
@@ -56,6 +57,7 @@ export default function Ayarlar(ctx: AppCtx) {
   const [dlg, setDlg] = useState<{ t: 'tur' | 'kaldir' | 'onar'; id: string } | null>(null);
   const [metin, setMetin] = useState(pc.ekran.metin);
   const [mesaj, setMesaj] = useState('');
+  const [sf, setSf] = useState<{ adim: 'secim' | 'kaynak' | 'onay'; secenek: 'koru' | 'hepsi'; kaynak: 'bulut' | 'yerel' } | null>(null);
   const git = (s: Sayfa) => {
     setSayfa(s);
     setMesaj('');
@@ -63,7 +65,7 @@ export default function Ayarlar(ctx: AppCtx) {
   };
 
   const baslik: Record<Sayfa, string> = {
-    sistem: 'Sistem', ekran: 'Sistem  ›  Ekran', guc: 'Sistem  ›  Güç', hakkinda: 'Sistem  ›  Hakkında',
+    sistem: 'Sistem', ekran: 'Sistem  ›  Ekran', guc: 'Sistem  ›  Güç', hakkinda: 'Sistem  ›  Hakkında', kurtarma: 'Sistem  ›  Kurtarma',
     cihazlar: 'Bluetooth ve cihazlar', fare: 'Bluetooth ve cihazlar  ›  Fare',
     kisisel: 'Kişiselleştirme', arkaplan: 'Kişiselleştirme  ›  Arka plan', renkler: 'Kişiselleştirme  ›  Renkler',
     uygulamalar: 'Uygulamalar', yuklu: 'Uygulamalar  ›  Yüklü uygulamalar', varsayilan: 'Uygulamalar  ›  Varsayılan uygulamalar', 'varsayilan-app': 'Uygulamalar  ›  Varsayılan uygulamalar', baslangic: 'Uygulamalar  ›  Başlangıç',
@@ -79,6 +81,7 @@ export default function Ayarlar(ctx: AppCtx) {
           <>
             <Row t="Ekran" d="Monitörler, parlaklık, gece ışığı, ölçek" onClick={() => git('ekran')} />
             <Row t="Güç" d="Uyku, pil kullanımı, ekranı kapatma" onClick={() => git('guc')} />
+            <Row t="Kurtarma" d="Sıfırlama, gelişmiş başlangıç, geri dön" onClick={() => git('kurtarma')} />
             <Row t="Hakkında" d="Cihaz özellikleri, bilgisayarı yeniden adlandır, Windows belirtimleri" onClick={() => git('hakkinda')} />
           </>
         );
@@ -359,6 +362,22 @@ export default function Ayarlar(ctx: AppCtx) {
             </select>
           </Row>
         );
+      case 'kurtarma':
+        return (
+          <>
+            <div className="s-group">Kurtarma seçenekleri</div>
+            <Row t="Bu bilgisayarı sıfırla" d="Kişisel dosyalarınızı tutmayı veya kaldırmayı seçin, ardından Windows'u yeniden yükleyin">
+              <button className="ws-btn" onClick={() => (setSf({ adim: 'secim', secenek: 'koru', kaynak: 'yerel' }), ctx.log('sifirla.basla', {}))}>
+                Bilgisayarı sıfırla
+              </button>
+            </Row>
+            <Row t="Gelişmiş başlangıç" d="Cihaz veya disk (USB sürücüsü ya da DVD gibi) ile başlatma, Windows başlangıç ayarlarını değiştirme ya da Windows'u bir sistem görüntüsünden geri yükleme">
+              <button className="ws-btn" onClick={() => act('kurtarma.gelismis-baslangic', {}, (p) => ((p.acilis = 'kurtarma'), p))}>
+                Şimdi yeniden başlat
+              </button>
+            </Row>
+          </>
+        );
       case 'gizlilik':
         return <Row t="Windows Güvenliği" d="Virüsten koruma, tarayıcı, güvenlik duvarı ve ağ koruması" onClick={() => ctx.open('guvenlik')} />;
       case 'update':
@@ -402,6 +421,81 @@ export default function Ayarlar(ctx: AppCtx) {
         <h2>{baslik[sayfa]}</h2>
         {icerik()}
       </main>
+      {sf && (
+        <div className="ws-modal">
+          <div className="ws-dlg sf-dlg">
+            <div className="ws-h">Bu bilgisayarı sıfırla</div>
+            {sf.adim === 'secim' && (
+              <>
+                <b>Bir seçenek belirleyin</b>
+                <button className="dm-choice" onClick={() => setSf({ ...sf, adim: 'kaynak', secenek: 'koru' })}>
+                  <b>Dosyalarımı koru</b>
+                  <small>Uygulamaları ve ayarları kaldırır, ancak kişisel dosyalarınızı tutar.</small>
+                </button>
+                <button className="dm-choice" onClick={() => setSf({ ...sf, adim: 'kaynak', secenek: 'hepsi' })}>
+                  <b>Her şeyi kaldır</b>
+                  <small>Kişisel dosyalarınızın, uygulamalarınızın ve ayarlarınızın tümünü kaldırır.</small>
+                </button>
+                <div className="ws-foot">
+                  <button className="ws-btn" onClick={() => setSf(null)}>
+                    İptal
+                  </button>
+                </div>
+              </>
+            )}
+            {sf.adim === 'kaynak' && (
+              <>
+                <b>Windows'u nasıl yeniden yüklemek istersiniz?</b>
+                <button className="dm-choice" onClick={() => setSf({ ...sf, adim: 'onay', kaynak: 'bulut' })}>
+                  <b>Bulut indirmesi</b>
+                  <small>Windows'u indirin ve yeniden yükleyin (4 GB'tan fazla veri kullanabilir).</small>
+                </button>
+                <button className="dm-choice" onClick={() => setSf({ ...sf, adim: 'onay', kaynak: 'yerel' })}>
+                  <b>Yerel olarak yeniden yükle</b>
+                  <small>Windows'u bu cihazdan yeniden yükleyin.</small>
+                </button>
+                <div className="ws-foot">
+                  <button className="ws-btn" onClick={() => setSf({ ...sf, adim: 'secim' })}>
+                    Geri
+                  </button>
+                </div>
+              </>
+            )}
+            {sf.adim === 'onay' && (
+              <>
+                <b>Bu bilgisayarı sıfırlamaya hazır</b>
+                <p className="small">Sıfırlama işlemi şunları yapacak:</p>
+                <ul className="small">
+                  {sf.secenek === 'hepsi' && <li>Bu bilgisayardaki tüm kişisel dosyaları ve kullanıcı hesaplarını kaldırır</li>}
+                  <li>Tüm uygulamaları ve programları kaldırır</li>
+                  <li>Ayarları varsayılan değerlerine döndürür</li>
+                  <li>Windows'u {sf.kaynak === 'bulut' ? 'buluttan indirerek' : 'bu cihazdan'} yeniden yükler</li>
+                  {sf.secenek === 'koru' && <li>Kişisel dosyalarınızı tutar</li>}
+                </ul>
+                <p className="small muted">Diğer sürücülerdeki (D:, USB bellek) dosyalar etkilenmez. Bu işlem geri alınamaz.</p>
+                {sf.kaynak === 'bulut' && !pc.internet && <p className="err-text small">Bulut indirmesi için internet bağlantısı gerekir.</p>}
+                <div className="ws-foot">
+                  <button
+                    className="ws-btn primary"
+                    disabled={sf.kaynak === 'bulut' && !pc.internet}
+                    onClick={() => {
+                      const { secenek, kaynak } = sf;
+                      setSf(null);
+                      act('sifirla', { secenek, kaynak }, (p) => sifirla(p, secenek));
+                      ctx.close('ayarlar');
+                    }}
+                  >
+                    Sıfırla
+                  </button>
+                  <button className="ws-btn" onClick={() => setSf(null)}>
+                    İptal
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
       {dlg && (
         <div className="ws-modal">
           <div className="ws-dlg">

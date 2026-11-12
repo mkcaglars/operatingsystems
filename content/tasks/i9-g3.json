@@ -1,0 +1,295 @@
+{
+ "id": "i9-g3",
+ "istasyon": "i9",
+ "baslik": "Mavi ekran ve Güvenli Mod",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "B9",
+  "S8",
+  "Y4"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "Öğrenci dün akşam ekran kartı için internetten yeni bir sürücü yüklemiş. Bilgisayar artık her açılışta mavi ekran veriyor. Windows Kurtarma Ortamı'nı kullanarak Güvenli Mod'da aç, sorunu yaratan sürücüyü geri al ve bilgisayarı normal şekilde yeniden başlat. Kişisel dosyalar silinmemeli.",
+ "ogren": [
+  "Mavi ekran (BSOD), Windows'un çekirdek düzeyinde kurtarılamayan bir hatayla durduğunu gösterir. Ekrandaki 'durdurma kodu' ve 'başarısız olan' dosya adı ipucu verir (ör. nvlddmkm.sys → NVIDIA ekran kartı sürücüsü).",
+  "Windows art arda başlatılamazsa Otomatik Onarım ve Windows Kurtarma Ortamı (WinRE) açılır: Gelişmiş seçenekler › Sorun gider › Gelişmiş seçenekler.",
+  "Başlangıç Ayarları › 4) Güvenli Modu etkinleştir: Windows yalnızca temel sürücülerle açılır; hatalı sürücü yüklenmez.",
+  "Güvenli Mod'da Aygıt Yöneticisi › aygıt › 'Sürücüyü Geri Al' önceki çalışan sürücüye döner. Sistem Geri Yükleme de bir seçenektir. Sıfırlama son çaredir."
+ ],
+ "ipuclari": [
+  "Mavi ekrandaki 'Başarısız olan' dosyasına bak; Otomatik Onarım ekranını bekle.",
+  "Gelişmiş seçenekler › Sorun gider › Gelişmiş seçenekler › Başlangıç Ayarları › Yeniden başlat › 4.",
+  "Güvenli Mod'da Aygıt Yöneticisi › NVIDIA GeForce GTX 1650 › Sürücüyü Geri Al; sonra Başlat › Güç › Yeniden başlat."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "aygit",
+   "ayarlar",
+   "dosya"
+  ],
+  "pc": {
+   "acilis": "bsod",
+   "aygitlar": [
+    {
+     "id": "cpu",
+     "kategori": "İşlemciler",
+     "ad": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+     "durum": "ok"
+    },
+    {
+     "id": "disk",
+     "kategori": "Disk sürücüleri",
+     "ad": "Samsung SSD 870 EVO 500GB",
+     "durum": "ok"
+    },
+    {
+     "id": "gpu",
+     "kategori": "Görüntü bağdaştırıcıları",
+     "ad": "NVIDIA GeForce GTX 1650",
+     "durum": "ok",
+     "sorunluSurucu": true,
+     "surucuSurum": "32.0.15.6094 (beta)",
+     "oncekiSurucu": "31.0.15.3623"
+    },
+    {
+     "id": "lan",
+     "kategori": "Ağ bağdaştırıcıları",
+     "ad": "Realtek PCIe GbE Family Controller",
+     "durum": "ok"
+    },
+    {
+     "id": "ses",
+     "kategori": "Ses, video ve oyun denetleyicileri",
+     "ad": "Realtek High Definition Audio",
+     "durum": "ok"
+    },
+    {
+     "id": "klavye",
+     "kategori": "Klavyeler",
+     "ad": "HID Klavye Aygıtı",
+     "durum": "ok"
+    },
+    {
+     "id": "fare",
+     "kategori": "Fareler ve diğer işaret aygıtları",
+     "ad": "HID uyumlu fare",
+     "durum": "ok"
+    }
+   ],
+   "geriYukleme": [
+    "1.03.2026 08:55 — Otomatik Geri Yükleme Noktası"
+   ]
+  },
+  "sorular": [
+   {
+    "id": "guvenli",
+    "soru": "Güvenli Mod nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "asgari",
+      "metin": "Windows'un yalnızca temel sürücü ve hizmetlerle başlatıldığı sorun giderme modu",
+      "dogru": true
+     },
+     {
+      "id": "sifir",
+      "metin": "Windows'u fabrika ayarlarına döndüren mod",
+      "dogru": false,
+      "aciklama": "Bu, 'Bu bilgisayarı sıfırla'dır."
+     },
+     {
+      "id": "virus",
+      "metin": "Virüslerin otomatik silindiği mod",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "neden",
+    "soru": "Mavi ekranın en olası nedeni neydi?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "surucu",
+      "metin": "Yeni yüklenen ekran kartı sürücüsü",
+      "dogru": true
+     },
+     {
+      "id": "ram",
+      "metin": "Bellek yetersizliği",
+      "dogru": false
+     },
+     {
+      "id": "disk",
+      "metin": "Diskin dolması",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "kurtarma",
+   "aciklama": "Güvenli Mod ya da Sistem Geri Yükleme kullanıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "any": [
+     {
+      "event": "kurtarma.guvenli-mod"
+     },
+     {
+      "event": "kurtarma.geri-yukle"
+     }
+    ]
+   }
+  },
+  {
+   "id": "surucu",
+   "aciklama": "Hatalı ekran kartı sürücüsü geri alındı",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.surecAdlari",
+      "len_gte": 1
+     },
+     {
+      "path": "pc.sorunluAygitlar",
+      "len_eq": 0
+     },
+     {
+      "any": [
+       {
+        "event": "surucu.geri-al"
+       },
+       {
+        "event": "kurtarma.geri-yukle"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "normal",
+   "aciklama": "Bilgisayar normal modda açıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acilis",
+      "eq": "normal"
+     },
+     {
+      "any": [
+       {
+        "event": "pc.yeniden-baslat"
+       },
+       {
+        "event": "kurtarma.geri-yukle"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-guvenli",
+   "aciklama": "Soru: Güvenli Mod nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.guvenli",
+    "eq": "asgari"
+   }
+  },
+  {
+   "id": "q-neden",
+   "aciklama": "Soru: Mavi ekranın en olası nedeni neydi?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.neden",
+    "eq": "surucu"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sifirla",
+   "aciklama": "Gereksiz yere bilgisayar sıfırlandı (programlar silindi)",
+   "ceza": 30,
+   "kural": {
+    "path": "pc.sifirlama",
+    "in": [
+     "koru",
+     "hepsi"
+    ]
+   }
+  },
+  {
+   "id": "gpu",
+   "aciklama": "Ekran kartı devre dışı bırakıldı (sorun gizlendi, çözülmedi)",
+   "ceza": 15,
+   "kural": {
+    "path": "pc.devreDisi",
+    "includes": "gpu"
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "surecAdlari": [
+     "explorer"
+    ],
+    "sorunluAygitlar": [],
+    "acilis": "normal",
+    "devreDisi": [],
+    "sifirlama": ""
+   },
+   "cevaplar": {
+    "guvenli": "asgari",
+    "neden": "surucu"
+   }
+  },
+  "events": [
+   {
+    "type": "kurtarma.otomatik-onarim",
+    "t": 3000
+   },
+   {
+    "type": "kurtarma.guvenli-mod",
+    "t": 20000,
+    "secenek": 4
+   },
+   {
+    "type": "surucu.geri-al",
+    "t": 60000,
+    "aygit": "gpu"
+   },
+   {
+    "type": "pc.yeniden-baslat",
+    "t": 70000,
+    "mod": "normal"
+   }
+  ]
+ }
+}

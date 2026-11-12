@@ -22,6 +22,8 @@ export interface ShellState {
   sudocular: string[];
   history: string[];
   sistem: { ram: string; disk: string; cpu: string; ag: string; ekran: string; ip: string };
+  /** Çift önyükleme: GRUB menüsünde Windows girişi var mı (update-grub ile os-prober çalışınca) */
+  grub: { windows: boolean; osProber: boolean };
 }
 
 export interface ExecResult {
@@ -51,7 +53,9 @@ export function defaultShell(user = 'ogrenci', host = 'lab-pc'): ShellState {
     cwd: `/home/${user}`,
     fs: dir({
       home: dir({ [user]: home }),
-      etc: dir({ hostname: file(host + '\n'), 'os-release': file('PRETTY_NAME="Ubuntu 24.04.1 LTS"\nNAME="Ubuntu"\nVERSION_ID="24.04"\n') }),
+      etc: dir({
+        default: dir({ grub: file('GRUB_DEFAULT=0\nGRUB_TIMEOUT_STYLE=hidden\nGRUB_TIMEOUT=0\nGRUB_CMDLINE_LINUX_DEFAULT="quiet splash"\n#GRUB_DISABLE_OS_PROBER=false\n') }),
+        hostname: file(host + '\n'), 'os-release': file('PRETTY_NAME="Ubuntu 24.04.1 LTS"\nNAME="Ubuntu"\nVERSION_ID="24.04"\n') }),
       tmp: dir(),
       usr: dir({ bin: dir() }),
       var: dir({ log: dir() }),
@@ -62,6 +66,7 @@ export function defaultShell(user = 'ogrenci', host = 'lab-pc'): ShellState {
       { name: user, groups: [user, 'adm', 'sudo'] },
     ],
     apt: { guncel: false, yukseltildi: false, bekleyen: 0, kurulu: [] },
+    grub: { windows: true, osProber: true },
     dosyalar: [],
     kullanicilar: [],
     sudocular: [],
@@ -164,12 +169,13 @@ const PKGS: Record<string, { ad: string; boyut: string }> = {
   'google-chrome-stable': { ad: 'google-chrome-stable', boyut: '112 MB' },
 };
 
-export const COMMANDS = ['pwd', 'ls', 'cd', 'mkdir', 'touch', 'cat', 'cp', 'mv', 'rm', 'rmdir', 'echo', 'whoami', 'hostname', 'uname', 'lsblk', 'lspci', 'lsusb', 'free', 'df', 'ip', 'ping', 'sudo', 'apt', 'adduser', 'deluser', 'passwd', 'usermod', 'groups', 'id', 'clear', 'history', 'help', 'man', 'date'];
+export const COMMANDS = ['update-grub', 'os-prober', 'nano', 'pwd', 'ls', 'cd', 'mkdir', 'touch', 'cat', 'cp', 'mv', 'rm', 'rmdir', 'echo', 'whoami', 'hostname', 'uname', 'lsblk', 'lspci', 'lsusb', 'free', 'df', 'ip', 'ping', 'sudo', 'apt', 'adduser', 'deluser', 'passwd', 'usermod', 'groups', 'id', 'clear', 'history', 'help', 'man', 'date'];
 
 const HELP = `Kullanılabilen komutlar (eğitsel simülasyon):
   Dosya:     pwd  ls [-l] [-a]  cd  mkdir [-p]  touch  cat  cp [-r]  mv  rm [-r]  rmdir
   Sistem:    whoami  hostname  uname -a  date  lsblk  lspci  lsusb  free -h  df -h  ip a  ping -c 4 <adres>
   Paketler:  sudo apt update   sudo apt upgrade   sudo apt install <paket>
+  Önyükleme: sudo os-prober   sudo update-grub   cat /etc/default/grub
   Kullanıcı: sudo adduser <ad>  sudo passwd <ad>  sudo usermod -aG <grup> <ad>  groups [ad]  id [ad]  sudo deluser <ad>
   Diğer:     clear  history  man <komut>  help`;
 
@@ -484,6 +490,29 @@ export function exec(prev: ShellState, line: string): ExecResult {
       if (!u) return err(`${cmd}: '${name}': böyle bir kullanıcı yok`);
       if (cmd === 'groups') return R(`${params[0] ? name + ' : ' : ''}${u.groups.join(' ')}`);
       return R(`uid=${1000 + s.users.indexOf(u) - 1}(${name}) gid=${1000 + s.users.indexOf(u) - 1}(${name}) gruplar=${u.groups.map((g, i) => `${1000 + i}(${g})`).join(',')}`);
+    }
+    case 'os-prober':
+      if (!root) return err('os-prober: root yetkisi gerekli (sudo os-prober)');
+      return R('/dev/sda1@/efi/Microsoft/Boot/bootmgfw.efi:Windows Boot Manager:Windows:efi');
+    case 'update-grub': {
+      if (!root) return err('/usr/sbin/grub-mkconfig: Önce root olmalısınız. (sudo update-grub)');
+      const lines = ['Sourcing file `/etc/default/grub\'', 'Generating grub configuration file ...', 'Found linux image: /boot/vmlinuz-6.8.0-45-generic', 'Found initrd image: /boot/initrd.img-6.8.0-45-generic'];
+      if (s.grub.osProber) {
+        s.grub.windows = true;
+        lines.push('Found Windows Boot Manager on /dev/sda1@/efi/Microsoft/Boot/bootmgfw.efi', 'Adding boot menu entry for UEFI Firmware Settings ...');
+      } else lines.push('Warning: os-prober will not be executed to detect other bootable partitions.', 'Systems on them will not be added to the GRUB boot configuration.', "Check GRUB_DISABLE_OS_PROBER documentation entry.");
+      lines.push('done');
+      return R(lines.join('\n'));
+    }
+    case 'nano': {
+      const f = params[0];
+      if (f !== '/etc/default/grub') return err('nano: bu simülasyonda yalnızca /etc/default/grub düzenlenebilir.');
+      if (!root) return err('[ /etc/default/grub dosyası yazmak için açılamadı: Erişim engellendi ] (sudo nano kullanın)');
+      // Eğitsel kısayol: düzenleyici yerine os-prober satırını açar
+      s.grub.osProber = true;
+      const n = getNode(s.fs, '/etc/default/grub');
+      if (n && n.t === 'f') n.v = n.v.replace('#GRUB_DISABLE_OS_PROBER=false', 'GRUB_DISABLE_OS_PROBER=false').replace('GRUB_DISABLE_OS_PROBER=true', 'GRUB_DISABLE_OS_PROBER=false');
+      return R('[ /etc/default/grub kaydedildi ] GRUB_DISABLE_OS_PROBER=false satırı etkinleştirildi.\n(Değişikliğin geçerli olması için: sudo update-grub)');
     }
     default:
       return R(`${cmd}: komut bulunamadı${COMMANDS.length ? '\n(Kullanılabilen komutlar için: help)' : ''}`, 127);

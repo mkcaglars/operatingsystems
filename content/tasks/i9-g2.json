@@ -1,0 +1,257 @@
+{
+ "id": "i9-g2",
+ "istasyon": "i9",
+ "baslik": "Donanım çakışması (Kod 12)",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "B10",
+  "S9",
+  "Y4"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Müşteri bilgisayarına yeni bir PCI Express ses kartı (Creative Sound Blaster) taktırmış; ancak kart çalışmıyor ve Aygıt Yöneticisi'nde sarı ünlem var. Hatanın kodunu bul, çakışmayı gider ve yeni kartın düzgün çalışmasını sağla.",
+ "ogren": [
+  "Aygıt Yöneticisi, donanımların durumunu gösterir. Sarı ünlem (⚠) sorunlu aygıtı işaret eder; Özellikler › Genel'de hata kodu yazar.",
+  "Kod 28: sürücü yok. Kod 22: aygıt devre dışı. Kod 12: aygıt kullanabileceği boş kaynak (IRQ, G/Ç adresi, bellek) bulamıyor; başka bir aygıtla çakışıyor.",
+  "Aynı işi yapan iki aygıt çakışıyorsa kullanılmayan aygıt (çoğu zaman anakarttaki tümleşik aygıt) devre dışı bırakılır ya da BIOS'tan kapatılır.",
+  "Sorunu çözmeyen aygıtı devre dışı bırakmak ya da kaldırmak çözüm değildir: yeni kart yine çalışmaz."
+ ],
+ "ipuclari": [
+  "Aygıt Yöneticisi'nde sarı ünlemli aygıta çift tıkla ve hata kodunu oku.",
+  "Çakışan aygıt, anakart üzerindeki Realtek High Definition Audio.",
+  "Realtek aygıtını açıp 'Aygıtı devre dışı bırak' de; Sound Blaster'ın durumunu yeniden kontrol et."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "aygit",
+   "ayarlar",
+   "dosya"
+  ],
+  "baslangicUygulama": "aygit",
+  "pc": {
+   "aygitlar": [
+    {
+     "id": "cpu",
+     "kategori": "İşlemciler",
+     "ad": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+     "durum": "ok"
+    },
+    {
+     "id": "disk",
+     "kategori": "Disk sürücüleri",
+     "ad": "Samsung SSD 870 EVO 500GB",
+     "durum": "ok"
+    },
+    {
+     "id": "gpu",
+     "kategori": "Görüntü bağdaştırıcıları",
+     "ad": "NVIDIA GeForce GTX 1650",
+     "durum": "ok"
+    },
+    {
+     "id": "lan",
+     "kategori": "Ağ bağdaştırıcıları",
+     "ad": "Realtek PCIe GbE Family Controller",
+     "durum": "ok"
+    },
+    {
+     "id": "ses",
+     "kategori": "Ses, video ve oyun denetleyicileri",
+     "ad": "Realtek High Definition Audio",
+     "durum": "ok"
+    },
+    {
+     "id": "klavye",
+     "kategori": "Klavyeler",
+     "ad": "HID Klavye Aygıtı",
+     "durum": "ok"
+    },
+    {
+     "id": "fare",
+     "kategori": "Fareler ve diğer işaret aygıtları",
+     "ad": "HID uyumlu fare",
+     "durum": "ok"
+    },
+    {
+     "id": "sesk",
+     "kategori": "Ses, video ve oyun denetleyicileri",
+     "ad": "Creative Sound Blaster Audigy Fx",
+     "durum": "cakisma",
+     "cakisan": "ses",
+     "surucuSurum": "6.0.1.1352"
+    }
+   ]
+  },
+  "sorular": [
+   {
+    "id": "kod12",
+    "soru": "Aygıt Yöneticisi'ndeki 'Kod 12' hatası ne anlama gelir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kaynak",
+      "metin": "İki aygıt aynı sistem kaynağını (IRQ, bellek adresi) kullanmak istiyor: donanım çakışması",
+      "dogru": true
+     },
+     {
+      "id": "surucu",
+      "metin": "Aygıtın sürücüsü yüklenmemiş",
+      "dogru": false,
+      "aciklama": "Sürücü yoksa Kod 28 görünür."
+     },
+     {
+      "id": "kapali",
+      "metin": "Aygıt devre dışı bırakılmış",
+      "dogru": false,
+      "aciklama": "Devre dışı aygıt Kod 22 gösterir."
+     }
+    ]
+   },
+   {
+    "id": "neden",
+    "soru": "Neden anakarttaki ses aygıtını devre dışı bıraktık?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "ayni",
+      "metin": "Yeni ses kartı aynı işi yapıyor; çakışan ve artık gereksiz olan aygıt kapatılınca kaynak serbest kalır",
+      "dogru": true
+     },
+     {
+      "id": "bozuk",
+      "metin": "Anakart ses aygıtı bozuk olduğu için",
+      "dogru": false
+     },
+     {
+      "id": "hiz",
+      "metin": "Bilgisayarı hızlandırmak için",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "kart",
+   "aciklama": "Sound Blaster ses kartı düzgün çalışıyor",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S9",
+    "Y4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.surecAdlari",
+      "len_gte": 1
+     },
+     {
+      "path": "pc.sorunluAygitlar",
+      "len_eq": 0
+     },
+     {
+      "path": "pc.devreDisi",
+      "excludes": "sesk"
+     }
+    ]
+   }
+  },
+  {
+   "id": "realtek",
+   "aciklama": "Çakışan tümleşik ses aygıtı devre dışı bırakıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S9"
+   ],
+   "kural": {
+    "path": "pc.devreDisi",
+    "includes": "ses"
+   }
+  },
+  {
+   "id": "q-kod12",
+   "aciklama": "Soru: Aygıt Yöneticisi'ndeki 'Kod 12' hatası ne anlama gelir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B10"
+   ],
+   "kural": {
+    "path": "cevaplar.kod12",
+    "eq": "kaynak"
+   }
+  },
+  {
+   "id": "q-neden",
+   "aciklama": "Soru: Neden anakarttaki ses aygıtını devre dışı bıraktık?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B10",
+    "S9"
+   ],
+   "kural": {
+    "path": "cevaplar.neden",
+    "eq": "ayni"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sesk",
+   "aciklama": "Yeni ses kartının kendisi devre dışı bırakıldı",
+   "ceza": 20,
+   "kural": {
+    "path": "pc.devreDisi",
+    "includes": "sesk"
+   }
+  },
+  {
+   "id": "baska",
+   "aciklama": "İlgisiz bir aygıt devre dışı bırakıldı",
+   "ceza": 15,
+   "kural": {
+    "any": [
+     {
+      "path": "pc.devreDisi",
+      "includes": "lan"
+     },
+     {
+      "path": "pc.devreDisi",
+      "includes": "gpu"
+     },
+     {
+      "path": "pc.devreDisi",
+      "includes": "disk"
+     },
+     {
+      "path": "pc.devreDisi",
+      "includes": "klavye"
+     },
+     {
+      "path": "pc.devreDisi",
+      "includes": "fare"
+     }
+    ]
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "surecAdlari": [
+     "explorer"
+    ],
+    "sorunluAygitlar": [],
+    "devreDisi": [
+     "ses"
+    ]
+   },
+   "cevaplar": {
+    "kod12": "kaynak",
+    "neden": "ayni"
+   }
+  },
+  "events": []
+ }
+}

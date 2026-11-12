@@ -1,9 +1,10 @@
 // Sanal Windows 11 masaüstü: görev çubuğu, başlat menüsü, pencereler, UAC (Kullanıcı Hesabı Denetimi).
 // Uygulamalar win/ altında; hepsi sim durumundaki "pc" (WinPc) üzerinde çalışır.
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Json } from '../core/rules';
 import type { Sim } from '../core/sim';
-import { derive, type WinPc } from '../core/winpc';
+import { derive, yenidenBaslat, type WinPc } from '../core/winpc';
+import Kurtarma from './Kurtarma';
 import Ayarlar from './Ayarlar';
 import GorevYoneticisi from './GorevYoneticisi';
 import DosyaGezgini from './DosyaGezgini';
@@ -60,9 +61,21 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
   const [wins, setWins] = useState<Win[]>(veri.baslangicUygulama ? [{ id: veri.baslangicUygulama, arg: veri.baslangicSayfa }] : []);
   const [aktif, setAktif] = useState<AppId | null>(veri.baslangicUygulama ?? null);
   const [start, setStart] = useState(false);
+  const [guc, setGuc] = useState(false);
+  const [reklamKapali, setReklamKapali] = useState(false);
   const [uacReq, setUacReq] = useState<{ ad: string; yayinci: string; ok: () => void } | null>(null);
   const [uacPw, setUacPw] = useState('');
   const [uacErr, setUacErr] = useState('');
+
+  // "Bu bilgisayarı sıfırla" sonrası bilgisayar yeniden başlar: açık pencereler kapanır
+  const sonSifirlama = useRef(pc.sifirlama);
+  useEffect(() => {
+    if (pc.sifirlama !== sonSifirlama.current) {
+      sonSifirlama.current = pc.sifirlama;
+      setWins([]);
+      setAktif(null);
+    }
+  }, [pc.sifirlama]);
 
   const act: AppCtx['act'] = (type, data, f) => sim.act(type, data, (st) => ({ ...st, pc: derive(f(JSON.parse(JSON.stringify(st.pc)))) }));
   const log: AppCtx['log'] = (type, data) => sim.act(type, data, (st) => st);
@@ -114,10 +127,36 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
     }
   }
 
+  const yeniden = (mod: 'normal' | 'guvenli' = 'normal') => {
+    setStart(false);
+    setGuc(false);
+    setWins([]);
+    setAktif(null);
+    act('pc.yeniden-baslat', { mod }, (x) => yenidenBaslat(x, mod));
+  };
+  if (pc.acilis === 'bsod' || pc.acilis === 'kurtarma') {
+    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn };
+    return (
+      <div className="w11 w11-boot">
+        <Kurtarma {...ctx} />
+      </div>
+    );
+  }
+  const guvenli = pc.acilis === 'guvenli';
+
   const duvar = { bloom: 'radial-gradient(ellipse at 40% 60%, #4a8df5, #1c4fa8 55%, #0d2a63)', girne: 'linear-gradient(180deg,#f59e0b 0%,#fb7185 35%,#1e3a8a 75%)', karpaz: 'linear-gradient(180deg,#7dd3fc 0%,#22d3ee 45%,#fde68a 75%)', soyut: 'linear-gradient(135deg,#4c1d95,#1e3a8a 50%,#0f766e)' } as Record<string, string>;
   const dark = pc.ekran.tema === 'koyu';
   return (
-    <div className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '')} style={{ background: duvar[pc.ekran.arkaPlan] ?? duvar.bloom, ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
+    <div className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : (duvar[pc.ekran.arkaPlan] ?? duvar.bloom), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
+      {guvenli && (
+        <>
+          <span className="safe-c sc-tl">Güvenli Mod</span>
+          <span className="safe-c sc-tr">Güvenli Mod</span>
+          <span className="safe-c sc-bl">Güvenli Mod</span>
+          <span className="safe-c sc-br">Güvenli Mod</span>
+          <span className="safe-ver">Windows 11 Pro Derleme 26100</span>
+        </>
+      )}
       <div className="w11-icons">
         <span className="w11-icon">
           <i>🗑</i>Geri Dönüşüm Kutusu
@@ -129,8 +168,11 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
           </span>
         ))}
       </div>
-      {pc.belirti.reklam && (
+      {pc.belirti.reklam && !reklamKapali && (
         <div className="w11-ad">
+          <button className="ad-x" onClick={() => setReklamKapali(true)} aria-label="Reklamı kapat">
+            ✕
+          </button>
           <b>🎉 TEBRİKLER! Bilgisayarınız 3 virüs içeriyor!</b>
           <span>Hemen temizlemek için PC Speed Booster PRO'yu satın alın</span>
         </div>
@@ -172,7 +214,17 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
           </div>
           <div className="w11-start-foot">
             <span>👤 {pc.cihaz.kullanici}</span>
-            <span>⏻</span>
+            <span className="rel">
+              <button className="w11-power" onClick={() => setGuc((g) => !g)} aria-label="Güç">
+                ⏻
+              </button>
+              {guc && (
+                <span className="w11-power-menu">
+                  <button onClick={() => yeniden()}>↻ Yeniden başlat</button>
+                  <button onClick={() => yeniden()}>⏻ Kapat</button>
+                </span>
+              )}
+            </span>
           </div>
         </div>
       )}
@@ -194,6 +246,9 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
           ))}
         <span className="tb-tray">
           {pc.uyariSayisi > 0 && <span title="Windows Güvenliği: eylem gerekiyor">🛡⚠</span>}
+          <span title={pc.internet ? 'İnternet erişimi' : 'İnternet yok'} aria-label={pc.internet ? 'Ağ: bağlı' : 'Ağ: internet yok'}>
+            {pc.internet ? '🖧' : '🌐⃠'}
+          </span>
           <span>TUR</span>
           <span className="tb-clock">
             09:41
