@@ -10,17 +10,29 @@ function app_config(): array
     if ($config !== null) return $config;
     $candidates = [];
     if (getenv('ISLAB_CONFIG')) $candidates[] = (string)getenv('ISLAB_CONFIG'); // testler için
-    $candidates[] = dirname(__DIR__, 3) . '/isletimsistemi-config.php'; // public_html'in bir üstü (önerilen)
+    $outside = dirname(__DIR__, 3); // public_html'in bir üstü (önerilen yer: web'den erişilemez)
+    $candidates[] = $outside . '/isletimsistemi-config.php';
+    $candidates[] = $outside . '/config.php';
     $candidates[] = dirname(__DIR__) . '/config.php';
     foreach ($candidates as $file) {
         if (is_file($file)) {
             $config = require $file;
+            if (!is_array($config)) {
+                http_response_code(500);
+                header('Content-Type: text/plain; charset=utf-8');
+                echo 'Ayar dosyası (' . basename($file) . ') bir dizi döndürmüyor. Dosya "<?php return [ ... ];" biçiminde olmalı.';
+                exit;
+            }
             return $config;
         }
     }
     http_response_code(500);
     header('Content-Type: text/plain; charset=utf-8');
-    echo "Ayar dosyası bulunamadı. api/config.example.php dosyasını api/config.php olarak kopyalayıp düzenleyin.";
+    $site = basename(dirname(__DIR__, 2)); // genellikle public_html
+    echo "Ayar dosyası bulunamadı.\n\nŞu yerlerden birine koyun:\n"
+        . "  1) $site klasörünün YANINA (önerilen): isletimsistemi-config.php ya da config.php\n"
+        . "  2) $site/api/config.php\n\n"
+        . "Örnek içerik: api/config.example.php";
     exit;
 }
 

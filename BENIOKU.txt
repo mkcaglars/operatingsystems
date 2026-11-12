@@ -1,3 +1,3 @@
 Bu dal otomatik üretilir; elle değiştirmeyin.
-İşletim Sistemleri Laboratuvarı'nın derlenmiş hâli (kaynak: main @ 3a9813b).
+İşletim Sistemleri Laboratuvarı'nın derlenmiş hâli (kaynak: main @ 44c00c2).
 Hostinger Git bu dalı public_html'e çeker. Ayar dosyası (isletimsistemi-config.php) burada DEĞİL, sunucuda durur.
