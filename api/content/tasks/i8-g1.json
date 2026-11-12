@@ -1,0 +1,181 @@
+{
+ "id": "i8-g1",
+ "istasyon": "i8",
+ "baslik": "Google Chrome kurulumu",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S6",
+  "S5",
+  "S4"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "Laboratuvar bilgisayarına Google Chrome kurulacak. Edge ile Chrome'u ara, RESMÎ siteden indir ve kur. Sonra Chrome'u varsayılan tarayıcı yap. Sahte indirme sitelerinden ve 'önerilen' ek yazılımlardan uzak dur.",
+ "ogren": [
+  "Programlar yalnızca üreticinin resmî sitesinden indirilir. Arama sonuçlarındaki 'Reklam' etiketli bağlantılar ve benzer adlı siteler sahte olabilir.",
+  "Sahte yükleyiciler istenmeyen yazılımlar (reklam yazılımı, tarayıcı korsanı) kurar.",
+  "Microsoft Defender SmartScreen, yaygın olmayan ve şüpheli indirmeler için uyarı verir: bu durumda dosya silinir.",
+  "Varsayılan tarayıcı: Ayarlar › Uygulamalar › Varsayılan uygulamalar."
+ ],
+ "ipuclari": [
+  "Arama: 'chrome indir'. Adresi google.com/chrome olan sonucu seç.",
+  "İndirilen ChromeSetup.exe'yi aç (İndirilenler › Dosyayı aç).",
+  "Ayarlar › Uygulamalar › Varsayılan uygulamalar › Google Chrome."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "edge",
+   "ayarlar",
+   "dosya",
+   "guvenlik"
+  ],
+  "baslangicUygulama": "edge",
+  "sorular": [
+   {
+    "id": "resmi",
+    "soru": "İndirme yapılacak sitenin resmî olduğunu nasıl anlarsın?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "adres",
+      "metin": "Adres çubuğundaki alan adı üreticiye ait (ör. google.com) ve arama sonucunda 'Reklam' etiketi yok",
+      "dogru": true
+     },
+     {
+      "id": "buyuk",
+      "metin": "İndir düğmesi büyük ve yeşil",
+      "dogru": false,
+      "aciklama": "Sahte siteler genellikle büyük, dikkat çekici indirme düğmeleri kullanır."
+     },
+     {
+      "id": "ilk",
+      "metin": "Arama sonuçlarında ilk sırada",
+      "dogru": false,
+      "aciklama": "İlk sıradaki sonuç çoğu zaman bir reklamdır."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "kur",
+   "aciklama": "Chrome kuruldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "pc.kurulu",
+    "includes": "chrome"
+   }
+  },
+  {
+   "id": "resmi",
+   "aciklama": "Chrome resmî kaynaktan kuruldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6",
+    "S5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "chrome"
+     },
+     {
+      "path": "pc.sahteKaynakli",
+      "excludes": "chrome"
+     }
+    ]
+   }
+  },
+  {
+   "id": "varsayilan",
+   "aciklama": "Chrome varsayılan tarayıcı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "path": "pc.varsayilan.tarayici",
+    "eq": "chrome"
+   }
+  },
+  {
+   "id": "temiz",
+   "aciklama": "İstenmeyen ek yazılım kurulmadı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "chrome"
+     },
+     {
+      "path": "pc.belirti.reklam",
+      "eq": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-resmi",
+   "aciklama": "Soru: İndirme yapılacak sitenin resmî olduğunu nasıl anlarsın?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "cevaplar.resmi",
+    "eq": "adres"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sahte",
+   "aciklama": "Sahte siteden dosya indirildi",
+   "ceza": 20,
+   "kural": {
+    "event": "indirme",
+    "where": {
+     "kaynak": "sahte"
+    }
+   }
+  },
+  {
+   "id": "tut",
+   "aciklama": "SmartScreen uyarısına rağmen şüpheli dosya tutuldu",
+   "ceza": 10,
+   "kural": {
+    "event": "smartscreen.tut"
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "kurulu": [
+     "edge",
+     "chrome"
+    ],
+    "sahteKaynakli": [],
+    "varsayilan": {
+     "tarayici": "chrome"
+    },
+    "belirti": {
+     "reklam": false
+    }
+   },
+   "cevaplar": {
+    "resmi": "adres"
+   }
+  },
+  "events": []
+ }
+}

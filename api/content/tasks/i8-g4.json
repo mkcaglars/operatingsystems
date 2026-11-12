@@ -1,0 +1,151 @@
+{
+ "id": "i8-g4",
+ "istasyon": "i8",
+ "baslik": "Adobe Acrobat Reader kurulumu",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S6",
+  "S5",
+  "Y3"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "PDF belgeleri için Adobe Acrobat Reader kur. Resmî indirme sayfasındaki isteğe bağlı McAfee tekliflerinin işaretlerini kaldır. Kurulumdan sonra Acrobat'ı varsayılan PDF uygulaması yap.",
+ "ogren": [
+  "Ücretsiz programların indirme sayfalarında ya da kurulumlarında ek yazılım teklifleri (bundleware) olabilir; işaretli bırakılırsa istenmeyen programlar kurulur.",
+  "Varsayılan uygulamalar Ayarlar › Uygulamalar › Varsayılan uygulamalar bölümünden ayarlanır."
+ ],
+ "ipuclari": [
+  "Edge'de 'acrobat reader' ara; get.adobe.com resmî sayfadır.",
+  "İndirmeden önce iki McAfee kutucuğunun işaretini kaldır."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "edge",
+   "dosya",
+   "ayarlar"
+  ],
+  "baslangicUygulama": "edge",
+  "sorular": [
+   {
+    "id": "teklif",
+    "soru": "İndirme sayfasındaki işaretli 'isteğe bağlı teklifler' için ne yapılmalı?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kaldir",
+      "metin": "Gerekmiyorsa işaretleri kaldırılır; istenmeyen programlar kurulmaz",
+      "dogru": true
+     },
+     {
+      "id": "birak",
+      "metin": "İşaretli bırakılır, zararı yoktur",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "kur",
+   "aciklama": "Acrobat Reader kuruldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "acrobat"
+     },
+     {
+      "path": "pc.sahteKaynakli",
+      "excludes": "acrobat"
+     }
+    ]
+   }
+  },
+  {
+   "id": "teklif",
+   "aciklama": "McAfee teklifleri kurulmadı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6",
+    "S5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "acrobat"
+     },
+     {
+      "path": "pc.kurulu",
+      "excludes": "mcafee-scan"
+     },
+     {
+      "path": "pc.kurulu",
+      "excludes": "mcafee-safe"
+     }
+    ]
+   }
+  },
+  {
+   "id": "pdf",
+   "aciklama": "Acrobat varsayılan PDF uygulaması",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "pc.varsayilan.pdf",
+    "eq": "acrobat"
+   }
+  },
+  {
+   "id": "q-teklif",
+   "aciklama": "Soru: İndirme sayfasındaki işaretli 'isteğe bağlı teklifler' için ne yapılmalı?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "cevaplar.teklif",
+    "eq": "kaldir"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sahte",
+   "aciklama": "Sahte siteden dosya indirildi",
+   "ceza": 20,
+   "kural": {
+    "event": "indirme",
+    "where": {
+     "kaynak": "sahte"
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "kurulu": [
+     "acrobat"
+    ],
+    "sahteKaynakli": [],
+    "varsayilan": {
+     "pdf": "acrobat"
+    }
+   },
+   "cevaplar": {
+    "teklif": "kaldir"
+   }
+  },
+  "events": []
+ },
+ "istege_bagli": "acrobat"
+}

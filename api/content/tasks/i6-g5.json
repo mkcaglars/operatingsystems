@@ -1,0 +1,194 @@
+{
+ "id": "i6-g5",
+ "istasyon": "i6",
+ "baslik": "Dosya Gezgini ile dosya yönetimi",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S7",
+  "B8"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Belgeler klasöründe düzen sağla: 'Ödevler' adlı bir klasör oluştur ve 'ders-notlari' belgesinin adını 'isletim-sistemleri' olarak değiştir. Sonra Dosya Gezgini'nde dosya adı uzantılarını ve gizli öğeleri görünür yap.",
+ "ogren": [
+  "Dosya Gezgini dosya ve klasörleri yönetir: oluşturma, yeniden adlandırma, taşıma, kopyalama, silme.",
+  "Varsayılan olarak dosya uzantıları (.docx, .exe…) ve gizli dosyalar gösterilmez; Görünüm › Göster menüsünden açılır.",
+  "Uzantılar gizliyken yeniden adlandırma yapılırsa Windows uzantıyı korur."
+ ],
+ "ipuclari": [
+  "Yeni › Klasör (araç çubuğunda '⊕ Yeni').",
+  "Dosyayı seç, 'Yeniden adlandır'.",
+  "Görünüm ▾ › Göster."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "dosya",
+   "ayarlar"
+  ],
+  "baslangicUygulama": "dosya",
+  "sorular": [
+   {
+    "id": "uzanti",
+    "soru": "'.docx' gibi dosya uzantıları ne işe yarar?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "tur",
+      "metin": "Dosyanın türünü ve hangi programla açılacağını gösterir",
+      "dogru": true
+     },
+     {
+      "id": "boyut",
+      "metin": "Dosyanın boyutunu gösterir",
+      "dogru": false
+     },
+     {
+      "id": "gizli",
+      "metin": "Dosyayı gizler",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "gizli",
+    "soru": "Bazı dosyalar neden varsayılan olarak gizlidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "sistem",
+      "metin": "Sistem ve program ayar dosyaları yanlışlıkla silinmesin ya da değiştirilmesin diye",
+      "dogru": true
+     },
+     {
+      "id": "virus",
+      "metin": "Hepsi virüs olduğu için",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "klasor",
+   "aciklama": "Belgeler'de Ödevler klasörü oluşturuldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S7",
+    "B8"
+   ],
+   "kural": {
+    "path": "pc.dosyalar",
+    "includes": "C:/Kullanıcılar/Ogrenci/Belgeler/Ödevler"
+   }
+  },
+  {
+   "id": "ad",
+   "aciklama": "Belge isletim-sistemleri.docx olarak yeniden adlandırıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.dosyalar",
+      "includes": "C:/Kullanıcılar/Ogrenci/Belgeler/isletim-sistemleri.docx"
+     },
+     {
+      "path": "pc.dosyalar",
+      "excludes": "C:/Kullanıcılar/Ogrenci/Belgeler/ders-notlari.docx"
+     }
+    ]
+   }
+  },
+  {
+   "id": "uzanti",
+   "aciklama": "Dosya adı uzantıları gösteriliyor",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "pc.explorer.uzanti",
+    "eq": true
+   }
+  },
+  {
+   "id": "gizli",
+   "aciklama": "Gizli öğeler gösteriliyor",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "pc.explorer.gizli",
+    "eq": true
+   }
+  },
+  {
+   "id": "q-uzanti",
+   "aciklama": "Soru: '.docx' gibi dosya uzantıları ne işe yarar?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.uzanti",
+    "eq": "tur"
+   }
+  },
+  {
+   "id": "q-gizli",
+   "aciklama": "Soru: Bazı dosyalar neden varsayılan olarak gizlidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.gizli",
+    "eq": "sistem"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sil",
+   "aciklama": "Başka dosya ya da klasörler silindi",
+   "ceza": 15,
+   "kural": {
+    "any": [
+     {
+      "path": "pc.dosyalar",
+      "excludes": "C:/Kullanıcılar/Ogrenci/Resimler/girne.jpg"
+     },
+     {
+      "path": "pc.dosyalar",
+      "excludes": "C:/Kullanıcılar/Ogrenci/İndirilenler"
+     }
+    ]
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "dosyalar": [
+     "C:/Kullanıcılar/Ogrenci/Belgeler/Ödevler",
+     "C:/Kullanıcılar/Ogrenci/Belgeler/isletim-sistemleri.docx",
+     "C:/Kullanıcılar/Ogrenci/Resimler/girne.jpg",
+     "C:/Kullanıcılar/Ogrenci/İndirilenler"
+    ],
+    "explorer": {
+     "uzanti": true,
+     "gizli": true
+    }
+   },
+   "cevaplar": {
+    "uzanti": "tur",
+    "gizli": "sistem"
+   }
+  },
+  "events": []
+ }
+}

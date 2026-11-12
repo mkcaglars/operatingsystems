@@ -85,7 +85,8 @@
   "kazanimlar": [
    "S5",
    "S6",
-   "Y3"
+   "Y3",
+   "S8"
   ],
   "faz": "F4"
  },
@@ -96,7 +97,9 @@
   "aciklama": "Microsoft Office, Google Chrome ve isteğe bağlı programlar.",
   "kazanimlar": [
    "S6",
-   "Y3"
+   "Y3",
+   "S5",
+   "B6"
   ],
   "faz": "F4"
  },

@@ -1,0 +1,293 @@
+{
+ "id": "i6-g1",
+ "istasyon": "i6",
+ "baslik": "Görev Yöneticisi ile yavaşlığı gider",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S7",
+  "B8",
+  "S4"
+ ],
+ "sure_hedef": 420,
+ "ipucu_cezasi": 5,
+ "senaryo": "Laboratuvardaki bilgisayar çok yavaşladı. Görev Yöneticisi'ni aç: en çok bellek kullanan işlemi bul ve sonlandır. Sonra Başlangıç uygulamalarında, açılışta otomatik başlayan iki gereksiz programı (Oyun Başlatıcı Pro ve Ücretsiz Sürücü Güncelleyici) devre dışı bırak. Windows bileşenlerine dokunma.",
+ "ogren": [
+  "Görev Yöneticisi (Ctrl+Shift+Esc) çalışan işlemleri, işlemci (CPU) ve bellek kullanımını gösterir. Yanıt vermeyen ya da çok kaynak tüketen bir program 'Görevi sonlandır' ile kapatılır.",
+  "Windows sistem işlemleri (Windows Gezgini, Hizmet Ana Bilgisayarı, Antimalware Service…) sonlandırılmamalıdır.",
+  "Başlangıç uygulamaları sekmesinde, oturum açılınca otomatik başlayan programlar etkinleştirilir ya da devre dışı bırakılır. Gereksiz olanlar bilgisayarın geç açılmasına yol açar."
+ ],
+ "ipuclari": [
+  "Görev çubuğundaki Görev Yöneticisi simgesine tıkla; Bellek sütununa göre sırala.",
+  "En çok bellek kullanan Oyun Başlatıcı Pro.",
+  "Başlangıç uygulamaları sekmesinde 'Yüksek' etkili gereksiz programları devre dışı bırak."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "gorev",
+   "ayarlar",
+   "dosya"
+  ],
+  "pc": {
+   "surecler": [
+    {
+     "id": "explorer",
+     "ad": "Windows Gezgini",
+     "cpu": 0.6,
+     "ram": 92,
+     "sistem": true
+    },
+    {
+     "id": "oyun",
+     "ad": "Oyun Başlatıcı Pro",
+     "cpu": 34.2,
+     "ram": 4820
+    },
+    {
+     "id": "msedge",
+     "ad": "Microsoft Edge (6)",
+     "cpu": 1.2,
+     "ram": 610
+    },
+    {
+     "id": "antimalware",
+     "ad": "Antimalware Service Executable",
+     "cpu": 0.4,
+     "ram": 180,
+     "sistem": true
+    },
+    {
+     "id": "guncelleyici",
+     "ad": "Ücretsiz Sürücü Güncelleyici",
+     "cpu": 8.1,
+     "ram": 540
+    },
+    {
+     "id": "host",
+     "ad": "Hizmet Ana Bilgisayarı: Yerel Sistem (14)",
+     "cpu": 0.3,
+     "ram": 120,
+     "sistem": true
+    }
+   ],
+   "baslangic": [
+    {
+     "id": "oyun",
+     "ad": "Oyun Başlatıcı Pro",
+     "yayinci": "GameLaunch Ltd.",
+     "etki": "Yüksek",
+     "acik": true
+    },
+    {
+     "id": "guncelleyici",
+     "ad": "Ücretsiz Sürücü Güncelleyici",
+     "yayinci": "Bilinmiyor",
+     "etki": "Yüksek",
+     "acik": true
+    },
+    {
+     "id": "security",
+     "ad": "Windows Security notification icon",
+     "yayinci": "Microsoft Corporation",
+     "etki": "Düşük",
+     "acik": true
+    },
+    {
+     "id": "realtek",
+     "ad": "Realtek HD Audio Universal Service",
+     "yayinci": "Realtek Semiconductor",
+     "etki": "Düşük",
+     "acik": true
+    }
+   ]
+  },
+  "sorular": [
+   {
+    "id": "ram",
+    "soru": "Görev Yöneticisi › Performans'a göre bu bilgisayarda toplam ne kadar bellek (RAM) var?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "16",
+      "metin": "16 GB",
+      "dogru": true
+     },
+     {
+      "id": "8",
+      "metin": "8 GB",
+      "dogru": false
+     },
+     {
+      "id": "4",
+      "metin": "4 GB",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "baslangic",
+    "soru": "Başlangıç uygulamalarını devre dışı bırakmak ne sağlar?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "hiz",
+      "metin": "Bilgisayar daha hızlı açılır, gereksiz programlar belleği doldurmaz",
+      "dogru": true
+     },
+     {
+      "id": "sil",
+      "metin": "Programlar bilgisayardan silinir",
+      "dogru": false,
+      "aciklama": "Devre dışı bırakmak programı silmez; yalnızca oturum açılınca otomatik başlamasını engeller."
+     },
+     {
+      "id": "virus",
+      "metin": "Virüsleri temizler",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "sonlandir",
+   "aciklama": "En çok bellek kullanan işlem (Oyun Başlatıcı Pro) sonlandırıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S7",
+    "B8"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.surecAdlari",
+      "includes": "explorer"
+     },
+     {
+      "path": "pc.surecAdlari",
+      "excludes": "oyun"
+     }
+    ]
+   }
+  },
+  {
+   "id": "bas1",
+   "aciklama": "Oyun Başlatıcı Pro açılışta başlamıyor",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acikBaslangic",
+      "includes": "security"
+     },
+     {
+      "path": "pc.acikBaslangic",
+      "excludes": "oyun"
+     }
+    ]
+   }
+  },
+  {
+   "id": "bas2",
+   "aciklama": "Ücretsiz Sürücü Güncelleyici açılışta başlamıyor",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acikBaslangic",
+      "includes": "security"
+     },
+     {
+      "path": "pc.acikBaslangic",
+      "excludes": "guncelleyici"
+     }
+    ]
+   }
+  },
+  {
+   "id": "sistem",
+   "aciklama": "Windows bileşenleri (güvenlik simgesi, sistem işlemleri) korundu",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B8"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acikBaslangic",
+      "includes": "security"
+     },
+     {
+      "path": "pc.surecAdlari",
+      "includes": "host"
+     },
+     {
+      "path": "pc.surecAdlari",
+      "includes": "antimalware"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-ram",
+   "aciklama": "Soru: Görev Yöneticisi › Performans'a göre bu bilgisayarda toplam ne kadar bellek (RAM) var?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.ram",
+    "eq": "16"
+   }
+  },
+  {
+   "id": "q-baslangic",
+   "aciklama": "Soru: Başlangıç uygulamalarını devre dışı bırakmak ne sağlar?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S7"
+   ],
+   "kural": {
+    "path": "cevaplar.baslangic",
+    "eq": "hiz"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sistem",
+   "aciklama": "Bir Windows sistem işlemi sonlandırılmaya çalışıldı",
+   "ceza": 10,
+   "kural": {
+    "event": "gorev.sistem-uyari"
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "surecAdlari": [
+     "explorer",
+     "msedge",
+     "antimalware",
+     "host"
+    ],
+    "acikBaslangic": [
+     "security",
+     "realtek"
+    ]
+   },
+   "cevaplar": {
+    "ram": "16",
+    "baslangic": "hiz"
+   }
+  },
+  "events": []
+ }
+}

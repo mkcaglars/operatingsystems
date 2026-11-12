@@ -1,0 +1,287 @@
+{
+ "id": "i7-g1",
+ "istasyon": "i7",
+ "baslik": "Eksik sürücüleri yükleme",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S6",
+  "Y3"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "Windows yeni kuruldu ve Aygıt Yöneticisi'nde sürücüsü eksik aygıtlar var. İnternet bağlantısı yok. Anakartın sürücü USB'si (E:) takılı. Sürücüleri doğru sırayla yükle: önce yonga seti (chipset), sonra ağ, ses ve ekran kartı. Bütün aygıtlar düzgün çalışsın.",
+ "ogren": [
+  "Aygıt Yöneticisi'nde sürücüsü olmayan aygıtlar sarı ünlemle (⚠) ve genellikle 'Diğer aygıtlar' altında görünür (Kod 28).",
+  "Sürücü kurulum sırası: önce yonga seti (chipset), sonra ağ kartı (internete çıkabilmek için), sonra ses, ekran kartı ve diğerleri.",
+  "İnternet yoksa 'Sürücüler için bilgisayarıma gözat' ile üreticinin USB/DVD'sindeki sürücü klasörü seçilir."
+ ],
+ "ipuclari": [
+  "Önce 'SM Veri Yolu Denetleyicisi' (yonga seti) aygıtına çift tıkla.",
+  "İnternet olmadığı için 'Sürücüler için bilgisayarıma gözat' seçeneğini kullan.",
+  "Klasörü aygıta göre seç: Chipset, LAN, Audio, VGA."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "aygit",
+   "ayarlar"
+  ],
+  "baslangicUygulama": "aygit",
+  "pc": {
+   "aygitlar": [
+    {
+     "id": "cpu",
+     "kategori": "İşlemciler",
+     "ad": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+     "durum": "ok"
+    },
+    {
+     "id": "disk",
+     "kategori": "Disk sürücüleri",
+     "ad": "Samsung SSD 870 EVO 500GB",
+     "durum": "ok"
+    },
+    {
+     "id": "chipset",
+     "kategori": "Sistem aygıtları",
+     "ad": "Intel(R) 400 Series Chipset Family SMBus",
+     "bilinmeyenAd": "SM Veri Yolu Denetleyicisi",
+     "durum": "surucu-yok",
+     "surucu": "chipset"
+    },
+    {
+     "id": "lan",
+     "kategori": "Ağ bağdaştırıcıları",
+     "ad": "Realtek PCIe GbE Family Controller",
+     "bilinmeyenAd": "Ethernet Denetleyicisi",
+     "durum": "surucu-yok",
+     "surucu": "lan"
+    },
+    {
+     "id": "ses",
+     "kategori": "Ses, video ve oyun denetleyicileri",
+     "ad": "Realtek High Definition Audio",
+     "bilinmeyenAd": "Yüksek Tanımlı Ses Veri Yolundaki Ses Aygıtı",
+     "durum": "surucu-yok",
+     "surucu": "ses"
+    },
+    {
+     "id": "gpu",
+     "kategori": "Görüntü bağdaştırıcıları",
+     "ad": "NVIDIA GeForce GTX 1650",
+     "bilinmeyenAd": "Microsoft Temel Görüntü Bağdaştırıcısı",
+     "durum": "surucu-yok",
+     "surucu": "vga"
+    },
+    {
+     "id": "klavye",
+     "kategori": "Klavyeler",
+     "ad": "HID Klavye Aygıtı",
+     "durum": "ok"
+    },
+    {
+     "id": "fare",
+     "kategori": "Fareler ve diğer işaret aygıtları",
+     "ad": "HID uyumlu fare",
+     "durum": "ok"
+    }
+   ]
+  },
+  "surucuKlasorleri": [
+   {
+    "id": "chipset",
+    "ad": "E:\\Suruculer\\Chipset (Intel)"
+   },
+   {
+    "id": "lan",
+    "ad": "E:\\Suruculer\\LAN (Realtek)"
+   },
+   {
+    "id": "ses",
+    "ad": "E:\\Suruculer\\Audio (Realtek)"
+   },
+   {
+    "id": "vga",
+    "ad": "E:\\Suruculer\\VGA (NVIDIA)"
+   }
+  ],
+  "sorular": [
+   {
+    "id": "surucu",
+    "soru": "Sürücü (driver) nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kopru",
+      "metin": "İşletim sisteminin bir donanımla nasıl iletişim kuracağını bilmesini sağlayan yazılım",
+      "dogru": true
+     },
+     {
+      "id": "program",
+      "metin": "Bir oyun programı",
+      "dogru": false
+     },
+     {
+      "id": "disk",
+      "metin": "Bir disk türü",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "sira",
+    "soru": "Sürücüler kurulurken neden önce yonga seti (chipset) sürücüsü kurulur?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "temel",
+      "metin": "Anakarttaki diğer aygıtların (USB, SATA, PCIe) düzgün tanınması yonga setine bağlıdır",
+      "dogru": true
+     },
+     {
+      "id": "kucuk",
+      "metin": "En küçük dosya olduğu için",
+      "dogru": false
+     },
+     {
+      "id": "alfabe",
+      "metin": "Alfabetik sıra olduğu için",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "hepsi",
+   "aciklama": "Tüm aygıtlar düzgün çalışıyor",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S6",
+    "Y3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.surecAdlari",
+      "len_gte": 1
+     },
+     {
+      "path": "pc.sorunluAygitlar",
+      "len_eq": 0
+     }
+    ]
+   }
+  },
+  {
+   "id": "chipset",
+   "aciklama": "Yonga seti sürücüsü yüklendi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "event": "surucu.chipset"
+   }
+  },
+  {
+   "id": "sira",
+   "aciklama": "Önce yonga seti sürücüsü yüklendi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "all": [
+     {
+      "before": [
+       "surucu.chipset",
+       "surucu.lan"
+      ]
+     },
+     {
+      "before": [
+       "surucu.chipset",
+       "surucu.ses"
+      ]
+     },
+     {
+      "before": [
+       "surucu.chipset",
+       "surucu.gpu"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-surucu",
+   "aciklama": "Soru: Sürücü (driver) nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "cevaplar.surucu",
+    "eq": "kopru"
+   }
+  },
+  {
+   "id": "q-sira",
+   "aciklama": "Soru: Sürücüler kurulurken neden önce yonga seti (chipset) sürücüsü kurulur?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "cevaplar.sira",
+    "eq": "temel"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "deneme",
+   "aciklama": "Yanlış sürücü klasörü çok kez denendi",
+   "ceza": 10,
+   "kural": {
+    "event": "surucu.bulunamadi",
+    "count": {
+     "gte": 4
+    }
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "surecAdlari": [
+     "explorer"
+    ],
+    "sorunluAygitlar": []
+   },
+   "cevaplar": {
+    "surucu": "kopru",
+    "sira": "temel"
+   }
+  },
+  "events": [
+   {
+    "type": "surucu.chipset",
+    "t": 1
+   },
+   {
+    "type": "surucu.lan",
+    "t": 2
+   },
+   {
+    "type": "surucu.ses",
+    "t": 3
+   },
+   {
+    "type": "surucu.gpu",
+    "t": 4
+   }
+  ]
+ }
+}

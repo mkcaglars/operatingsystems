@@ -1,0 +1,196 @@
+{
+ "id": "i7-g3",
+ "istasyon": "i7",
+ "baslik": "Virüs taraması ve karantina",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S5",
+  "S8"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bir öğrenci D: sürücüsüne internetten 'oyun hilesi' indirdiğini söyledi. Hızlı tarama bir şey bulamadı. Bilgisayarın tamamını tara, bulunan tehdidi karantinaya al ve koruma geçmişinden kontrol et.",
+ "ogren": [
+  "Hızlı tarama yalnızca zararlıların sık bulunduğu konumlara bakar. Şüphe varsa tam tarama yapılır; tam tarama tüm diskleri, sıkıştırılmış dosyaların içini ve çalışan programları denetler.",
+  "Bulunan tehdit için önerilen eylem: karantinaya almak ya da kaldırmak. 'Cihazda izin ver' yalnızca dosyanın kesinlikle güvenli olduğu biliniyorsa seçilir.",
+  "Koruma geçmişi, Defender'ın aldığı önlemleri listeler."
+ ],
+ "ipuclari": [
+  "Virüs ve tehdit koruması › Tarama seçenekleri › Tam tarama › Şimdi tara.",
+  "Tarama bitince 'Karantinaya al'ı seçip 'Eylemleri başlat'a bas."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "guvenlik",
+   "dosya",
+   "ayarlar"
+  ],
+  "baslangicUygulama": "guvenlik",
+  "pc": {
+   "fs": {
+    "D:": {
+     "tur": "klasor"
+    },
+    "D:/Arsiv": {
+     "tur": "klasor"
+    },
+    "D:/Arsiv/oyun-hilesi.zip": {
+     "tur": "dosya",
+     "boyut": "3,4 MB"
+    },
+    "D:/Arsiv/oyun-hilesi.zip/hile.exe": {
+     "tur": "dosya",
+     "tehdit": "Trojan:Win32/Wacatac.B!ml"
+    }
+   }
+  },
+  "sorular": [
+   {
+    "id": "fark",
+    "soru": "Hızlı tarama ile tam tarama arasındaki fark nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "dogru",
+      "metin": "Hızlı tarama tehditlerin sık bulunduğu yerlere bakar; tam tarama tüm diskleri ve dosyaları tarar, daha uzun sürer",
+      "dogru": true
+     },
+     {
+      "id": "ters",
+      "metin": "Hızlı tarama tüm diskleri tarar",
+      "dogru": false
+     },
+     {
+      "id": "ayni",
+      "metin": "Aynıdırlar",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "karantina",
+    "soru": "Karantinaya almak ne demektir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "yalit",
+      "metin": "Zararlı dosya çalışamayacağı güvenli bir yere taşınır; gerekirse geri alınabilir ya da silinebilir",
+      "dogru": true
+     },
+     {
+      "id": "izin",
+      "metin": "Dosyanın çalışmasına izin verilir",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "tam",
+   "aciklama": "Tam tarama yapıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "event": "guvenlik.tarama",
+    "where": {
+     "tur": "tam"
+    }
+   }
+  },
+  {
+   "id": "karantina",
+   "aciklama": "Tehdit karantinaya alındı",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S5",
+    "S8"
+   ],
+   "kural": {
+    "path": "pc.guvenlik.karantina",
+    "includes": "D:/Arsiv/oyun-hilesi.zip/hile.exe"
+   }
+  },
+  {
+   "id": "izin",
+   "aciklama": "Tehdide izin verilmedi",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.guvenlik.karantina",
+      "len_gte": 1
+     },
+     {
+      "path": "pc.guvenlik.izinVerilen",
+      "len_eq": 0
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-fark",
+   "aciklama": "Soru: Hızlı tarama ile tam tarama arasındaki fark nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.fark",
+    "eq": "dogru"
+   }
+  },
+  {
+   "id": "q-karantina",
+   "aciklama": "Soru: Karantinaya almak ne demektir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.karantina",
+    "eq": "yalit"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "izin",
+   "aciklama": "Zararlı dosyanın cihazda çalışmasına izin verildi",
+   "ceza": 40,
+   "kural": {
+    "path": "pc.guvenlik.izinVerilen",
+    "len_gte": 1
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "guvenlik": {
+     "karantina": [
+      "D:/Arsiv/oyun-hilesi.zip/hile.exe"
+     ],
+     "izinVerilen": []
+    }
+   },
+   "cevaplar": {
+    "fark": "dogru",
+    "karantina": "yalit"
+   }
+  },
+  "events": [
+   {
+    "type": "guvenlik.tarama",
+    "t": 1,
+    "tur": "tam"
+   }
+  ]
+ }
+}

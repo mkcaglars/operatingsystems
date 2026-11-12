@@ -1,0 +1,159 @@
+{
+ "id": "i7-g4",
+ "istasyon": "i7",
+ "baslik": "Fidye yazılımı koruması",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S5",
+  "Y3"
+ ],
+ "sure_hedef": 300,
+ "ipucu_cezasi": 5,
+ "senaryo": "Muhasebe bürosunun kayıtları D:\\Muhasebe klasöründe. Fidye yazılımlarına karşı Windows Güvenliği'nde denetimli klasör erişimini aç ve D:\\Muhasebe klasörünü korumalı klasörlere ekle.",
+ "ogren": [
+  "Fidye yazılımları dosyaları şifreleyip açmak için para ister.",
+  "Denetimli klasör erişimi, korumalı klasörlerdeki dosyaların güvenilmeyen uygulamalarca değiştirilmesini engeller. Belgeler, Resimler gibi klasörler varsayılan olarak korunur; başka klasörler eklenebilir.",
+  "En etkili önlem düzenli yedek almaktır."
+ ],
+ "ipuclari": [
+  "Virüs ve tehdit koruması › Fidye yazılımı korumasını yönet.",
+  "Denetimli klasör erişimini aç, sonra 'Korumalı klasör ekle'."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "guvenlik",
+   "dosya"
+  ],
+  "baslangicUygulama": "guvenlik",
+  "pc": {
+   "fs": {
+    "D:": {
+     "tur": "klasor"
+    },
+    "D:/Muhasebe": {
+     "tur": "klasor"
+    },
+    "D:/Muhasebe/2026-kayitlar.xlsx": {
+     "tur": "dosya",
+     "boyut": "860 KB"
+    }
+   }
+  },
+  "sorular": [
+   {
+    "id": "fidye",
+    "soru": "Fidye yazılımı (ransomware) nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "sifre",
+      "metin": "Dosyaları şifreleyip açmak için para isteyen zararlı yazılım",
+      "dogru": true
+     },
+     {
+      "id": "reklam",
+      "metin": "Reklam gösteren yazılım",
+      "dogru": false
+     },
+     {
+      "id": "hiz",
+      "metin": "Bilgisayarı hızlandıran yazılım",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "yedek",
+    "soru": "Fidye yazılımına karşı en etkili önlem hangisidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "yedek",
+      "metin": "Düzenli, bilgisayardan ayrı tutulan yedekler almak",
+      "dogru": true
+     },
+     {
+      "id": "odeme",
+      "metin": "İstenen parayı ödemek",
+      "dogru": false,
+      "aciklama": "Ödeme yapmak dosyaların geri geleceğini garanti etmez."
+     },
+     {
+      "id": "kapat",
+      "metin": "Antivirüsü kapatmak",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "denetimli",
+   "aciklama": "Denetimli klasör erişimi açık",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "pc.guvenlik.denetimliKlasor",
+    "eq": true
+   }
+  },
+  {
+   "id": "korunan",
+   "aciklama": "D:\\Muhasebe korumalı klasörlerde",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5",
+    "Y3"
+   ],
+   "kural": {
+    "path": "pc.guvenlik.korunan",
+    "includes": "D:/Muhasebe"
+   }
+  },
+  {
+   "id": "q-fidye",
+   "aciklama": "Soru: Fidye yazılımı (ransomware) nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.fidye",
+    "eq": "sifre"
+   }
+  },
+  {
+   "id": "q-yedek",
+   "aciklama": "Soru: Fidye yazılımına karşı en etkili önlem hangisidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.yedek",
+    "eq": "yedek"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "guvenlik": {
+     "denetimliKlasor": true,
+     "korunan": [
+      "D:/Muhasebe"
+     ]
+    }
+   },
+   "cevaplar": {
+    "fidye": "sifre",
+    "yedek": "yedek"
+   }
+  },
+  "events": []
+ }
+}

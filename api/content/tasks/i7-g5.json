@@ -1,0 +1,164 @@
+{
+ "id": "i7-g5",
+ "istasyon": "i7",
+ "baslik": "Kullanıcı hesapları ve geri yükleme noktası",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S5",
+  "Y3"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Laboratuvar bilgisayarında öğrencilerin kullandığı 'Ogrenci' hesabı yönetici. Hesabı standart kullanıcı yap (Ogretmen hesabı yönetici kalmalı). Sonra büyük değişikliklerden önce bir geri yükleme noktası oluştur: açıklaması 'Laboratuvar kurulumu' olsun.",
+ "ogren": [
+  "Yönetici hesabı program kurabilir ve sistem ayarlarını değiştirebilir. Standart kullanıcı bunları yapamaz; yapmak istediğinde Kullanıcı Hesabı Denetimi (UAC) yönetici parolası ister.",
+  "Günlük kullanımda standart hesap kullanmak, zararlı yazılımların bilgisayara yerleşmesini zorlaştırır.",
+  "Geri yükleme noktası, sistem dosyalarını ve ayarları belirli bir ana döndürmeyi sağlar. Ayarlar › Sistem › Hakkında › Sistem koruması."
+ ],
+ "ipuclari": [
+  "Ayarlar › Hesaplar › Diğer kullanıcılar › Ogrenci › Hesap türünü değiştir.",
+  "Ogrenci standart olduktan sonra yönetici işlemlerinde Ogretmen hesabının parolası istenir (sağdaki not).",
+  "Sistem koruması › Oluştur…"
+ ],
+ "veri": {
+  "uygulamalar": [
+   "ayarlar",
+   "guvenlik",
+   "dosya"
+  ],
+  "baslangicUygulama": "ayarlar",
+  "yonetici": {
+   "ad": "Ogretmen",
+   "parola": "Lab-2026"
+  },
+  "notlar": [
+   "📌 Yapışkan not: Ogretmen hesabının parolası: Lab-2026"
+  ],
+  "sorular": [
+   {
+    "id": "standart",
+    "soru": "Öğrenci hesabı neden standart kullanıcı olmalıdır?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "yetki",
+      "metin": "Program kurup sistem ayarlarını değiştiremez; zararlı yazılımların etkisi sınırlı kalır (en az yetki ilkesi)",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "Bilgisayar daha hızlı çalışır",
+      "dogru": false
+     },
+     {
+      "id": "internet",
+      "metin": "İnternete bağlanamaz",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "geri",
+    "soru": "Geri yükleme noktası ne işe yarar?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "geri",
+      "metin": "Sistem dosyalarını ve ayarları, bir sorun çıkınca o anki hâline döndürür (kişisel dosyalara dokunmaz)",
+      "dogru": true
+     },
+     {
+      "id": "yedek",
+      "metin": "Tüm kişisel dosyaların yedeğidir",
+      "dogru": false,
+      "aciklama": "Geri yükleme noktası kişisel dosyaları yedeklemez."
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "standart",
+   "aciklama": "Ogrenci standart kullanıcı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "pc.standartlar",
+    "includes": "Ogrenci"
+   }
+  },
+  {
+   "id": "yonetici",
+   "aciklama": "Ogretmen yönetici olarak kaldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "pc.yoneticiler",
+    "includes": "Ogretmen"
+   }
+  },
+  {
+   "id": "geri",
+   "aciklama": "Geri yükleme noktası oluşturuldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5",
+    "Y3"
+   ],
+   "kural": {
+    "path": "pc.geriYukleme",
+    "includes": "Laboratuvar kurulumu"
+   }
+  },
+  {
+   "id": "q-standart",
+   "aciklama": "Soru: Öğrenci hesabı neden standart kullanıcı olmalıdır?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.standart",
+    "eq": "yetki"
+   }
+  },
+  {
+   "id": "q-geri",
+   "aciklama": "Soru: Geri yükleme noktası ne işe yarar?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.geri",
+    "eq": "geri"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "standartlar": [
+     "Ogrenci"
+    ],
+    "yoneticiler": [
+     "Ogretmen"
+    ],
+    "geriYukleme": [
+     "Laboratuvar kurulumu"
+    ]
+   },
+   "cevaplar": {
+    "standart": "yetki",
+    "geri": "geri"
+   }
+  },
+  "events": []
+ }
+}

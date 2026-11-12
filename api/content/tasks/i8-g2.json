@@ -1,0 +1,195 @@
+{
+ "id": "i8-g2",
+ "istasyon": "i8",
+ "baslik": "Microsoft Office kurulumu ve etkinleştirme",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S6",
+  "Y3"
+ ],
+ "sure_hedef": 600,
+ "ipucu_cezasi": 5,
+ "senaryo": "Okulun Office lisansıyla laboratuvar bilgisayarına Office kurulacak. Kurulum dosyası E: sürücüsünde (setup.exe). Yalnızca Word, Excel ve PowerPoint kurulsun (Özelleştir). Kurulumdan sonra Word'ü aç ve lisans kartındaki ürün anahtarıyla etkinleştir. İndirilenler'de bir öğrencinin bıraktığı 'Office_Aktivator_KMS.exe' var: KULLANMA.",
+ "ogren": [
+  "Office kurulumunda 'Özelleştir' ile yalnızca gereken uygulamalar seçilebilir; gereksiz uygulamalar disk alanı kaplamaz.",
+  "Office, ürün anahtarıyla (ya da kurumsal hesapla) etkinleştirilir. Durum Word › Dosya › Hesap › Ürün Bilgileri'nden görülür.",
+  "Lisans kırma araçları (crack, KMS aktivatör) yasa dışıdır ve genellikle zararlı yazılım içerir; Microsoft Defender bunları engeller."
+ ],
+ "ipuclari": [
+  "Dosya Gezgini › USB Sürücü (E:) › setup.exe.",
+  "'Özelleştir'i seç; Outlook, Access, Publisher ve OneNote'un işaretini kaldır.",
+  "Word'ü aç › Etkinleştir › anahtarı gir."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "dosya",
+   "ayarlar",
+   "guvenlik"
+  ],
+  "baslangicUygulama": "dosya",
+  "baslangicSayfa": "E:",
+  "officeAnahtar": "W9KTR-6NMX4-QD8PB-3HJ2C-7YVFG",
+  "notlar": [
+   "🪪 Office lisans kartı — Ürün anahtarı: W9KTR-6NMX4-QD8PB-3HJ2C-7YVFG (kurgusal)"
+  ],
+  "pc": {
+   "fs": {
+    "E:": {
+     "tur": "klasor"
+    },
+    "E:/setup.exe": {
+     "tur": "dosya",
+     "boyut": "7,1 MB",
+     "kurulum": "office",
+     "kaynak": "resmi"
+    },
+    "C:/Kullanıcılar/Ogrenci/İndirilenler/Office_Aktivator_KMS.exe": {
+     "tur": "dosya",
+     "boyut": "2,9 MB",
+     "kurulum": "kms",
+     "kaynak": "sahte"
+    }
+   }
+  },
+  "sorular": [
+   {
+    "id": "kms",
+    "soru": "Lisans kırma (crack/KMS aktivatör) araçları neden kullanılmamalıdır?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "yasa",
+      "metin": "Yasa dışıdır ve çoğu zaman bilgisayara zararlı yazılım bulaştırır",
+      "dogru": true
+     },
+     {
+      "id": "yavas",
+      "metin": "Yalnızca yavaş oldukları için",
+      "dogru": false
+     },
+     {
+      "id": "tamam",
+      "metin": "Kullanılabilir, sorun yoktur",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "kur",
+   "aciklama": "Office kuruldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "pc.kurulu",
+    "includes": "office"
+   }
+  },
+  {
+   "id": "bilesen",
+   "aciklama": "Yalnızca Word, Excel ve PowerPoint kuruldu",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6",
+    "Y3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.bilesenler.office",
+      "includes": "word"
+     },
+     {
+      "path": "pc.bilesenler.office",
+      "includes": "excel"
+     },
+     {
+      "path": "pc.bilesenler.office",
+      "includes": "powerpoint"
+     },
+     {
+      "path": "pc.bilesenler.office",
+      "len_eq": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": "etkin",
+   "aciklama": "Office ürün anahtarıyla etkinleştirildi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S6",
+    "Y3"
+   ],
+   "kural": {
+    "path": "pc.etkinUygulamalar",
+    "includes": "office"
+   }
+  },
+  {
+   "id": "q-kms",
+   "aciklama": "Soru: Lisans kırma (crack/KMS aktivatör) araçları neden kullanılmamalıdır?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S6"
+   ],
+   "kural": {
+    "path": "cevaplar.kms",
+    "eq": "yasa"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "kms",
+   "aciklama": "Lisans kırma aracı çalıştırılmaya çalışıldı",
+   "ceza": 40,
+   "kural": {
+    "event": "dosya.calistir",
+    "where": {
+     "kurulum": "kms"
+    }
+   }
+  },
+  {
+   "id": "trojan",
+   "aciklama": "Bilgisayara truva atı bulaştı",
+   "ceza": 40,
+   "kural": {
+    "path": "pc.zararli",
+    "includes": "trojan"
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "kurulu": [
+     "edge",
+     "teams",
+     "office"
+    ],
+    "bilesenler": {
+     "office": [
+      "word",
+      "excel",
+      "powerpoint"
+     ]
+    },
+    "etkinUygulamalar": [
+     "office"
+    ],
+    "zararli": []
+   },
+   "cevaplar": {
+    "kms": "yasa"
+   }
+  },
+  "events": []
+ }
+}

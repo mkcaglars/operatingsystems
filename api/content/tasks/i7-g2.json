@@ -1,0 +1,217 @@
+{
+ "id": "i7-g2",
+ "istasyon": "i7",
+ "baslik": "Windows Güvenliği uyarılarını giderme",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "S5",
+  "Y3"
+ ],
+ "sure_hedef": 360,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bir öğrenci oyun kurabilmek için bu bilgisayarda bazı güvenlik ayarlarını kapatmış; Windows Güvenliği'nde kırmızı uyarılar var. Tüm uyarıları gider: gerçek zamanlı koruma, koruma güncelleştirmeleri, güvenlik duvarı ve SmartScreen.",
+ "ogren": [
+  "Windows Güvenliği (Microsoft Defender) Windows 11 ile gelen ücretsiz korumadır: virüs ve tehdit koruması, güvenlik duvarı, uygulama ve tarayıcı denetimi (SmartScreen), cihaz güvenliği.",
+  "Gerçek zamanlı koruma ve güncel tanımlar (güvenlik bilgileri) zararlı yazılımların fark edilmesi için gereklidir.",
+  "Güvenlik duvarının üç profili vardır: Etki alanı, Özel ve Ortak. Üçü de açık olmalıdır."
+ ],
+ "ipuclari": [
+  "Giriş sayfasındaki kırmızı kutucuklara tıkla.",
+  "Virüs ve tehdit koruması ayarlarında gerçek zamanlı korumayı aç; koruma güncelleştirmelerini denetle.",
+  "Güvenlik duvarında kapalı profili, uygulama ve tarayıcı denetiminde SmartScreen'i aç."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "guvenlik",
+   "ayarlar"
+  ],
+  "baslangicUygulama": "guvenlik",
+  "pc": {
+   "guvenlik": {
+    "gercekZaman": false,
+    "tanimlarGuncel": false,
+    "duvar": {
+     "ortak": false
+    },
+    "smartScreen": false
+   }
+  },
+  "sorular": [
+   {
+    "id": "ortak",
+    "soru": "'Ortak ağ' profili hangi durumlar içindir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "kafe",
+      "metin": "Kafe, havalimanı gibi herkesin bağlanabildiği güvenilmeyen ağlar",
+      "dogru": true
+     },
+     {
+      "id": "ev",
+      "metin": "Yalnızca evdeki güvenilir ağ",
+      "dogru": false,
+      "aciklama": "Bu, 'özel ağ' profilidir."
+     },
+     {
+      "id": "sirket",
+      "metin": "Şirket etki alanı",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "gercek",
+    "soru": "Gerçek zamanlı koruma kapalı olursa ne olur?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "acik",
+      "metin": "İndirilen ya da çalıştırılan zararlı dosyalar anında fark edilmez",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "Bilgisayar internete bağlanamaz",
+      "dogru": false
+     },
+     {
+      "id": "yok",
+      "metin": "Hiçbir şey değişmez",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "gercek",
+   "aciklama": "Gerçek zamanlı koruma açık",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "pc.guvenlik.gercekZaman",
+    "eq": true
+   }
+  },
+  {
+   "id": "tanim",
+   "aciklama": "Koruma güncelleştirmeleri güncel",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "pc.guvenlik.tanimlarGuncel",
+    "eq": true
+   }
+  },
+  {
+   "id": "duvar",
+   "aciklama": "Güvenlik duvarının tüm profilleri açık",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.guvenlik.duvar.ortak",
+      "eq": true
+     },
+     {
+      "path": "pc.guvenlik.duvar.ozel",
+      "eq": true
+     },
+     {
+      "path": "pc.guvenlik.duvar.etki",
+      "eq": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "smart",
+   "aciklama": "SmartScreen açık",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "pc.guvenlik.smartScreen",
+    "eq": true
+   }
+  },
+  {
+   "id": "hepsi",
+   "aciklama": "Windows Güvenliği'nde uyarı kalmadı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5",
+    "Y3"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.guvenlik.gercekZaman",
+      "eq": true
+     },
+     {
+      "path": "pc.uyariSayisi",
+      "eq": 0
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-ortak",
+   "aciklama": "Soru: 'Ortak ağ' profili hangi durumlar içindir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.ortak",
+    "eq": "kafe"
+   }
+  },
+  {
+   "id": "q-gercek",
+   "aciklama": "Soru: Gerçek zamanlı koruma kapalı olursa ne olur?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S5"
+   ],
+   "kural": {
+    "path": "cevaplar.gercek",
+    "eq": "acik"
+   }
+  }
+ ],
+ "hatalar": [],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "guvenlik": {
+     "gercekZaman": true,
+     "tanimlarGuncel": true,
+     "duvar": {
+      "ortak": true,
+      "ozel": true,
+      "etki": true
+     },
+     "smartScreen": true
+    },
+    "uyariSayisi": 0
+   },
+   "cevaplar": {
+    "ortak": "kafe",
+    "gercek": "acik"
+   }
+  },
+  "events": []
+ }
+}
