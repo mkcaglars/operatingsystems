@@ -6,6 +6,33 @@ Bu görseller yapay zekâ ile üretilecek ve projeye ait olacak; açık lisans/a
 Ekran görüntüleri (BIOS, Windows 11, Ubuntu, Office, Chrome, Windows Güvenliği) **kodla çizilir**; burada yalnızca
 fiziksel nesneler ve ortamlar var.
 
+## Görseller nereye yüklenir?
+
+**Yol 1 (en kolay): sohbete gönder.** Görselleri Claude'a sohbette gönder ve hangi dosya adı olduğunu yaz
+(ya da sıra numarasını). Kontrol eder, gerekirse arka planı temizler, adlandırır ve projeye ekler.
+
+**Yol 2: GitHub'a kendin yükle.**
+1. https://github.com/mkcaglars/operatingsystems/tree/main/assets/gorseller adresine git (dal: **main**).
+2. Sağ üstte **Add file › Upload files**.
+3. Dosyaları sürükle. **Dosya adları aşağıdaki listedekiyle birebir aynı olmalı** (küçük harf, Türkçe karakter yok,
+   ör. `kh-flash-mavi.png`). Uzantı `.webp`, `.png` ya da `.jpg` olabilir.
+4. Yükleme çubukları bitince sayfanın en altındaki yeşil **Commit changes** düğmesine bas. Basılmazsa dosyalar kaydedilmez!
+5. GitHub Actions siteyi birkaç dakikada günceller; görsel otomatik olarak kullanılmaya başlar (kod değişikliği gerekmez).
+
+## Şu an kodda kullanılan görseller (öncelik)
+
+| Durum | Dosya adı | Nerede |
+|---|---|---|
+| ✅ | `cmos-pil`, `sata-kablo-gevsek`, `guc-kablosu`, `ortam-servis-masasi` | İ2, İ9, İ1, giriş ekranı |
+| ⏳ | `kh-kasa-on`, `kh-guc-dugmesi`, `kh-reset-dugmesi`, `kh-usb-giris`, `kh-flash-mavi`, `kh-flash-turuncu`, `kh-not-kagidi`, `lisans-etiketi` | **Kum havuzu sağ paneli** (bölüm 10) |
+| ⏳ | `kasa-on`, `monitor`, `modem`, `yazici-lazer` | İ1 donanım masası |
+| ⏳ | `ups-offline`, `ups-line-interactive`, `ups-online` | İ1 UPS seçimi |
+| ⏳ | `ram-yerinden-cikmis` | İ2 bip kodları |
+| ⏳ | `kisi-grafiker`, `kisi-muhasebeci` | İ3 ihtiyaca göre seçim |
+| ⏳ | `ortam-lab-masa` | (UK prizleriyle yeniden) |
+
+Logolar (Windows, Ubuntu, Chrome, Office…) kodla çiziliyor; onlar için görsel gerekmez.
+
 ## Genel kurallar (her görsel için)
 
 1. **Yazı, logo, marka adı olmasın.** Yapay zekâ yazıları bozar; logolar ve etiketler sonradan kodla eklenir.
@@ -121,6 +148,25 @@ fiziksel nesneler ve ortamlar var.
 | 51 | `duvar-kagidi-1.webp` | 16:9 | Wide landscape photograph of Kyrenia (Girne) old harbour with the castle at sunset, desktop wallpaper, no text |
 | 52 | `duvar-kagidi-2.webp` | 16:9 | Golden sand beach and turquoise sea of the Karpaz peninsula in Northern Cyprus, desktop wallpaper, no text |
 | 53 | `duvar-kagidi-3.webp` | 16:9 | Abstract soft gradient waves in deep blue and purple, minimal desktop wallpaper, no text |
+
+## 10. Kum havuzu — kasa ön paneli (sağdaki tıklanabilir parçalar)
+
+Bu parçalar ayrı ayrı üretilir; kod onları kasa paneline yerleştirir, tıklanabilir yapar ve üstüne yazıları ekler.
+**Hepsinde yazı, sembol dışında işaret ve marka olmasın.** Dekupe olanlar **şeffaf arka planlı PNG** olsun.
+
+| # | Dosya adı | Oran | Prompt |
+|---|---|---|---|
+| 54 | `kh-kasa-on.webp` | 1:3 (dikey) | The plain front panel of a modern matte black PC tower case, straight-on, filling the whole frame, subtle vertical brushed-aluminium texture with a thin fine mesh strip at the edges, **no buttons, no ports, no lights, no logos** (they will be added separately), even soft lighting. **[ÖNDEN]** photorealistic, high detail, no text |
+| 55 | `kh-guc-dugmesi.png` | 1:1 | A round brushed-metal PC power button seen exactly from the front, with the standard power symbol engraved in the centre and a thin glowing blue LED ring around it, slightly convex, realistic reflections. **[ÖNDEN] [DEKUPE]** |
+| 56 | `kh-reset-dugmesi.png` | 1:1 | A small round recessed black plastic PC reset button seen exactly from the front, with a thin silver bezel, no symbol. **[ÖNDEN] [DEKUPE]** |
+| 57 | `kh-usb-giris.png` | 12:5 (yatay) | Close-up of a single empty USB 3.0 Type-A port on the front panel of a black PC case, exactly front view, blue plastic tongue visible inside the black metal port, dark matte surface around it filling the frame. **[ÖNDEN]** photorealistic, high detail, no text |
+| 58 | `kh-flash-mavi.png` | 3:1 (yatay) | A blue plastic USB flash drive lying horizontally, side view, **metal USB-A connector pointing to the right**, rounded body with a small keyring hole on the left end, glossy finish, no printing. **[DEKUPE]** |
+| 59 | `kh-flash-turuncu.png` | 3:1 (yatay) | The same style USB flash drive in **orange** plastic, lying horizontally, side view, **metal USB-A connector pointing to the right**, small keyring hole on the left end, no printing. **[DEKUPE]** |
+| 60 | `kh-not-kagidi.png` | 1:1 | A single blank square yellow sticky note, top-down, one corner slightly curled up, realistic paper texture, **completely empty**. **[DEKUPE]** |
+| 45 | `lisans-etiketi.png` | 3:1 | (Bölüm 7'deki ile aynı) Windows ve Office anahtar kartlarının arka planı olarak kullanılır: boş beyaz etiket, solda hologram şerit. |
+
+İpuçları: 58 ve 59 için aynı sohbette "aynı flash belleği bu kez turuncu yap" demek iki görselin birebir aynı biçimde
+çıkmasını sağlar. 55 ve 56 aynı ışıkta olsun.
 
 ---
 

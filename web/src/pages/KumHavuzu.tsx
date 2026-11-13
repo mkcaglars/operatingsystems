@@ -30,6 +30,7 @@ import { toJpeg } from 'html-to-image';
 import type { TaskDef } from '../core/types';
 import type { WinPc } from '../core/winpc';
 import PcBios from '../tasks/PcBios';
+import Photo, { photoUrl } from '../components/Photo';
 import WinSetup, { initialWinSetup } from '../tasks/WinSetup';
 import UbuntuKur, { initialUbuntuKur } from '../tasks/UbuntuKur';
 import { GrubMenu, UbuntuMasaustu } from '../components/UbuntuMasaustu';
@@ -42,6 +43,11 @@ const WIN_VERI: WinVeri = { uygulamalar: ['ayarlar', 'gorev', 'dosya', 'aygit', 
 /** Kurulumlardan çıkış (kapatma, reset): yarım kalan kurulumların disk etkisi işlenir, çalışan sistem kapanır */
 const cik = (s: KhState): KhState => ({ ...ubuntuKurulumuIsle(kurulumuIsle(s)), calisan: null });
 const blur = (e: MouseEvent<HTMLElement>) => e.currentTarget.blur();
+/** Görsel varsa CSS arka planı olarak (assets/gorseller/<ad>) */
+const arkaPlan = (ad: string) => {
+  const u = photoUrl(ad);
+  return u ? { backgroundImage: `url(${u})` } : undefined;
+};
 
 export default function KumHavuzu() {
   const sim = useSim<KhState>(ilkDurum());
@@ -356,21 +362,30 @@ export default function KumHavuzu() {
           <div className="kh-ekran" aria-label="Ekran" tabIndex={-1} ref={ekranRef}>
             {Ekran()}
           </div>
-          <aside className="kh-kasa" aria-label="Kasa ön paneli">
+          <aside className={'kh-kasa' + (photoUrl('kh-kasa-on') ? ' foto' : '')} aria-label="Kasa ön paneli" style={arkaPlan('kh-kasa-on')}>
             <div className="kh-guc">
               <div className="kh-dugmeler">
                 <button
-                  className={'kh-onoff' + (acik ? ' on' : '')}
+                  className={'kh-onoff' + (acik ? ' on' : '') + (photoUrl('kh-guc-dugmesi') ? ' foto' : '')}
                   onClick={(ev) => (blur(ev), acik ? kapat() : ac())}
                   title={acik ? 'Kapat (güç düğmesine uzun bas)' : 'Aç'}
                   aria-label="Güç düğmesi"
                 >
-                  On/
-                  <br />
-                  off
+                  <Photo
+                    name="kh-guc-dugmesi"
+                    alt=""
+                    className="kh-dugme-foto"
+                    fallback={
+                      <>
+                        On/
+                        <br />
+                        off
+                      </>
+                    }
+                  />
                 </button>
-                <button className="kh-reset" onClick={(ev) => (blur(ev), acik && reset())} title="Reset (yeniden başlat)" aria-label="Reset düğmesi">
-                  r
+                <button className={'kh-reset' + (photoUrl('kh-reset-dugmesi') ? ' foto' : '')} onClick={(ev) => (blur(ev), acik && reset())} title="Reset (yeniden başlat)" aria-label="Reset düğmesi">
+                  <Photo name="kh-reset-dugmesi" alt="" className="kh-dugme-foto" fallback="r" />
                 </button>
               </div>
               <div className="kh-ledler">
@@ -382,15 +397,16 @@ export default function KumHavuzu() {
               {st.portlar.map((p, i) => (
                 <button
                   key={i}
-                  className={'kh-port' + (p ? ' dolu ' + p : '')}
+                  className={'kh-port' + (p ? ' dolu ' + p : '') + (photoUrl('kh-usb-giris') ? ' foto' : '')}
+                  style={arkaPlan('kh-usb-giris')}
                   onClick={(ev) => (blur(ev), p && cikar(p))}
                   onDragOver={(ev) => ev.preventDefault()}
                   onDrop={ondrop(i)}
                   title={p ? `${st.flash[p].ad} — çıkarmak için tıkla` : 'Boş USB girişi: bir flash belleği buraya sürükle'}
                   aria-label={`USB girişi ${i + 1}${p ? ': ' + st.flash[p].ad : ''}`}
                 >
-                  USB
-                  {p && <span className={'kh-takili ' + p} />}
+                  {!photoUrl('kh-usb-giris') && 'USB'}
+                  {p && <Photo name={'kh-flash-' + p} alt="" className={'kh-takili-foto ' + p} fallback={<span className={'kh-takili ' + p} />} />}
                 </button>
               ))}
             </div>
@@ -408,12 +424,21 @@ export default function KumHavuzu() {
                     title={`${f.ad} ${f.kapasite} — ${f.icerik === 'win11' ? 'Windows 11 kurulum belleği' : Object.keys(f.dosyalar).length ? 'içinde dosyalar var' : 'boş'}. Takmak/çıkarmak için tıkla ya da sürükle.`}
                     aria-label={`${id === 'mavi' ? 'Mavi' : 'Turuncu'} flash bellek ${takili ? '(takılı)' : ''}`}
                   >
-                    <span className="kh-flash-govde">
-                      Flash
-                      <br />
-                      Disk
-                    </span>
-                    <span className="kh-flash-uc" />
+                    <Photo
+                      name={'kh-flash-' + id}
+                      alt=""
+                      className="kh-flash-foto"
+                      fallback={
+                        <>
+                          <span className="kh-flash-govde">
+                            Flash
+                            <br />
+                            Disk
+                          </span>
+                          <span className="kh-flash-uc" />
+                        </>
+                      }
+                    />
                     <small>
                       {f.kapasite}
                       {f.icerik === 'win11' ? ' · W11' : ''}
@@ -422,15 +447,15 @@ export default function KumHavuzu() {
                 );
               })}
             </div>
-            <div className="kh-etiket" title="Kasanın yanındaki lisans etiketi">
+            <div className={'kh-etiket' + (photoUrl('lisans-etiketi') ? ' foto' : '')} title="Kasanın yanındaki lisans etiketi" style={arkaPlan('lisans-etiketi')}>
               <b>Windows 11 Pro</b>
               <code>{URUN_ANAHTARI}</code>
             </div>
-            <div className="kh-etiket office" title="Office lisans kartı">
+            <div className={'kh-etiket office' + (photoUrl('lisans-etiketi') ? ' foto' : '')} title="Office lisans kartı" style={arkaPlan('lisans-etiketi')}>
               <b>Office Professional Plus 2024</b>
               <code>{OFFICE_ANAHTARI}</code>
             </div>
-            <div className="kh-not" title="Masadaki not kâğıdı">
+            <div className={'kh-not' + (photoUrl('kh-not-kagidi') ? ' foto' : '')} title="Masadaki not kâğıdı" style={arkaPlan('kh-not-kagidi')}>
               Wi-Fi: <b>OKUL-LAB</b>
               <br />
               Şifre: <b>Kibris2026</b>
