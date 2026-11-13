@@ -41,6 +41,11 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - **Kampanyalar K1–K4** (Y1–Y4): yeni ofis bilgisayarı, laboratuvara Ubuntu, servis masası günü, virüslü bilgisayarı yeniden kur;
   adımlar sırayla açılır
 - **Servis biletleri:** öğretmenin gönderdiği arıza ana sayfada bant olarak çıkar
+- **Serbest kum havuzu** (`#/kum-havuzu`, puansız): tek bir gerçekçi bilgisayar — On/off ve reset düğmeleri, güç ve disk
+  ışıkları, 3 USB girişi, sürükle-tak 2 flash bellek, durum çubuğu. Eski (virüslü) Windows'ta belgeleri belleğe yedekle,
+  Microsoft'tan ISO, rufus.ie'den Rufus indirip kurulum belleği hazırla, F8/BIOS ile USB'den aç, diski biçimlendirip Windows 11'i
+  kur, Wi-Fi şifresiyle bağlan, Windows Update ile sürücüleri yükle, Chrome ve WinRAR kur, ayarları yap. BIOS'a giriş, BIOS'ta
+  gezinme ve yazı yazma **gerçek klavyeden** yapılır. Çalışma sunucuya kaydedilir; isteğe bağlı yapılacaklar listesi vardır
 - Yarım kalan çalışma sunucuya kaydedilir; başka bilgisayardan kaldığı yerden devam edilir
 - Görev sonunda puan, kriterler, hatalar ve kazanım düzeyleri
 

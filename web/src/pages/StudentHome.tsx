@@ -77,6 +77,16 @@ export default function StudentHome() {
             })}
           </section>
         )}
+        <a className="kh-kart" href="#/kum-havuzu">
+          <span className="kh-kart-ikon" aria-hidden>
+            🖥
+          </span>
+          <span>
+            <b>Serbest kum havuzu</b>
+            <small>Gerçek bir bilgisayar: USB belleği hazırla, BIOS'tan USB'den aç, formatla, Windows 11'i kur, internete bağlan, Chrome ve WinRAR yükle, ayarları yap. Puan yok — istediğin gibi dene.</small>
+          </span>
+          <span className="btn primary">Başla →</span>
+        </a>
         <h3 className="sec-h">Kampanyalar</h3>
         <p className="muted small">Kampanyalar, gerçek bir işi baştan sona yaptıran görev dizileridir. Bir adımda en az 50 puan alınca sonraki adım açılır.</p>
         <div className="campaign-grid">

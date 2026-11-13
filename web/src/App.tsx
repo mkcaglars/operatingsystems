@@ -3,6 +3,7 @@ import { api, setCsrf, setUnauthorizedHandler, type User } from './api';
 import { go, useRoute } from './router';
 import Login from './pages/Login';
 import StudentHome from './pages/StudentHome';
+import KumHavuzu from './pages/KumHavuzu';
 import TaskPage from './pages/TaskPage';
 import Account from './pages/Account';
 import TeacherApp from './pages/teacher/TeacherApp';
@@ -53,6 +54,8 @@ export default function App() {
     page = user ? <Redirect to={isStaff(user) ? 'ogretmen' : ''} /> : <Login />;
   } else if (first === 'gorev' && route.path[1]) {
     page = <TaskPage key={route.path[1]} taskId={route.path[1]} />;
+  } else if (first === 'kum-havuzu') {
+    page = <KumHavuzu />;
   } else if (first === 'hesap') {
     page = <Account />;
   } else if (first === 'ogretmen') {

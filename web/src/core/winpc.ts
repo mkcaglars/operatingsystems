@@ -57,6 +57,8 @@ export interface DosyaGirdi {
   kaynak?: 'resmi' | 'sahte';
   /** indirme sayfasında işaretli bırakılan ek teklifler (ör. McAfee) */
   ekTeklifler?: string[];
+  /** kurulum gerektirmeyen (taşınabilir) program: çift tıklayınca açılan uygulama (ör. rufus) */
+  uygulama?: string;
 }
 
 export interface WinPc {
@@ -92,6 +94,8 @@ export interface WinPc {
   acilis: 'normal' | 'bsod' | 'kurtarma' | 'guvenli';
   /** "Bu bilgisayarı sıfırla" yapıldı mı ve nasıl */
   sifirlama: '' | 'koru' | 'hepsi';
+  /** Ağ bağlantısı: Ethernet kablosu takılı mı, bağlı kablosuz ağ (SSID) */
+  ag: { kablo: boolean; wifi: string };
   // ---- Kurallar için türetilmiş alanlar ----
   dosyalar: string[];
   kurulu: string[];
@@ -190,6 +194,7 @@ export function defaultPc(): WinPc {
     belirti: { reklam: false },
     acilis: 'normal',
     sifirlama: '',
+    ag: { kablo: true, wifi: '' },
     dosyalar: [],
     kurulu: [],
     etkinUygulamalar: [],
@@ -232,7 +237,9 @@ export function derive(pc: WinPc): WinPc {
   for (const a of pc.aygitlar) if (a.durum === 'cakisma' && a.cakisan && pc.aygitlar.find((b) => b.id === a.cakisan)?.durum === 'devre-disi') a.durum = 'ok';
   pc.sorunluAygitlar = pc.aygitlar.filter((a) => a.durum === 'surucu-yok' || a.durum === 'cakisma' || a.sorunluSurucu).map((a) => a.id);
   pc.devreDisi = pc.aygitlar.filter((a) => a.durum === 'devre-disi').map((a) => a.id);
-  pc.internet = pc.aygitlar.find((a) => a.id === 'lan')?.durum === 'ok';
+  const calisir = (id: string) => pc.aygitlar.find((a) => a.id === id)?.durum === 'ok';
+  const ag = pc.ag ?? { kablo: true, wifi: '' };
+  pc.internet = (ag.kablo && calisir('lan')) || (!!ag.wifi && calisir('wifi'));
   pc.acikBaslangic = pc.baslangic.filter((b) => b.acik).map((b) => b.id);
   pc.surecAdlari = pc.surecler.map((s) => s.id);
   pc.yoneticiler = pc.hesaplar.filter((h) => h.tur === 'yonetici').map((h) => h.ad);

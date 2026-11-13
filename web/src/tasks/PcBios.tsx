@@ -21,8 +21,8 @@ export interface Cmos {
   secureBoot: boolean;
   tpm: boolean;
 }
-type Ekran = 'kapali' | 'post' | 'posthata' | 'setup' | 'bootmenu' | 'os' | 'kurulum' | 'bootfail' | 'bsod';
-interface Veri {
+export type Ekran = 'kapali' | 'post' | 'posthata' | 'setup' | 'bootmenu' | 'os' | 'kurulum' | 'bootfail' | 'bsod';
+export interface BiosVeri {
   cmos: Cmos;
   aygitlar: { id: string; ad: string }[];
   usbTakili?: boolean;
@@ -34,7 +34,7 @@ interface Veri {
   diskYok?: string;
   sorular?: Soru[];
 }
-interface State {
+export interface BiosState {
   ekran: Ekran;
   cmos: Cmos;
   setup: Cmos | null;
@@ -45,11 +45,14 @@ interface State {
 }
 
 export const initialPcBios = (task: { veri: unknown }): State => {
-  const v = task.veri as Veri;
+  const v = task.veri as BiosVeri;
   return { ekran: 'kapali', cmos: { ...v.cmos }, setup: null, sifreDeger: null, sonAcilis: null, donanim: {}, cevaplar: {} };
 };
 
-const DEFAULTS: Partial<Cmos> = { sata: 'AHCI', vt: false, ses: true, lan: true, fastBoot: false, usbBoot: true, csm: false, secureBoot: true, tpm: true };
+type Veri = BiosVeri;
+type State = BiosState;
+
+export const DEFAULTS: Partial<Cmos> = { sata: 'AHCI', vt: false, ses: true, lan: true, fastBoot: false, usbBoot: true, csm: false, secureBoot: true, tpm: true };
 const TABS = ['Main', 'Advanced', 'Boot', 'Security', 'Save & Exit'] as const;
 const LEGEND = ['→←: Select Screen', '↑↓: Select Item', 'Enter: Select', '+/-: Change Opt.', 'F1: General Help', 'F9: Optimized Defaults', 'F10: Save & Exit', 'ESC: Exit'];
 
@@ -130,7 +133,13 @@ type Popup =
   | { t: 'time' }
   | { t: 'password'; mode: 'set' | 'enter' };
 
-export default function PcBios({ task, mode, sim }: TaskUIProps) {
+/** Kum havuzu gibi başka bir arayüze gömüldüğünde: yalnızca ekran çizilir, giriş yalnızca gerçek klavyeden. */
+export interface BiosGomulu {
+  /** Değişince POST zamanlayıcısı yeniden başlar (reset düğmesi) */
+  nonce: number;
+}
+
+export default function PcBios({ task, mode, sim, gomulu }: TaskUIProps & { gomulu?: BiosGomulu }) {
   const veri = task.veri as unknown as Veri;
   const s = sim.state as State;
   const learn = mode === 'ogren';
@@ -142,6 +151,7 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
   const [postNonce, setPostNonce] = useState(0);
   const [postPct, setPostPct] = useState(0);
   const [son, setSon] = useState<string>('');
+  const [bootSel, setBootSel] = useState(0);
   const postMs = mode === 'ogren' ? 7000 : mode === 'uygula' ? 4000 : 3000;
 
   const c = s.setup ?? s.cmos;
@@ -171,6 +181,13 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
     sim.act('acilis', { aygit, sonuc }, (x: State) => ({ ...x, ekran: sonuc, sonAcilis: sonuc }));
   }, [sim, veri]);
 
+  const bootAygitlari = veri.aygitlar.filter((a) => a.id !== 'ssd' || diskVar);
+  const bootSec = (id: string) => {
+    const st = ref.current;
+    const sonuc: Ekran = id === 'usb' ? (veri.usbTakili && st.cmos.usbBoot ? 'kurulum' : 'bootfail') : id === 'ssd' ? (!diskVar ? 'bootfail' : veri.diskSata && st.cmos.sata !== veri.diskSata ? 'bsod' : 'os') : 'bootfail';
+    sim.act('bootmenu.sec', { aygit: id, sonuc }, (x: State) => ({ ...x, ekran: sonuc, sonAcilis: sonuc }));
+  };
+
   const postHataVar = useCallback(() => !!veri.postHata && evaluate(veri.postHata.kosul, { state: ref.current as never, events: [] }), [veri]);
 
   // POST zamanlayıcısı
@@ -193,7 +210,7 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
       clearInterval(tick);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s.ekran, postNonce]);
+  }, [s.ekran, postNonce, gomulu?.nonce]);
 
   const powerOn = () => {
     sim.act('pc.guc', { acik: true }, (x: State) => ({ ...x, ekran: 'post' }));
@@ -294,9 +311,22 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
         if (k === 'Delete' || k === 'F2') {
           sim.act('post.tus', { tus: k, basarili: true }, (x: State) => x);
           girSetup();
-        } else if (k === 'F8') {
+        } else if (k === 'F8' || k === 'F11' || k === 'F12') {
+          setBootSel(0);
           sim.act('post.tus', { tus: k, basarili: true }, (x: State) => ({ ...x, ekran: 'bootmenu' }));
         } else sim.act('post.tus', { tus: k, basarili: false }, (x: State) => x);
+        return;
+      }
+      if (st.ekran === 'bootmenu') {
+        const n = bootAygitlari.length + 1;
+        if (k === 'ArrowUp' || k === 'ArrowDown') setBootSel((i) => (i + (k === 'ArrowUp' ? -1 : 1) + n) % n);
+        else if (k === 'Enter') {
+          if (bootSel < bootAygitlari.length) bootSec(bootAygitlari[bootSel].id);
+          else {
+            sim.act('bootmenu.setup', {}, (x: State) => x);
+            girSetup();
+          }
+        } else if (k === 'Escape') boot();
         return;
       }
       if (st.ekran === 'posthata') {
@@ -321,7 +351,7 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
       else if (k === 'Escape') confirm('Exit Without Saving', 'Quit without saving?', iptal);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [popup, list, cur, tab, c],
+    [popup, list, cur, tab, c, bootSel, bootAygitlari],
   );
 
   useEffect(() => {
@@ -377,20 +407,13 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
         return (
           <div className="bios-popup center">
             <div className="bp-title">Please select boot device:</div>
-            {veri.aygitlar.filter((a) => a.id !== 'ssd' || diskVar).map((a) => (
-              <button
-                key={a.id}
-                className="bp-opt"
-                onClick={() => {
-                  const sonuc: Ekran = a.id === 'usb' ? (veri.usbTakili && s.cmos.usbBoot ? 'kurulum' : 'bootfail') : a.id === 'ssd' ? (!diskVar ? 'bootfail' : veri.diskSata && s.cmos.sata !== veri.diskSata ? 'bsod' : 'os') : 'bootfail';
-                  sim.act('bootmenu.sec', { aygit: a.id, sonuc }, (x: State) => ({ ...x, ekran: sonuc, sonAcilis: sonuc }));
-                }}
-              >
+            {bootAygitlari.map((a, i) => (
+              <button key={a.id} className={'bp-opt' + (bootSel === i ? ' cur' : '')} onClick={() => bootSec(a.id)}>
                 {a.ad}
               </button>
             ))}
             <button
-              className="bp-opt"
+              className={'bp-opt' + (bootSel === bootAygitlari.length ? ' cur' : '')}
               onClick={() => {
                 sim.act('bootmenu.setup', {}, (x: State) => x);
                 girSetup();
@@ -576,6 +599,14 @@ export default function PcBios({ task, mode, sim }: TaskUIProps) {
     ['+', '+'],
     ['Enter', 'Enter ↵'],
   ];
+
+  if (gomulu)
+    return (
+      <div className={'screen-fill yalniz-klavye' + (s.ekran === 'kapali' ? '' : ' on')}>
+        {s.ekran !== 'kapali' && Screen()}
+        {popup && s.ekran !== 'setup' && BiosPopup()}
+      </div>
+    );
 
   return (
     <div className="pc">

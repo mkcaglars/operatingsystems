@@ -388,8 +388,22 @@ export default function Ayarlar(ctx: AppCtx) {
             <button
               className="ws-btn primary"
               onClick={() => {
-                act('update.denetle', {}, (p) => ((p.guvenlik.tanimlarGuncel = true), p));
-                setMesaj('Güncelleştirmeler yüklendi: Microsoft Defender Antivirus için güvenlik bilgileri güncelleştirmesi');
+                if (!pc.internet) {
+                  ctx.log('update.baglanti-yok', {});
+                  setMesaj('Güncelleştirmeler denetlenemedi. İnternet bağlantınızı denetleyin. (0x8024402c)');
+                  return;
+                }
+                // Windows Update, internet varsa eksik aygıt sürücülerini de yükler
+                const surucu = pc.aygitlar.filter((a) => a.durum === 'surucu-yok' && a.surucu);
+                act('update.denetle', { surucu: surucu.map((a) => a.id) }, (p) => {
+                  p.guvenlik.tanimlarGuncel = true;
+                  for (const a of p.aygitlar) if (a.durum === 'surucu-yok' && a.surucu) a.durum = 'ok';
+                  return p;
+                });
+                setMesaj(
+                  'Güncelleştirmeler yüklendi: Microsoft Defender Antivirus için güvenlik bilgileri güncelleştirmesi' +
+                    (surucu.length ? ' · Sürücüler: ' + surucu.map((a) => a.ad).join(', ') : ''),
+                );
               }}
             >
               Güncelleştirmeleri denetle

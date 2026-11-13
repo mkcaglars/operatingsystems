@@ -2,12 +2,15 @@
 // SmartScreen indirme uyarısı, indirilenler. İndirilen dosyalar İndirilenler klasörüne gelir.
 import { useState, type FormEvent } from 'react';
 import { INDIRILEN, KATALOG } from '../core/katalog';
+import Logo from '../components/Logo';
 import type { AppCtx } from './Masaustu';
 
 interface Indirme {
   dosya: string;
   boyut: string;
   kurulum: string;
+  /** kurulumsuz program (ör. rufus) */
+  uygulama?: string;
   kaynak: 'resmi' | 'sahte';
   ekTeklifler?: string[];
 }
@@ -23,6 +26,7 @@ const SAHTE: Record<string, { baslik: string; dosya: string; kurulum: string; sl
   'chrome-indir-ucretsiz.net': { baslik: 'Chrome İndir — En Hızlı Sürüm!', dosya: 'ChromeSetup(1).exe', kurulum: 'chrome-sahte', slogan: 'Google Chrome 2026 Full Türkçe — Hızlı ve Ücretsiz İndir!' },
   'winrar-full-crack-indir.net': { baslik: 'WinRAR Full Crack İndir', dosya: 'WinRAR_Full_Crack_2026.exe', kurulum: 'kms', slogan: 'WinRAR 7 Full Lisanslı — Ömür Boyu Ücretsiz!' },
   'photoshop-crack-2025.net': { baslik: 'Photoshop 2025 Crack Full', dosya: 'Photoshop_2025_Crack_Patch.exe', kurulum: 'kms', slogan: 'Adobe Photoshop 2025 Full Crack — Lisans gerekmez!' },
+  'windows11-full-etkinlestirilmis-indir.net': { baslik: 'Windows 11 Pro Full Etkinleştirilmiş', dosya: 'Win11_Pro_Activator_Full.exe', kurulum: 'kms', slogan: 'Windows 11 Pro + Etkinleştirici — Ömür boyu lisans!' },
   'pdf-reader-hizli-indir.com': { baslik: 'PDF Reader Hızlı İndir', dosya: 'PDFReader_Setup(2).exe', kurulum: 'chrome-sahte', slogan: 'En iyi PDF okuyucu — tek tık kurulum!' },
 };
 
@@ -43,6 +47,15 @@ function sonuclar(q: string): Sonuc[] {
     return [
       { url: 'www.win-rar.com/turkce', baslik: 'WinRAR Türkçe — win.rar GmbH', ozet: 'WinRAR resmi indirme sayfası. 40 günlük deneme sürümü.' },
       { url: 'winrar-full-crack-indir.net', baslik: 'WinRAR Full Crack İndir 2026', ozet: 'WinRAR full lisanslı crack, keygen dahil.' },
+    ];
+  if (/windows|win ?11|iso|kurulum medya/.test(s))
+    return [
+      { url: 'www.microsoft.com/tr-tr/software-download/windows11', baslik: "Windows 11'i İndirin - Microsoft", ozet: 'Windows 11 Kurulum Yardımcısı, kurulum medyası oluşturma ve x64 cihazlar için Windows 11 Disk Görüntüsü (ISO) indirme.' },
+      { url: 'windows11-full-etkinlestirilmis-indir.net', baslik: 'Windows 11 Pro Full Etkinleştirilmiş ISO İndir', ozet: 'Lisans gerektirmez! Crack dahil tek link.', reklam: true },
+    ];
+  if (/rufus|usb|önyükle|bootable/.test(s))
+    return [
+      { url: 'rufus.ie/tr', baslik: 'Rufus - Önyüklenebilir USB sürücülerini kolay bir şekilde oluşturun', ozet: 'Rufus, USB bellekleri biçimlendirmeye ve önyüklenebilir USB sürücüler oluşturmaya yardımcı olan bir araçtır.' },
     ];
   if (/photoshop|adobe/.test(s))
     return [
@@ -85,7 +98,7 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
   const indirmeyiKaydet = (d: Indirme) => {
     const yol = `${INDIRILEN}/${d.dosya}`;
     act('indirme', { dosya: d.dosya, kaynak: d.kaynak, kurulum: d.kurulum }, (p) => {
-      p.fs[yol] = { tur: 'dosya', boyut: d.boyut, kurulum: d.kurulum, kaynak: d.kaynak, ...(d.ekTeklifler ? { ekTeklifler: d.ekTeklifler } : {}) };
+      p.fs[yol] = { tur: 'dosya', boyut: d.boyut, ...(d.kurulum ? { kurulum: d.kurulum } : {}), ...(d.uygulama ? { uygulama: d.uygulama } : {}), kaynak: d.kaynak, ...(d.ekTeklifler ? { ekTeklifler: d.ekTeklifler } : {}) };
       return p;
     });
     setIndir((l) => (l.includes(d.dosya) ? l : [d.dosya, ...l]));
@@ -102,6 +115,11 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
   const ac = (dosya: string) => {
     const yol = `${INDIRILEN}/${dosya}`;
     const f = pc.fs[yol];
+    if (f?.uygulama === 'rufus') {
+      ctx.log('dosya.calistir', { dosya: yol, uygulama: 'rufus' });
+      ctx.uac(dosya, 'Akeo Consulting', () => ctx.open('rufus'));
+      return;
+    }
     if (!f?.kurulum) return;
     ctx.log('dosya.calistir', { dosya: yol, kurulum: f.kurulum });
     ctx.uac(dosya, f.kaynak === 'sahte' ? 'Bilinmiyor' : KATALOG[f.kurulum].uygulama.yayinci, () => ctx.open('kurulum', yol));
@@ -243,6 +261,69 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
             </tbody>
           </table>
           <p className="small">WinRAR bir paylaşımlı yazılımdır: 40 günlük ücretsiz deneme süresinden sonra lisans satın alınmalıdır.</p>
+        </div>
+      );
+    if (url === 'www.microsoft.com/tr-tr/software-download/windows11')
+      return (
+        <div className="br-page ms">
+          <div className="br-ms">
+            <Logo id="microsoft" size="1.4em" /> Microsoft
+          </div>
+          <h1>Windows 11'i İndirin</h1>
+          <section className="br-ms-sec">
+            <h3>Windows 11 Kurulum Medyası Oluşturma</h3>
+            <p className="small">Windows 11'i yeniden yüklemek ya da temiz yükleme yapmak istiyorsanız önyüklenebilir USB ya da DVD oluşturmak için bu aracı kullanın.</p>
+            <button className="br-blue" onClick={() => indirBaslat({ dosya: 'mediacreationtool.exe', boyut: '9,8 MB', kurulum: '', kaynak: 'resmi' })}>
+              Şimdi indirin
+            </button>
+            <p className="small muted">Bu simülasyonda kurulum belleği Rufus ile hazırlanır: aşağıdan ISO dosyasını indirip Rufus'la USB belleğe yazın.</p>
+          </section>
+          <section className="br-ms-sec">
+            <h3>x64 cihazlar için Windows 11 Disk Görüntüsü (ISO) indirin</h3>
+            <label className="small">
+              Sürüm seçin{' '}
+              <select aria-label="ISO sürümü" defaultValue="w11">
+                <option value="w11">Windows 11 (multi-edition ISO for x64 devices)</option>
+              </select>
+            </label>
+            <label className="small">
+              Ürün dilini seçin{' '}
+              <select aria-label="ISO dili" defaultValue="tr">
+                <option value="tr">Türkçe</option>
+                <option value="en">English International</option>
+              </select>
+            </label>
+            <button className="br-blue" onClick={() => indirBaslat({ dosya: 'Win11_24H2_Turkish_x64.iso', boyut: '5,8 GB', kurulum: '', kaynak: 'resmi' })}>
+              64 bit İndir
+            </button>
+            <p className="small muted">Bağlantı 24 saat geçerlidir. SHA256 doğrulama değerleri sayfanın altında listelenir.</p>
+          </section>
+        </div>
+      );
+    if (url === 'rufus.ie/tr')
+      return (
+        <div className="br-page rufus-site">
+          <div className="br-rufus">
+            <Logo id="rufus" size="2em" /> <b>Rufus</b>
+          </div>
+          <h1>Önyüklenebilir USB sürücülerini kolay bir şekilde oluşturun</h1>
+          <p>Rufus; USB bellekler gibi önyüklenebilir USB flaş sürücüleri biçimlendirmeye ve oluşturmaya yardımcı olan bir araçtır.</p>
+          <h3>İndir</h3>
+          <table className="br-tbl">
+            <tbody>
+              <tr>
+                <td>Rufus 4.6</td>
+                <td>Standart</td>
+                <td>Windows x64</td>
+                <td>
+                  <button className="br-blue" onClick={() => indirBaslat({ dosya: 'rufus-4.6.exe', boyut: '1,5 MB', kurulum: '', uygulama: 'rufus', kaynak: 'resmi' })}>
+                    rufus-4.6.exe
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p className="small">Rufus kurulum gerektirmez (taşınabilir): indirdikten sonra doğrudan çalıştırılır. Yönetici izni ister.</p>
         </div>
       );
     if (url === 'www.adobe.com/tr/products/photoshop')

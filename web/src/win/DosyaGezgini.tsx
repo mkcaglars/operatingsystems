@@ -32,6 +32,15 @@ export default function DosyaGezgini(ctx: AppCtx) {
       ctx.log('dosya.gez', { yol: p });
       return;
     }
+    if (f.uygulama === 'rufus') {
+      ctx.log('dosya.calistir', { dosya: p, uygulama: f.uygulama });
+      ctx.uac(adOf(p), 'Akeo Consulting', () => ctx.open('rufus'));
+      return;
+    }
+    if (/\.iso$/i.test(p)) {
+      setHata('Bu bir disk kalıbı (ISO). Kurulum belleği hazırlamak için Rufus ile bir USB belleğe yazın.');
+      return;
+    }
     if (f.kurulum) {
       const t = KATALOG[f.kurulum];
       ctx.log('dosya.calistir', { dosya: p, kurulum: f.kurulum });
@@ -161,7 +170,7 @@ export default function DosyaGezgini(ctx: AppCtx) {
           <div className="fe-nav-h">Bu bilgisayar</div>
           {surucler.map((d) => (
             <button key={d} className={yol === d ? 'on' : ''} onClick={() => (setYol(d), setSec(null))}>
-              {d === 'C:' ? '💽 Yerel Disk (C:)' : d === 'D:' ? '💽 Veri (D:)' : `🔌 USB Sürücü (${d})`}
+              {d === 'C:' ? '💽 Yerel Disk (C:)' : d === 'D:' ? '💽 Veri (D:)' : `🔌 ${pc.fs[d]?.boyut ?? 'USB Sürücü'} (${d})`}
             </button>
           ))}
         </nav>
@@ -175,7 +184,7 @@ export default function DosyaGezgini(ctx: AppCtx) {
           {ogeler.map((p) => {
             const f = pc.fs[p];
             const uz = adOf(p).match(/\.([^.]+)$/)?.[1]?.toLowerCase();
-            const tur = f.tur === 'klasor' ? 'Dosya klasörü' : uz === 'exe' ? 'Uygulama' : uz === 'docx' ? 'Microsoft Word Belgesi' : uz === 'pdf' ? 'PDF Belgesi' : uz === 'zip' || uz === 'rar' ? 'Sıkıştırılmış klasör' : uz === 'jpg' ? 'JPG Dosyası' : `${(uz ?? '').toUpperCase()} Dosyası`;
+            const tur = f.tur === 'klasor' ? 'Dosya klasörü' : uz === 'exe' ? 'Uygulama' : uz === 'docx' ? 'Microsoft Word Belgesi' : uz === 'pdf' ? 'PDF Belgesi' : uz === 'zip' || uz === 'rar' ? 'Sıkıştırılmış klasör' : uz === 'iso' ? 'Disk Görüntüsü Dosyası' : uz === 'mp3' ? 'MP3 Biçimi Ses' : uz === 'jpg' ? 'JPG Dosyası' : `${(uz ?? '').toUpperCase()} Dosyası`;
             return (
               <div key={p} className={'fe-row' + (sec === p ? ' on' : '') + (f.gizli ? ' hidden' : '')} onClick={() => setSec(p)} onDoubleClick={() => ac(p)} role="button" aria-label={adOf(p)}>
                 <span>
