@@ -28,7 +28,7 @@ import { useSim, type Sim } from '../core/sim';
 import { olayMetni } from '../core/gunluk';
 import { toJpeg } from 'html-to-image';
 import type { TaskDef } from '../core/types';
-import type { WinPc } from '../core/winpc';
+import { sistemiTamamla, type WinPc } from '../core/winpc';
 import PcBios from '../tasks/PcBios';
 import Photo, { photoUrl } from '../components/Photo';
 import WinSetup, { initialWinSetup } from '../tasks/WinSetup';
@@ -91,7 +91,9 @@ export default function KumHavuzu() {
         if (r.data?.st?.pc) {
           // Sayfa kapandığında bilgisayar kapanmış sayılır
           const ilk = ilkDurum();
-          const s = cik({ ...ilk, ...r.data.st, iz: { ...ilk.iz, ...r.data.st.iz } });
+          const kayit = r.data.st;
+          // Eski sürümde kaydedilmiş bilgisayar: eksik sistem klasörleri tamamlanır
+          const s = cik({ ...ilk, ...kayit, pc: sistemiTamamla(kayit.pc), iz: { ...ilk.iz, ...kayit.iz } });
           sim.restore({ ...s, bios: { ...s.bios, ekran: 'kapali', setup: null } }, []);
           if (Array.isArray((r.data as { gunluk?: unknown }).gunluk)) setGunluk((r.data as { gunluk: { t: string; m: string }[] }).gunluk);
         }

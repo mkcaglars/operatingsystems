@@ -5,6 +5,7 @@ import { campaigns, outcomeText, stationById, taskById } from '../content';
 import { evaluate, type Rule, type SimEvent } from '../core/rules';
 import { levelOf, LEVEL_LABEL, type ScoreResult } from '../core/scoring';
 import { useSim } from '../core/sim';
+import { sistemiTamamla, type WinPc } from '../core/winpc';
 import type { Mode, TaskDef } from '../core/types';
 import { taskUIs } from '../tasks/registry';
 
@@ -117,7 +118,9 @@ function TaskRunner({ task }: { task: TaskDef }) {
   }
 
   function resume(s: Saved) {
-    sim.restore(s.state, s.events);
+    // Eski sürümde kaydedilmiş Windows durumu: eksik sistem klasörleri tamamlanır
+    const durum = s.state as { pc?: WinPc } | null;
+    sim.restore(durum && typeof durum === 'object' && durum.pc ? { ...durum, pc: sistemiTamamla(durum.pc) } : s.state, s.events);
     setMode(s.mode);
     setHints(s.hints);
     setAttemptId(s.attempt_id);

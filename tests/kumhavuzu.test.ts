@@ -64,3 +64,19 @@ describe('kum havuzu: Ubuntu çift önyükleme', () => {
     expect(yapilacaklar(son).find((x) => x.id === 'ubuntu')!.tamam).toBe(true);
   });
 });
+
+describe('eski kayıtların tamamlanması', () => {
+  it('sistem klasörleri olmayan eski bilgisayara C: içeriği eklenir, kullanıcı dosyaları korunur', async () => {
+    const { sistemiTamamla, defaultPc, derive } = await import('../web/src/core/winpc');
+    const eski = defaultPc();
+    for (const k of Object.keys(eski.fs)) if (k !== 'C:' && !k.startsWith('C:/Kullanıcılar')) delete eski.fs[k];
+    eski.fs['C:/Kullanıcılar/Ogrenci/Belgeler/odev.docx'] = { tur: 'dosya' };
+    eski.uygulamalar.push({ id: 'winrar', ad: 'WinRAR', yayinci: 'win.rar GmbH', surum: '7', boyutMB: 9 });
+    delete (eski as { ag?: unknown }).ag;
+    const t = sistemiTamamla(derive(eski));
+    expect(t.dosyalar).toContain('C:/Windows/System32');
+    expect(t.dosyalar).toContain('C:/Program Files/WinRAR/WinRAR.exe');
+    expect(t.dosyalar).toContain('C:/Kullanıcılar/Ogrenci/Belgeler/odev.docx');
+    expect(t.ag).toEqual({ kablo: true, wifi: '' });
+  });
+});
