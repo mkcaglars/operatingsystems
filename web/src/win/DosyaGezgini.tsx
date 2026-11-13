@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { KATALOG } from '../core/katalog';
 import { adOf, children, gorunenAd, KULLANICI, parentOf } from '../core/winpc';
+import { arsivAdi, arsivKoku, arsivle, cikart } from '../core/arsiv';
 import type { AppCtx } from './Masaustu';
 
 const NAV: [string, string, string][] = [
@@ -47,7 +48,42 @@ export default function DosyaGezgini(ctx: AppCtx) {
       ctx.uac(adOf(p), f.kaynak === 'sahte' ? 'Bilinmiyor' : t.uygulama.yayinci, () => ctx.open('kurulum', p));
       return;
     }
+    if (/\.zip$/i.test(p)) {
+      // Windows .zip arşivlerini klasör gibi açar
+      setYol(p);
+      setSec(null);
+      ctx.log('dosya.gez', { yol: p, zip: true });
+      return;
+    }
+    if (/\.rar$/i.test(p)) {
+      if (pc.kurulu.includes('winrar')) ctx.open('program', 'winrar|' + p);
+      else setHata('Windows bu dosyayı açamıyor: .rar arşivleri için bir program gerekir (ör. WinRAR).');
+      return;
+    }
+    if (/\.xlsx?$/i.test(p)) {
+      if (pc.kurulu.includes('office')) ctx.open('program', 'excel|' + p);
+      else setHata('Bu dosyayı açmak için Microsoft Excel gerekir.');
+      return;
+    }
     if (/\.docx?$/.test(p) && pc.kurulu.includes('office')) ctx.open('word', p);
+  };
+
+  const zipArsiv = arsivKoku(pc, yol);
+  const zipSikistir = () => {
+    if (!sec || zipArsiv) return;
+    let hedef = `${yol}/${arsivAdi(adOf(sec)).replace(/\.[^.]+$/, '')}.zip`;
+    for (let i = 2; pc.fs[hedef]; i++) hedef = `${yol}/${arsivAdi(adOf(sec)).replace(/\.[^.]+$/, '')} (${i}).zip`;
+    const kaynak = sec;
+    act('zip.sikistir', { kaynak, arsiv: hedef }, (p) => arsivle(p, [kaynak], hedef, 'zip'));
+    setSec(hedef);
+  };
+  const tumunuAyikla = () => {
+    if (!zipArsiv) return;
+    const hedef = `${parentOf(zipArsiv)}/${arsivAdi(zipArsiv)}`;
+    const a = zipArsiv;
+    act('zip.ayikla', { arsiv: a, hedef }, (p) => cikart(p, a, hedef));
+    setYol(hedef);
+    setSec(null);
   };
 
   const yeniKlasor = () => {
@@ -133,6 +169,15 @@ export default function DosyaGezgini(ctx: AppCtx) {
         <button className="ws-link" disabled={!pano} onClick={yapistir} title="Yapıştır">
           📋 Yapıştır
         </button>
+        {zipArsiv ? (
+          <button className="ws-link" onClick={tumunuAyikla} title="Tümünü ayıkla">
+            📤 Tümünü ayıkla
+          </button>
+        ) : (
+          <button className="ws-link" disabled={!sec} onClick={zipSikistir} title="ZIP dosyasına sıkıştır">
+            🗜 ZIP'e sıkıştır
+          </button>
+        )}
         <button className="ws-link" disabled={!sec} onClick={sil} title="Sil">
           🗑 Sil
         </button>

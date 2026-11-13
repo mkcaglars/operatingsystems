@@ -3,6 +3,8 @@
 import Logo, { uygulamaLogo } from '../components/Logo';
 import { adOf, children, gorunenAd, KULLANICI } from '../core/winpc';
 import type { AppCtx } from './Masaustu';
+import WinRar from './WinRar';
+import Excel from './Excel';
 
 export const PROGRAM_AD: Record<string, string> = {
   winrar: 'WinRAR',
@@ -24,7 +26,11 @@ export const PROGRAM_AD: Record<string, string> = {
 const OFFICE = ['excel', 'powerpoint', 'outlook', 'access', 'publisher', 'onenote'];
 
 export default function Program(ctx: AppCtx) {
-  const { pc, arg = '' } = ctx;
+  const { pc } = ctx;
+  // arg: "program" ya da "program|dosya yolu" (ör. "excel|C:/…/butce.xlsx")
+  const [arg, dosyaYolu] = (ctx.arg ?? '').split('|');
+  if (arg === 'excel') return <Excel ctx={ctx} dosya={dosyaYolu} />;
+  if (arg === 'winrar') return <WinRar ctx={ctx} baslangic={dosyaYolu} />;
   const office = pc.uygulamalar.find((u) => u.id === 'office');
 
   if (OFFICE.includes(arg)) {

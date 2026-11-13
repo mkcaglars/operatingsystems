@@ -59,6 +59,12 @@ export interface DosyaGirdi {
   ekTeklifler?: string[];
   /** kurulum gerektirmeyen (taşınabilir) program: çift tıklayınca açılan uygulama (ör. rufus) */
   uygulama?: string;
+  /** Sıkıştırılmış arşiv (içindekiler "arsiv.rar/dosya" yollarında durur) */
+  arsiv?: 'rar' | 'zip';
+  /** Parolalı arşiv */
+  parola?: string;
+  /** Excel çalışma kitabı hücreleri (A1 → ham değer/formül) */
+  tablo?: Record<string, string>;
 }
 
 export interface WinPc {

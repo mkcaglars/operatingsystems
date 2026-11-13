@@ -73,7 +73,11 @@ const APP_INFO: Record<AppId, { ad: string; ikon: string; renk: string }> = {
 
 /** Pencere başlığı ve simgesi ("program" penceresinde kurulu programın kendisi) */
 function pencere(w: { id: AppId; arg?: string }): { ad: string; logo: string | null } {
-  if (w.id === 'program') return { ad: PROGRAM_AD[w.arg ?? ''] ?? w.arg ?? 'Program', logo: uygulamaLogo(w.arg ?? '') };
+  if (w.id === 'program') {
+    const [taban, dosya] = (w.arg ?? '').split('|');
+    const ad = PROGRAM_AD[taban] ?? taban ?? 'Program';
+    return { ad: dosya ? `${dosya.slice(dosya.lastIndexOf('/') + 1)} - ${ad}` : ad, logo: uygulamaLogo(taban) };
+  }
   return { ad: APP_INFO[w.id].ad, logo: logoVar(w.id) ? w.id : null };
 }
 
@@ -176,7 +180,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
       case 'rufus':
         return <Rufus {...ctx} />;
       case 'program':
-        return <Program key={w.arg} {...ctx} />;
+        return <Program key={w.arg?.split('|')[0]} {...ctx} />;
     }
   }
 
