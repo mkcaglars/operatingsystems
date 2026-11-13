@@ -36,7 +36,7 @@ içine basılmış dama deseni temizlendi.
 PowerPoint, Ayarlar, Windows Güvenliği koda gömülü (Iconify setleri); kullanıcıdan gelenler `ikon-dosya`, `ikon-gorev`,
 `ikon-aygit`, `ikon-geridonusum`, `ikon-winrar`, `ikon-acrobat`, `ikon-office`, `ikon-rufus` ✅
 
-**Hâlâ eksik (isteğe bağlı):** `kisi-muhasebeci` yeni portrelerle aynı tarzda; `os-ubuntu-duvar`, `os-ubuntu-giris`;
+**Hâlâ eksik (isteğe bağlı):** `os-ubuntu-duvar`, `os-ubuntu-giris`;
 daha geniş (önden görünen) bir Dosya Gezgini klasör simgesi.
 
 Logolar (Windows, Ubuntu, Chrome, Office…) kodla çiziliyor; onlar için görsel gerekmez.
