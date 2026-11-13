@@ -19,17 +19,18 @@ fiziksel nesneler ve ortamlar var.
 4. Yükleme çubukları bitince sayfanın en altındaki yeşil **Commit changes** düğmesine bas. Basılmazsa dosyalar kaydedilmez!
 5. GitHub Actions siteyi birkaç dakikada günceller; görsel otomatik olarak kullanılmaya başlar (kod değişikliği gerekmez).
 
-## Şu an kodda kullanılan görseller (öncelik)
+## Durum (13 Kasım 2026)
 
-| Durum | Dosya adı | Nerede |
-|---|---|---|
-| ✅ | `cmos-pil`, `sata-kablo-gevsek`, `guc-kablosu`, `ortam-servis-masasi` | İ2, İ9, İ1, giriş ekranı |
-| ⏳ | `kh-kasa-on`, `kh-guc-dugmesi`, `kh-reset-dugmesi`, `kh-usb-giris`, `kh-flash-mavi`, `kh-flash-turuncu`, `kh-not-kagidi`, `lisans-etiketi` | **Kum havuzu sağ paneli** (bölüm 10) |
-| ⏳ | `kasa-on`, `monitor`, `modem`, `yazici-lazer` | İ1 donanım masası |
-| ⏳ | `ups-offline`, `ups-line-interactive`, `ups-online` | İ1 UPS seçimi |
-| ⏳ | `ram-yerinden-cikmis` | İ2 bip kodları |
-| ⏳ | `kisi-grafiker`, `kisi-muhasebeci` | İ3 ihtiyaca göre seçim |
-| ⏳ | `ortam-lab-masa` | (UK prizleriyle yeniden) |
+**Yüklendi ve kullanımda (49 görsel, WebP'ye çevrildi: 72,7 MB → 5 MB):** kum havuzu paneli (`kh-*`, `lisans-etiketi`),
+donanım (`kasa-on`, `kasa-arka`, `kasa-ic`, `monitor`, `guc-kaynagi`, `hdd`, `ssd-sata`, `ram-modul`, `ram-yerinden-cikmis`,
+`cmos-pil`, `sata-kablo-gevsek`), klavye/fare, konnektörler, UPS'ler, `usb-bellek`, `dvd-disk`, `harici-disk`, `yazici-lazer`,
+`yazilim-kutusu`, `grup-priz`, ortamlar (UK prizli `ortam-lab-masa` dahil) ve kolajdan kırpılan portreler (`kisi-*`).
+
+**Düzeltilenler:** `kasa-on-panel` → `kh-kasa-on` olarak adlandırıldı; `kh-flash-turuncu` beyaz arka planı ve `hdd`
+içine basılmış dama deseni temizlendi.
+
+**Hâlâ eksik (isteğe bağlı):** `duvar-kagidi-1..3` (kolajdakiler masaüstü için çok küçük; 16:9 ve en az 1920 px
+gerekir) ve `modem`.
 
 Logolar (Windows, Ubuntu, Chrome, Office…) kodla çiziliyor; onlar için görsel gerekmez.
 
