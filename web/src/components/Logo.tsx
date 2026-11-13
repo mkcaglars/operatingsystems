@@ -147,6 +147,74 @@ const L: Record<string, (u: string) => ReactElement> = {
       <path d="M24 4a20 20 0 1 0 20 20c0-4-1-7-3-10 0 4-2 6-4 7 0-7-4-12-10-15 1 4-1 7-4 9-4 3-6 6-6 10 0 7 5 12 12 12a11 11 0 0 0 10-6c-3 2-8 2-11-1-2-2-3-5-2-8 1 2 3 3 5 3" fill="#ff9500" />
     </svg>
   ),
+  office: () => (
+    <svg viewBox="0 0 48 48">
+      <path d="M8 11l20-7 12 4v32l-12 4-20-7 20 3V8L13 13v20l-5 2z" fill="#eb3c00" />
+      <path d="M28 4l12 4v32l-12 4z" fill="#ff6a00" />
+    </svg>
+  ),
+  excel: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="14" y="6" width="30" height="36" rx="3" fill="#21a366" />
+      <rect x="29" y="6" width="15" height="12" fill="#33c481" />
+      <rect x="29" y="30" width="15" height="12" rx="0" fill="#107c41" />
+      <rect x="14" y="18" width="15" height="12" fill="#185c37" />
+      <rect x="4" y="13" width="22" height="22" rx="3" fill="#107c41" />
+      <text x="15" y="30" fontSize="15" fontWeight="700" fill="#fff" textAnchor="middle" fontFamily="Segoe UI, Arial">X</text>
+    </svg>
+  ),
+  powerpoint: () => (
+    <svg viewBox="0 0 48 48">
+      <circle cx="28" cy="24" r="18" fill="#ed6c47" />
+      <path d="M28 6a18 18 0 0 1 18 18H28z" fill="#ff8f6b" />
+      <path d="M28 24h18a18 18 0 0 1-18 18z" fill="#d35230" />
+      <rect x="4" y="13" width="22" height="22" rx="3" fill="#c43e1c" />
+      <text x="15" y="30" fontSize="15" fontWeight="700" fill="#fff" textAnchor="middle" fontFamily="Segoe UI, Arial">P</text>
+    </svg>
+  ),
+  acrobat: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="4" y="4" width="40" height="40" rx="9" fill="#b30b00" />
+      <path d="M13 34c3-2 6-8 9-15 1-4 0-7-1-7s-2 2-1 6c2 6 6 11 12 13 3 1 5 0 4-1s-6-1-12 1c-6 2-10 5-11 3z" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinejoin="round" />
+    </svg>
+  ),
+  photoshop: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="4" y="4" width="40" height="40" rx="9" fill="#001e36" />
+      <text x="24" y="31" fontSize="17" fontWeight="700" fill="#31a8ff" textAnchor="middle" fontFamily="Segoe UI, Arial">Ps</text>
+    </svg>
+  ),
+  teams: () => (
+    <svg viewBox="0 0 48 48">
+      <circle cx="35" cy="14" r="5" fill="#7b83eb" />
+      <rect x="27" y="20" width="16" height="17" rx="4" fill="#7b83eb" />
+      <circle cx="23" cy="12" r="6" fill="#5059c9" />
+      <rect x="12" y="19" width="22" height="22" rx="4" fill="#5059c9" />
+      <rect x="4" y="15" width="20" height="20" rx="3" fill="#4b53bc" />
+      <text x="14" y="30" fontSize="13" fontWeight="700" fill="#fff" textAnchor="middle" fontFamily="Segoe UI, Arial">T</text>
+    </svg>
+  ),
+  booster: () => (
+    <svg viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="#16a34a" />
+      <path d="M12 30a12 12 0 1 1 24 0" stroke="#fff" strokeWidth="4" fill="none" />
+      <path d="M24 30l8-10" stroke="#fde047" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  ),
+  mcafee: () => (
+    <svg viewBox="0 0 48 48">
+      <path d="M24 4l17 6v12c0 11-7 19-17 22C14 41 7 33 7 22V10z" fill="#c01818" />
+      <path d="M15 31V17l9 8 9-8v14" stroke="#fff" strokeWidth="3.5" fill="none" />
+    </svg>
+  ),
+  program: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="6" y="8" width="36" height="32" rx="4" fill="#64748b" />
+      <rect x="6" y="8" width="36" height="8" rx="4" fill="#475569" />
+      <rect x="12" y="22" width="24" height="3" fill="#e2e8f0" />
+      <rect x="12" y="29" width="16" height="3" fill="#e2e8f0" />
+    </svg>
+  ),
   geridonusum: () => (
     <svg viewBox="0 0 48 48">
       <path d="M12 12h24l-3 30H15z" fill="#d9e6f2" stroke="#8aa4bd" strokeWidth="2" />
@@ -157,6 +225,13 @@ const L: Record<string, (u: string) => ReactElement> = {
 };
 
 export const logoVar = (id: string) => id in L;
+
+/** Kurulu uygulama kimliğinden logo kimliği (bilinmeyenler için genel program simgesi) */
+export function uygulamaLogo(id: string): string {
+  if (id.startsWith('mcafee')) return 'mcafee';
+  if (id === 'arama') return 'booster';
+  return id in L ? id : 'program';
+}
 
 export default function Logo({ id, size = '1.6em', title }: { id: string; size?: string; title?: string }) {
   const u = useId().replace(/:/g, '');
