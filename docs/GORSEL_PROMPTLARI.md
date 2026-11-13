@@ -32,8 +32,12 @@ içine basılmış dama deseni temizlendi.
 **13 Kasım ikinci yükleme:** `os-win11-duvar`, `os-win11-kilit`, `duvar-kagidi-1..3`, `modem`, yeni portreler
 (`kisi-ogretmen`, `kisi-grafiker`, `kisi-ogrenci`; boy çekimi `kisi-ogrenci-tam` olarak saklandı) ✅
 
-**Hâlâ eksik (isteğe bağlı):** `kisi-muhasebeci` yeni portrelerle aynı tarzda ve çözünürlükte yeniden; `os-ubuntu-duvar`,
-`os-ubuntu-giris` ve `ikon-*` uygulama simgeleri (bölüm 11).
+**Uygulama simgeleri:** Windows, Microsoft, Chrome, Edge, Firefox, Ubuntu, Photoshop, Teams, Terminal, Word, Excel,
+PowerPoint, Ayarlar, Windows Güvenliği koda gömülü (Iconify setleri); kullanıcıdan gelenler `ikon-dosya`, `ikon-gorev`,
+`ikon-aygit`, `ikon-geridonusum`, `ikon-winrar`, `ikon-acrobat`, `ikon-office`, `ikon-rufus` ✅
+
+**Hâlâ eksik (isteğe bağlı):** `kisi-muhasebeci` yeni portrelerle aynı tarzda; `os-ubuntu-duvar`, `os-ubuntu-giris`;
+daha geniş (önden görünen) bir Dosya Gezgini klasör simgesi.
 
 Logolar (Windows, Ubuntu, Chrome, Office…) kodla çiziliyor; onlar için görsel gerekmez.
 
