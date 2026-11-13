@@ -122,6 +122,80 @@ export interface WinPc {
 
 export const KULLANICI = 'C:/Kullanıcılar/Ogrenci';
 
+const K = (): DosyaGirdi => ({ tur: 'klasor' });
+const D = (boyut: string, gizli = false): DosyaGirdi => ({ tur: 'dosya', boyut, ...(gizli ? { gizli } : {}) });
+
+/** Temiz bir Windows 11 kurulumunda C: sürücüsünde bulunan sistem klasörleri ve dosyaları */
+export const SISTEM_FS: Record<string, DosyaGirdi> = {
+  'C:/PerfLogs': K(),
+  'C:/Program Files': K(),
+  'C:/Program Files/Common Files': K(),
+  'C:/Program Files/Internet Explorer': K(),
+  'C:/Program Files/Windows Defender': K(),
+  'C:/Program Files/Windows Defender/MsMpEng.exe': D('133 KB'),
+  'C:/Program Files/Windows NT': K(),
+  'C:/Program Files/WindowsApps': { tur: 'klasor', gizli: true },
+  'C:/Program Files (x86)': K(),
+  'C:/Program Files (x86)/Common Files': K(),
+  'C:/Program Files (x86)/Microsoft': K(),
+  'C:/Program Files (x86)/Microsoft/Edge': K(),
+  'C:/Program Files (x86)/Microsoft/Edge/Application': K(),
+  'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe': D('4,1 MB'),
+  'C:/ProgramData': { tur: 'klasor', gizli: true },
+  'C:/Windows': K(),
+  'C:/Windows/Boot': K(),
+  'C:/Windows/Fonts': K(),
+  'C:/Windows/Fonts/arial.ttf': D('1,0 MB'),
+  'C:/Windows/Fonts/segoeui.ttf': D('972 KB'),
+  'C:/Windows/System32': K(),
+  'C:/Windows/System32/drivers': K(),
+  'C:/Windows/System32/cmd.exe': D('323 KB'),
+  'C:/Windows/System32/notepad.exe': D('201 KB'),
+  'C:/Windows/System32/svchost.exe': D('79 KB'),
+  'C:/Windows/System32/taskmgr.exe': D('1,5 MB'),
+  'C:/Windows/System32/calc.exe': D('45 KB'),
+  'C:/Windows/Temp': K(),
+  'C:/Windows/explorer.exe': D('5,4 MB'),
+  'C:/Windows/regedit.exe': D('358 KB'),
+  'C:/Kullanıcılar': K(),
+  'C:/Kullanıcılar/Ortak': K(),
+  'C:/Kullanıcılar/Ortak/Ortak Belgeler': K(),
+  'C:/pagefile.sys': D('2,4 GB', true),
+  'C:/swapfile.sys': D('16 MB', true),
+};
+
+/** Kurulan programların Program Files klasörleri */
+export const PROGRAM_DOSYALARI: Record<string, Record<string, string>> = {
+  chrome: { 'C:/Program Files/Google': '', 'C:/Program Files/Google/Chrome': '', 'C:/Program Files/Google/Chrome/Application': '', 'C:/Program Files/Google/Chrome/Application/chrome.exe': '2,9 MB' },
+  office: {
+    'C:/Program Files/Microsoft Office': '',
+    'C:/Program Files/Microsoft Office/root': '',
+    'C:/Program Files/Microsoft Office/root/Office16': '',
+    'C:/Program Files/Microsoft Office/root/Office16/WINWORD.EXE': '1,6 MB',
+    'C:/Program Files/Microsoft Office/root/Office16/EXCEL.EXE': '63,4 MB',
+    'C:/Program Files/Microsoft Office/root/Office16/POWERPNT.EXE': '1,9 MB',
+  },
+  winrar: { 'C:/Program Files/WinRAR': '', 'C:/Program Files/WinRAR/WinRAR.exe': '3,4 MB', 'C:/Program Files/WinRAR/Rar.exe': '1,0 MB', 'C:/Program Files/WinRAR/UnRAR.exe': '512 KB' },
+  acrobat: { 'C:/Program Files/Adobe': '', 'C:/Program Files/Adobe/Acrobat DC': '', 'C:/Program Files/Adobe/Acrobat DC/Acrobat': '', 'C:/Program Files/Adobe/Acrobat DC/Acrobat/Acrobat.exe': '6,8 MB' },
+  photoshop: { 'C:/Program Files/Adobe': '', 'C:/Program Files/Adobe/Adobe Photoshop 2025': '', 'C:/Program Files/Adobe/Adobe Photoshop 2025/Photoshop.exe': '198 MB' },
+  booster: { 'C:/Program Files (x86)/SpeedySoft': '', 'C:/Program Files (x86)/SpeedySoft/PCBooster': '', 'C:/Program Files (x86)/SpeedySoft/PCBooster/booster.exe': '7,7 MB' },
+};
+
+/** Program kurulunca/kaldırılınca Program Files klasörünü ekler/siler */
+export function programDosyalari(pc: WinPc, id: string, ekle: boolean): void {
+  const d = PROGRAM_DOSYALARI[id];
+  if (!d) return;
+  if (ekle) {
+    for (const [p, boyut] of Object.entries(d)) if (!pc.fs[p]) pc.fs[p] = boyut ? { tur: 'dosya', boyut } : { tur: 'klasor' };
+  } else {
+    // Programın kendi klasörü silinir; üst klasör (ör. Adobe) başka program kullanmıyorsa o da silinir
+    const kok = Object.keys(d).filter((k) => !d[k]).sort((a, b) => a.length - b.length);
+    const sil = kok.length > 1 ? kok[1] : kok[0];
+    for (const k of Object.keys(pc.fs)) if (k === sil || k.startsWith(sil + '/')) delete pc.fs[k];
+    if (kok.length > 1 && !Object.keys(pc.fs).some((k) => k.startsWith(kok[0] + '/'))) delete pc.fs[kok[0]];
+  }
+}
+
 export function defaultPc(): WinPc {
   return derive({
     cihaz: {
@@ -155,6 +229,7 @@ export function defaultPc(): WinPc {
     explorer: { uzanti: false, gizli: false },
     fs: {
       'C:': { tur: 'klasor' },
+      ...SISTEM_FS,
       [KULLANICI]: { tur: 'klasor' },
       [`${KULLANICI}/Masaüstü`]: { tur: 'klasor' },
       [`${KULLANICI}/Belgeler`]: { tur: 'klasor' },
@@ -229,7 +304,9 @@ export function pcWith(patch: Record<string, unknown> | undefined): WinPc {
     for (const [k, v] of Object.entries(b as Record<string, unknown>)) out[k] = merge((a as Record<string, unknown>)[k], v);
     return out;
   };
-  return derive(merge(base, patch ?? {}) as WinPc);
+  const pc = merge(base, patch ?? {}) as WinPc;
+  for (const u of pc.uygulamalar) programDosyalari(pc, u.id, true);
+  return derive(pc);
 }
 
 /** Kurallar için türetilmiş alanları yeniden hesaplar */
@@ -327,6 +404,7 @@ export function sifirla(pc0: WinPc, secenek: 'koru' | 'hepsi'): WinPc {
   pc.explorer = temiz.explorer;
   pc.geriYukleme = [];
   for (const a of pc.aygitlar) a.sorunluSurucu = false;
+  for (const id of Object.keys(PROGRAM_DOSYALARI)) if (id !== 'edge') programDosyalari(pc, id, false);
   for (const k of Object.keys(pc.fs)) if (k.startsWith('C:/Windows/System32/svchost32')) delete pc.fs[k];
   if (secenek === 'hepsi') {
     for (const k of Object.keys(pc.fs)) if (k.startsWith('C:')) delete pc.fs[k];

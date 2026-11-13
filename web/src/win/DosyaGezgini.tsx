@@ -152,7 +152,10 @@ export default function DosyaGezgini(ctx: AppCtx) {
     setSec(null);
   };
 
-  const yolGoster = yol.replace(/\//g, ' › ').replace('C: › Kullanıcılar › Ogrenci', 'Ogrenci');
+  const surucuAdi = (d: string) => (d === 'C:' ? 'Yerel Disk (C:)' : d === 'D:' ? 'Veri (D:)' : `${pc.fs[d]?.boyut ?? 'USB Sürücü'} (${d})`);
+  const yolGoster = yol.startsWith(KULLANICI)
+    ? yol.replace(KULLANICI, 'Ogrenci').replace(/\//g, ' › ')
+    : 'Bu bilgisayar › ' + surucuAdi(yol.slice(0, 2)) + yol.slice(2).replace(/\//g, ' › ');
   return (
     <div className="fe">
       <div className="fe-toolbar">
@@ -260,6 +263,7 @@ export default function DosyaGezgini(ctx: AppCtx) {
       </div>
       <div className="fe-status">
         {ogeler.length} öğe{sec ? ' · 1 öğe seçildi' : ''} — çift tıklayarak aç/çalıştır
+        {yol === 'C:' && <span className="fe-clip">Yerel Disk (C:) · 476 GB'nin 371 GB'ı boş</span>}
         {pano && <span className="fe-clip">Panoda: {adOf(pano)}</span>}
       </div>
     </div>

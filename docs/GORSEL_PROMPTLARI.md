@@ -29,8 +29,11 @@ donanım (`kasa-on`, `kasa-arka`, `kasa-ic`, `monitor`, `guc-kaynagi`, `hdd`, `s
 **Düzeltilenler:** `kasa-on-panel` → `kh-kasa-on` olarak adlandırıldı; `kh-flash-turuncu` beyaz arka planı ve `hdd`
 içine basılmış dama deseni temizlendi.
 
-**Hâlâ eksik (isteğe bağlı):** `duvar-kagidi-1..3` (kolajdakiler masaüstü için çok küçük; 16:9 ve en az 1920 px
-gerekir) ve `modem`.
+**13 Kasım ikinci yükleme:** `os-win11-duvar`, `os-win11-kilit`, `duvar-kagidi-1..3`, `modem`, yeni portreler
+(`kisi-ogretmen`, `kisi-grafiker`, `kisi-ogrenci`; boy çekimi `kisi-ogrenci-tam` olarak saklandı) ✅
+
+**Hâlâ eksik (isteğe bağlı):** `kisi-muhasebeci` yeni portrelerle aynı tarzda ve çözünürlükte yeniden; `os-ubuntu-duvar`,
+`os-ubuntu-giris` ve `ikon-*` uygulama simgeleri (bölüm 11).
 
 Logolar (Windows, Ubuntu, Chrome, Office…) kodla çiziliyor; onlar için görsel gerekmez.
 
@@ -168,6 +171,29 @@ Bu parçalar ayrı ayrı üretilir; kod onları kasa paneline yerleştirir, tık
 
 İpuçları: 58 ve 59 için aynı sohbette "aynı flash belleği bu kez turuncu yap" demek iki görselin birebir aynı biçimde
 çıkmasını sağlar. 55 ve 56 aynı ışıkta olsun.
+
+## 11. İşletim sistemi ve uygulama görselleri (gerçek görseller)
+
+Bu bölümdekiler **üretilmez**; gerçek işletim sistemi ve uygulama görselleridir (eğitim amaçlı kapalı sistem). Gelince
+kod değişmeden kullanılır; gelmeyenlerin yerinde şimdiki çizimler kalır.
+
+**Arka planlar** (16:9, en az 1920×1080, `.webp` ya da `.jpg`):
+
+| Dosya adı | Nerede |
+|---|---|
+| `os-win11-duvar` | Windows 11 varsayılan masaüstü arka planı ("Bloom") |
+| `os-win11-kilit` | Windows 11 kilit ekranı arka planı (yoksa masaüstü arka planı kullanılır) |
+| `os-ubuntu-duvar` | Ubuntu 24.04 masaüstü arka planı |
+| `os-ubuntu-giris` | Ubuntu giriş ekranı arka planı (isteğe bağlı) |
+| `duvar-kagidi-1` / `-2` / `-3` | Kişiselleştirme: Girne Limanı, Karpaz sahili, Soyut (bölüm 9) |
+
+**Uygulama simgeleri** (kare, şeffaf arka plan, en az 256×256 `.png` ya da `.webp`). Dosya adı `ikon-` + aşağıdaki ad:
+
+`windows` (Başlat), `edge`, `chrome`, `firefox`, `dosya` (Dosya Gezgini), `ayarlar`, `guvenlik` (Windows Güvenliği),
+`gorev` (Görev Yöneticisi), `aygit` (Aygıt Yöneticisi), `geridonusum`, `word`, `excel`, `powerpoint`, `office`, `teams`,
+`winrar`, `acrobat`, `photoshop`, `rufus`, `ubuntu`, `terminal`
+
+Örnek: `ikon-excel.png`, `ikon-winrar.png`.
 
 ---
 

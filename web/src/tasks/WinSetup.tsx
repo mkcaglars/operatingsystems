@@ -5,6 +5,7 @@ import Photo from '../components/Photo';
 import Sorular, { type Soru } from '../components/Sorular';
 import type { TaskDef } from '../core/types';
 import type { TaskUIProps } from './registry';
+import { DurumEkrani } from '../win/Acilis';
 
 type Tur = 'ayrilmamis' | 'sistem' | 'msr' | 'birincil' | 'kurtarma' | 'linux';
 export interface Bolum {
@@ -58,7 +59,7 @@ export interface WinSetupState {
   hedef: { disk: string; bolum: string } | null;
   ozet: { temiz: boolean; veriKaybi: string[] };
   kurulum: 'yok' | 'tamam';
-  oobe: { bolge: string; klavye: string; ikinciDuzen: boolean; ag: string; cihazAdi: string; kullanici: string; parola: boolean; guvenlik: number; gizlilik: Gizlilik };
+  oobe: { bolge: string; klavye: string; ikinciDuzen: boolean; ag: string; cihazAdi: string; kullanici: string; parola: boolean; parolaDeger?: string; guvenlik: number; gizlilik: Gizlilik };
   cevaplar: Record<string, string | string[]>;
 }
 
@@ -114,6 +115,8 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
   const [guv, setGuv] = useState(['', '', '']);
   const [gz, setGz] = useState<Gizlilik>(s.oobe.gizlilik);
   const [wifiSec, setWifiSec] = useState<string | null>(null);
+  /** Dosyalar kopyalandıktan sonra bilgisayar yeniden başlar: "Hazırlanıyor" ekranı */
+  const [hazirlik, setHazirlik] = useState(false);
   const [wifiPw, setWifiPw] = useState('');
 
   const go = (adim: Adim) => {
@@ -132,6 +135,10 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
       if (p >= 100) {
         clearInterval(t);
         sim.act('kurulum.tamam', {}, (x: State) => ({ ...x, kurulum: 'tamam', adim: veri.oobeYok ? 'bitti' : 'bolge' }));
+        if (!veri.oobeYok) {
+          setHazirlik(true);
+          setTimeout(() => setHazirlik(false), 3200);
+        }
       }
     }, 150);
     return () => clearInterval(t);
@@ -540,7 +547,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
                 if (form.p1.length < 4) return setHata('Güçlü bir parola girin (bu görevde en az 4 karakter).');
                 if (form.p1 !== form.p2) return setHata('Parolalar eşleşmiyor.');
                 if (guv.some((g) => !g.trim())) return setHata('Üç güvenlik sorusunu da yanıtlayın.');
-                setO({ kullanici: form.kullanici.trim(), parola: true, guvenlik: 3 }, 'oobe.hesap', 'gizlilik');
+                setO({ kullanici: form.kullanici.trim(), parola: true, guvenlik: 3, ...(veri.wifi ? { parolaDeger: form.p1 } : {}) }, 'oobe.hesap', 'gizlilik');
               }}
             >
               İleri
@@ -608,7 +615,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
   if (gomulu)
     return (
       <div className="screen-fill on ws-screen">
-        {Ekran()}
+        {hazirlik ? <DurumEkrani metin="Hazırlanıyor" alt="Bilgisayarınız birkaç kez yeniden başlatılacak" /> : Ekran()}
         {modal}
       </div>
     );
@@ -619,7 +626,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
       <div className="ws-main">
         <div className="monitor-css">
           <div className="screen on ws-screen">
-            {Ekran()}
+            {hazirlik ? <DurumEkrani metin="Hazırlanıyor" alt="Bilgisayarınız birkaç kez yeniden başlatılacak" /> : Ekran()}
             {dlg && (
               <div className="ws-modal">
                 <div className="ws-dlg">

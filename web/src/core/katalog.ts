@@ -1,5 +1,5 @@
 // İ8 kurulabilir yazılımlar: kurulum dosyaları, sihirbaz adımları ve kurulumun bilgisayara etkisi.
-import { clonePc, derive, KULLANICI, type Uygulama, type WinPc } from './winpc';
+import { clonePc, derive, KULLANICI, programDosyalari, type Uygulama, type WinPc } from './winpc';
 
 export type KurulumAdim = 'hosgeldin' | 'lisans' | 'tur' | 'bilesen' | 'teklif' | 'klasor' | 'gereksinim' | 'hesap' | 'kur' | 'bitti';
 
@@ -112,13 +112,17 @@ export function kur(pc0: WinPc, tanimId: string, secim: KurulumSecim, kaynak?: '
   if (secim.bilesenler && t.bilesenler) uyg.bilesenler = [...secim.bilesenler];
   if (tanimId === 'office' || tanimId === 'photoshop') uyg.etkin = tanimId === 'photoshop';
   pc.uygulamalar = pc.uygulamalar.filter((u) => u.id !== uyg.id);
-  if (tanimId !== 'kms') pc.uygulamalar.push(uyg);
+  if (tanimId !== 'kms') {
+    pc.uygulamalar.push(uyg);
+    programDosyalari(pc, uyg.id, true);
+  }
   for (const tk of secim.teklifler ?? []) {
     const tt = t.teklifler?.find((x) => x.id === tk);
     if (tt) {
       pc.uygulamalar.push({ id: tk, ad: tt.ad, yayinci: 'Bilinmiyor', surum: '1.0', boyutMB: 45 });
       pc.baslangic.push({ id: tk, ad: tt.ad, yayinci: 'Bilinmiyor', etki: 'Yüksek', acik: true });
       pc.surecler.push({ id: tk, ad: tt.ad, cpu: 6.5, ram: 380 });
+      programDosyalari(pc, tk, true);
     }
   }
   for (const ek of secim.ekTeklifler ?? []) pc.uygulamalar.push({ id: ek, ad: ek === 'mcafee-scan' ? 'McAfee Security Scan Plus' : 'McAfee Safe Connect', yayinci: 'McAfee, LLC', surum: '4.1', boyutMB: 60 });

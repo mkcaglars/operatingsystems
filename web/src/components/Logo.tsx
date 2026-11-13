@@ -1,5 +1,6 @@
 // Uygulama ve marka logoları (SVG). Eğitim amaçlı kapalı simülasyonda gerçek görünüme yakın çizimler.
 import { useId, type ReactElement } from 'react';
+import { photoUrl } from './Photo';
 
 const L: Record<string, (u: string) => ReactElement> = {
   windows: (u) => (
@@ -224,7 +225,7 @@ const L: Record<string, (u: string) => ReactElement> = {
   ),
 };
 
-export const logoVar = (id: string) => id in L;
+export const logoVar = (id: string) => id in L || !!photoUrl('ikon-' + id);
 
 /** Kurulu uygulama kimliğinden logo kimliği (bilinmeyenler için genel program simgesi) */
 export function uygulamaLogo(id: string): string {
@@ -235,6 +236,14 @@ export function uygulamaLogo(id: string): string {
 
 export default function Logo({ id, size = '1.6em', title }: { id: string; size?: string; title?: string }) {
   const u = useId().replace(/:/g, '');
+  // assets/gorseller/ikon-<id> yüklenmişse gerçek simge kullanılır
+  const foto = photoUrl('ikon-' + id);
+  if (foto)
+    return (
+      <span className="logo-svg" style={{ width: size, height: size }} role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+        <img src={foto} alt="" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+      </span>
+    );
   const svg = L[id]?.(u);
   if (!svg) return null;
   return (

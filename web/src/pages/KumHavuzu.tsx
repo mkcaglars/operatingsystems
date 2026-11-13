@@ -36,6 +36,7 @@ import UbuntuKur, { initialUbuntuKur } from '../tasks/UbuntuKur';
 import { GrubMenu, UbuntuMasaustu } from '../components/UbuntuMasaustu';
 import type { ShellState } from '../core/shell';
 import Masaustu, { type Kopru, type WinVeri } from '../win/Masaustu';
+import WindowsAcilis, { DurumEkrani, WindowsLogoEkrani } from '../win/Acilis';
 
 const SCOPE = 'kum-havuzu';
 const GRUB_HATA = 'error: no such device: 4A1C-22F0.\nerror: disk `hd0,gpt2\' not found.\n\nPress any key to continue...';
@@ -55,6 +56,10 @@ export default function KumHavuzu() {
   const [nonce, setNonce] = useState(0);
   const [bilgi, setBilgi] = useState('');
   const [liste, setListe] = useState(true);
+  /** Windows'tan kapatma/yeniden başlatma ekranı */
+  const [kapanis, setKapanis] = useState<null | 'kapat' | 'yeniden'>(null);
+  /** USB'den açılışta kurulum medyası yükleniyor (logo + dönen noktalar) */
+  const [medyaYukleniyor, setMedyaYukleniyor] = useState(false);
   const [yuklendi, setYuklendi] = useState(false);
   const version = useRef(0);
   const e = st.bios.ekran;
@@ -238,6 +243,13 @@ export default function KumHavuzu() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [e, st.calisan]);
 
+  useEffect(() => {
+    if (e !== 'kurulum') return;
+    setMedyaYukleniyor(true);
+    const t = setTimeout(() => setMedyaYukleniyor(false), 2500);
+    return () => clearTimeout(t);
+  }, [e]);
+
   // Açılış hatası ekranında bir tuşa basınca yeniden dener
   const grubVar = st.onyukleyici === 'grub' && !!st.ubuntu;
   const acilisHatasi = e === 'bootfail' || (e === 'os' && !windowsVar(st) && !grubVar) || (e === 'os' && grubVar && st.calisan === 'windows' && !windowsVar(st));
@@ -286,10 +298,32 @@ export default function KumHavuzu() {
       sim.act('kh.rufus', { flash: y.aygit, bolum: y.bolum, iso: y.iso }, (s) => rufusYaz(s, y.aygit as FlashId, y.bolum, y.iso));
       setBilgi(`Rufus bitti: ${st.flash[y.aygit as FlashId]?.ad} artık ${/ubuntu/i.test(y.iso) ? 'Ubuntu' : 'Windows 11'} kurulum belleği (${y.bolum}).`);
     },
-    guc: (t) => (t === 'kapat' ? kapat() : reset()),
+    guc: (t) => {
+      setKapanis(t);
+      setTimeout(() => {
+        setKapanis(null);
+        if (t === 'kapat') kapat();
+        else reset();
+      }, 2200);
+    },
   };
 
   function Ekran() {
+    if (e === 'kurulum' && medyaYukleniyor)
+      return ubuntuUsb ? (
+        <div className="win-boot ubuntu-boot">
+          <span className="ubuntu-boot-logo">ubuntu</span>
+          <span className="ubuntu-dots">
+            <i />
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
+        </div>
+      ) : (
+        <WindowsLogoEkrani />
+      );
     if (e === 'kurulum' && ubuntuUsb) {
       if (!st.ukur) return <div className="screen-fill on" />;
       return <UbuntuKur task={{ veri: ubuntuKurulumVeri(st) } as unknown as TaskDef} mode="uygula" sim={ukurSim} gomulu />;
@@ -325,7 +359,19 @@ export default function KumHavuzu() {
       if (!windowsVar(st)) return <pre className="post-text">{'Reboot and Select proper Boot device\nor Insert Boot Media in selected Boot device and press a key_'}</pre>;
       return (
         <div className="screen-fill on wg-screen">
-          <Masaustu sim={winSim} veri={WIN_VERI} learn={false} kopru={kopru} />
+          {kapanis ? (
+            <DurumEkrani metin={kapanis === 'kapat' ? 'Kapatılıyor' : 'Yeniden başlatılıyor'} />
+          ) : (
+            <WindowsAcilis
+              kullanici={st.pc.cihaz.kullanici}
+              parola={st.windows === 'yeni' ? st.winParola : ''}
+              ilk={st.winIlk && st.windows === 'yeni'}
+              onIlkBitti={() => sim.act('kh.ilk-acilis', {}, (s) => ({ ...s, winIlk: false }))}
+              log={(t) => sim.act(t, {}, (x) => x)}
+            >
+              <Masaustu sim={winSim} veri={WIN_VERI} learn={false} kopru={kopru} />
+            </WindowsAcilis>
+          )}
         </div>
       );
     }

@@ -1,8 +1,9 @@
 // Windows 11 Ayarlar uygulaması (sadeleştirilmiş, gerçek menü yapısına uygun).
 import { useState, type ReactNode } from 'react';
-import { sifirla } from '../core/winpc';
+import { programDosyalari, sifirla } from '../core/winpc';
 import { Toggle, type AppCtx } from './Masaustu';
 import Logo, { uygulamaLogo } from '../components/Logo';
+import { duvarArkaPlan } from '../components/Photo';
 
 type Sayfa =
   | 'sistem' | 'ekran' | 'guc' | 'hakkinda' | 'kurtarma'
@@ -212,7 +213,7 @@ export default function Ayarlar(ctx: AppCtx) {
                   ['soyut', 'Soyut'],
                 ] as const
               ).map(([id, ad]) => (
-                <button key={id} className={'thumb t-' + id + (pc.ekran.arkaPlan === id ? ' on' : '')} onClick={() => act('kisisel.arkaplan', { deger: id }, (p) => ((p.ekran.arkaPlan = id), p))} aria-label={ad} title={ad}>
+                <button key={id} className={'thumb t-' + id + (pc.ekran.arkaPlan === id ? ' on' : '')} style={{ background: duvarArkaPlan(id) }} onClick={() => act('kisisel.arkaplan', { deger: id }, (p) => ((p.ekran.arkaPlan = id), p))} aria-label={ad} title={ad}>
                   <span>{ad}</span>
                 </button>
               ))}
@@ -558,6 +559,7 @@ export default function Ayarlar(ctx: AppCtx) {
                       ctx.uac(`${dlgUyg.ad} Kaldırıcı`, dlgUyg.yayinci, () =>
                         act('uygulama.kaldir', { uygulama: dlgUyg.id }, (p) => {
                           p.uygulamalar = p.uygulamalar.filter((x) => x.id !== dlgUyg.id);
+                          programDosyalari(p, dlgUyg.id, false);
                           p.baslangic = p.baslangic.filter((x) => x.id !== dlgUyg.id);
                           p.surecler = p.surecler.filter((x) => x.id !== dlgUyg.id);
                           if (p.varsayilan.tarayici === dlgUyg.id) p.varsayilan.tarayici = 'edge';
