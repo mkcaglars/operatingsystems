@@ -190,6 +190,17 @@ function public_user(array $u): array
     ];
 }
 
+/** Kullanıcının durum kaydını (sürüm denetimi olmadan) yazar */
+function sim_state_yaz(int $uid, string $scope, array $data): void
+{
+    $json = json_encode($data, JSON_UNESCAPED_UNICODE);
+    if (q('SELECT 1 FROM sim_state WHERE user_id = ? AND scope = ?', [$uid, $scope])->fetchColumn()) {
+        q('UPDATE sim_state SET data = ?, version = version + 1, updated_at = ? WHERE user_id = ? AND scope = ?', [$json, now_str(), $uid, $scope]);
+    } else {
+        q('INSERT INTO sim_state (user_id, scope, data, version, updated_at) VALUES (?, ?, ?, 1, ?)', [$uid, $scope, $json, now_str()]);
+    }
+}
+
 function create_student(string $name, int $classId, ?string $username, ?string $password): array
 {
     $username = $username !== null && $username !== '' ? strtolower($username) : suggest_username($name);
@@ -362,7 +373,36 @@ try {
             $exists = q('SELECT 1 FROM presence WHERE user_id = ?', [$u['id']])->fetchColumn();
             if ($exists) q('UPDATE presence SET station = ?, task_id = ?, info = ?, updated_at = ? WHERE user_id = ?', [$station, $task, $info, time(), $u['id']]);
             else q('INSERT INTO presence (user_id, station, task_id, info, updated_at) VALUES (?, ?, ?, ?, ?)', [$u['id'], $station, $task, $info, time()]);
+            // Öğretmen kum havuzu ekranını izliyorsa öğrenci ekran görüntüsü gönderir
+            $izle = q("SELECT data FROM sim_state WHERE user_id = ? AND scope = 'kh-izle'", [$u['id']])->fetchColumn();
+            $izleniyor = $izle !== false && (int)(json_decode((string)$izle, true)['until'] ?? 0) > time();
+            out(['tamam' => true, 'izle' => $izleniyor]);
+        }
+
+        // ---------------- Kum havuzu izleme ----------------
+        case 'POST sandbox/screen': {
+            $u = require_user();
+            $img = (string)arg('img', '');
+            if (!preg_match('#^data:image/jpeg;base64,[A-Za-z0-9+/=]+$#', $img) || strlen($img) > 1200000) fail('Geçersiz ekran görüntüsü.');
+            sim_state_yaz($u['id'], 'kh-ekran', ['img' => $img, 't' => time()]);
             out(['tamam' => true]);
+        }
+
+        case 'GET sandbox/view': {
+            $u = require_staff();
+            $sid = (int)($_GET['student_id'] ?? 0);
+            require_student($u, $sid);
+            sim_state_yaz($sid, 'kh-izle', ['until' => time() + 25, 'ogretmen' => $u['id']]);
+            $ekran = q("SELECT data FROM sim_state WHERE user_id = ? AND scope = 'kh-ekran'", [$sid])->fetchColumn();
+            $durum = q("SELECT data, updated_at FROM sim_state WHERE user_id = ? AND scope = 'kum-havuzu'", [$sid])->fetch();
+            $d = $durum ? json_decode($durum['data'], true) : null;
+            out([
+                'ekran' => $ekran !== false ? json_decode((string)$ekran, true) : null,
+                'gunluk' => $d['gunluk'] ?? [],
+                'ozet' => $d['ozet'] ?? [],
+                'guncelleme' => $durum['updated_at'] ?? null,
+                'now' => time(),
+            ]);
         }
 
         case 'POST attempts/start': {
