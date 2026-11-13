@@ -97,7 +97,12 @@ function eskiPc(): WinPc {
       },
       [`${BELGE}/sunum-isletim-sistemleri.pptx`]: { tur: 'dosya', boyut: '6,1 MB' },
       [`${KULLANICI}/Resimler/girne-gezisi.jpg`]: { tur: 'dosya', boyut: '3,2 MB' },
-      [`${KULLANICI}/Masaüstü/OKU-BENİ.txt`]: { tur: 'dosya', boyut: '1 KB' },
+      [`${KULLANICI}/Masaüstü/OKU-BENİ.txt`]: {
+        tur: 'dosya',
+        boyut: '1 KB',
+        icerik:
+          'Merhaba teknisyen arkadaşım,\r\n\r\nBilgisayar çok yavaşladı ve sürekli reklam çıkıyor. Windows\'u baştan kurabilirsin ama\r\nBelgeler klasöründeki proje ödevim ve bütçe dosyam ÇOK ÖNEMLİ, lütfen önce bir USB belleğe yedekle!\r\n\r\nKurulumdan sonra Chrome, WinRAR ve Office lazım. Wi-Fi şifresi masadaki sarı kâğıtta.\r\n\r\nTeşekkürler,\r\nAyşe',
+      },
     },
     surecler: [
       { id: 'explorer', ad: 'Windows Gezgini', cpu: 0.6, ram: 92, sistem: true },

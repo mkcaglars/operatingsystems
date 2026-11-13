@@ -217,6 +217,21 @@ const L: Record<string, (u: string) => ReactElement> = {
       <rect x="12" y="29" width="16" height="3" fill="#e2e8f0" />
     </svg>
   ),
+  notdefteri: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="9" y="5" width="30" height="38" rx="3" fill="#2c7be5" />
+      <rect x="12" y="10" width="24" height="30" rx="1" fill="#fff" />
+      <path d="M15 17h18M15 22h18M15 27h18M15 32h12" stroke="#94a3b8" strokeWidth="2" />
+      <rect x="9" y="5" width="30" height="6" rx="3" fill="#1d4ed8" />
+    </svg>
+  ),
+  fotograflar: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="5" y="9" width="38" height="30" rx="5" fill="#0ea5e9" />
+      <circle cx="17" cy="19" r="4" fill="#fde047" />
+      <path d="M5 33l12-11 9 8 6-5 11 9v1a5 5 0 0 1-5 4H10a5 5 0 0 1-5-4z" fill="#22c55e" />
+    </svg>
+  ),
   geridonusum: () => (
     <svg viewBox="0 0 48 48">
       <path d="M12 12h24l-3 30H15z" fill="#d9e6f2" stroke="#8aa4bd" strokeWidth="2" />

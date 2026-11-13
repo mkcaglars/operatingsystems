@@ -3,7 +3,13 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Json } from '../core/rules';
 import type { Sim } from '../core/sim';
-import { derive, yenidenBaslat, type WinPc } from '../core/winpc';
+import { adOf, children, derive, KULLANICI, yenidenBaslat, type WinPc } from '../core/winpc';
+import { KATALOG } from '../core/katalog';
+import { acicilar, uzanti } from '../core/dosyaIslem';
+import BaglamMenu, { type MenuOge } from './BaglamMenu';
+import BirlikteAc from './BirlikteAc';
+import NotDefteri from './NotDefteri';
+import Fotograflar from './Fotograflar';
 import Kurtarma from './Kurtarma';
 import Rufus from './Rufus';
 import Program, { PROGRAM_AD } from './Program';
@@ -20,7 +26,7 @@ import Kurulum from './Kurulum';
 import Word from './Word';
 import SistemKoruma from './SistemKoruma';
 
-export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma' | 'rufus' | 'program';
+export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma' | 'rufus' | 'program' | 'notdefteri' | 'fotograflar';
 
 export interface WinVeri {
   uygulamalar?: AppId[];
@@ -56,6 +62,11 @@ export interface AppCtx {
   learn: boolean;
   arg?: string;
   kopru?: Kopru;
+  /** Dosyayı ilişkili uygulamayla açar; uygulama yoksa "Birlikte aç" penceresi gelir */
+  dosyaAc: (yol: string) => void;
+  birlikteAc: (yol: string) => void;
+  /** Sağ tık menüsü */
+  menu: (e: { clientX: number; clientY: number; preventDefault: () => void; stopPropagation: () => void }, ogeler: MenuOge[]) => void;
 }
 
 const APP_INFO: Record<AppId, { ad: string; ikon: string; renk: string }> = {
@@ -71,6 +82,8 @@ const APP_INFO: Record<AppId, { ad: string; ikon: string; renk: string }> = {
   sistemkoruma: { ad: 'Sistem Özellikleri', ikon: '🖥', renk: '#3a6ea5' },
   rufus: { ad: 'Rufus', ikon: '🔧', renk: '#3c3c3c' },
   program: { ad: 'Program', ikon: '▦', renk: '#64748b' },
+  notdefteri: { ad: 'Not Defteri', ikon: '📝', renk: '#2c7be5' },
+  fotograflar: { ad: 'Fotoğraflar', ikon: '🖼', renk: '#0ea5e9' },
 };
 
 /** Pencere başlığı ve simgesi ("program" penceresinde kurulu programın kendisi) */
@@ -80,6 +93,7 @@ function pencere(w: { id: AppId; arg?: string }): { ad: string; logo: string | n
     const ad = PROGRAM_AD[taban] ?? taban ?? 'Program';
     return { ad: dosya ? `${dosya.slice(dosya.lastIndexOf('/') + 1)} - ${ad}` : ad, logo: uygulamaLogo(taban) };
   }
+  if ((w.id === 'notdefteri' || w.id === 'fotograflar') && w.arg) return { ad: `${w.arg.slice(w.arg.lastIndexOf('/') + 1)} - ${APP_INFO[w.id].ad}`, logo: w.id };
   return { ad: APP_INFO[w.id].ad, logo: logoVar(w.id) ? w.id : null };
 }
 
@@ -98,6 +112,11 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
   const [start, setStart] = useState(false);
   const [guc, setGuc] = useState(false);
   const [reklamKapali, setReklamKapali] = useState(false);
+  const [menuDurum, setMenuDurum] = useState<{ x: number; y: number; ogeler: MenuOge[] } | null>(null);
+  const [birlikte, setBirlikte] = useState<string | null>(null);
+  const [mesajDlg, setMesajDlg] = useState<{ baslik: string; metin: string } | null>(null);
+  const [masaSec, setMasaSec] = useState<string | null>(null);
+  const kok = useRef<HTMLDivElement>(null);
   const [agMenu, setAgMenu] = useState(false);
   const [wifiSec, setWifiSec] = useState<string | null>(null);
   const [wifiPw, setWifiPw] = useState('');
@@ -133,6 +152,57 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
     setUacErr('');
     setUacReq({ ad, yayinci, ok });
   };
+  const menu: AppCtx['menu'] = (e, ogeler) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const r = kok.current?.getBoundingClientRect();
+    setMenuDurum({ x: e.clientX - (r?.left ?? 0), y: e.clientY - (r?.top ?? 0), ogeler });
+  };
+  /** Dosyayı seçilen uygulamayla açar */
+  const ileAc = (uyg: string, yol: string) => {
+    sim.act('dosya.ac', { dosya: yol, uygulama: uyg }, (st) => st);
+    if (uyg === 'word') open('word', yol);
+    else if (uyg === 'excel') open('program', 'excel|' + yol);
+    else if (uyg === 'winrar') open('program', 'winrar|' + yol);
+    else if (uyg === 'dosya') open('dosya', yol);
+    else if (uyg === 'notdefteri' || uyg === 'fotograflar') open(uyg, yol);
+    else if (uyg === 'edge' || uyg === 'chrome') open(uyg);
+    else open('program', uyg);
+  };
+  const birlikteAc: AppCtx['birlikteAc'] = (yol) => {
+    sim.act('dosya.birlikte-ac', { dosya: yol, uzanti: uzanti(yol), uygulamaVar: acicilar(pc, yol).length > 0 }, (st) => st);
+    setBirlikte(yol);
+  };
+  const dosyaAc: AppCtx['dosyaAc'] = (yol) => {
+    const f = pc.fs[yol];
+    if (!f) return;
+    if (f.tur === 'klasor') return open('dosya', yol);
+    if (f.uygulama === 'rufus') {
+      sim.act('dosya.calistir', { dosya: yol, uygulama: f.uygulama }, (st) => st);
+      return uac(adOf(yol), 'Akeo Consulting', () => open('rufus'));
+    }
+    if (f.kurulum) {
+      const t = KATALOG[f.kurulum];
+      sim.act('dosya.calistir', { dosya: yol, kurulum: f.kurulum }, (st) => st);
+      return uac(adOf(yol), f.kaynak === 'sahte' ? 'Bilinmiyor' : t.uygulama.yayinci, () => open('kurulum', yol));
+    }
+    const uz = uzanti(yol);
+    if (uz === 'iso') return setMesajDlg({ baslik: adOf(yol), metin: 'Bu bir disk görüntüsü (ISO). Kurulum belleği hazırlamak için Rufus ile bir USB belleğe yazın.' });
+    if (uz === 'exe' || uz === 'msi') return setMesajDlg({ baslik: adOf(yol), metin: 'Bu uygulama bu bilgisayarda çalıştırılamıyor. Bir yayımcıya başvurun.' });
+    const a = acicilar(pc, yol);
+    if (a.length) ileAc(a[0].id, yol);
+    else birlikteAc(yol);
+  };
+  /** Microsoft Store'da uygulama ara: bilinen dosya türleri için indirme sayfası açılır */
+  const storeAra = (yol: string) => {
+    const uz = uzanti(yol);
+    setBirlikte(null);
+    sim.act('dosya.store-ara', { uzanti: uz }, (st) => st);
+    if (['docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt'].includes(uz)) open('edge', 'www.microsoft.com/tr-tr/microsoft-365/office-2024');
+    else if (['rar', '7z'].includes(uz)) open('edge', 'www.win-rar.com/turkce');
+    else if (uz === 'pdf') open('edge', 'get.adobe.com/tr/reader');
+    else setMesajDlg({ baslik: 'Microsoft Store', metin: `".${uz}" dosyaları için uygun bir uygulama bulunamadı.` });
+  };
   const ben = pc.hesaplar.find((h) => h.ad === pc.cihaz.kullanici);
   const standart = ben?.tur === 'standart';
 
@@ -157,8 +227,54 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
   }
   kisayollar.sort((a, b) => a.ad.localeCompare(b.ad, 'tr'));
 
+  const MASA = `${KULLANICI}/Masaüstü`;
+  const masaDosyalari = children(pc, MASA).filter((p) => pc.explorer.gizli || !pc.fs[p].gizli);
+  const yeniAd = (taban: string, uz = '') => {
+    let n = `${MASA}/${taban}${uz}`;
+    for (let i = 2; pc.fs[n]; i++) n = `${MASA}/${taban} (${i})${uz}`;
+    return n;
+  };
+  function dosyaMenusu(yol: string): MenuOge[] {
+    const f = pc.fs[yol];
+    const klasor = f?.tur === 'klasor';
+    return [
+      { ad: 'Aç', kalin: true, ikon: '📂', onClick: () => dosyaAc(yol) },
+      ...(klasor ? [] : [{ ad: 'Birlikte aç…', ikon: '🗂', onClick: () => birlikteAc(yol) }]),
+      { ayrac: true },
+      { ad: 'Sil', ikon: '🗑', kisayol: 'Del', onClick: () => act('dosya.sil', { yol }, (p) => (Object.keys(p.fs).forEach((k) => (k === yol || k.startsWith(yol + '/')) && delete p.fs[k]), p)) },
+      { ad: 'Özellikler', ikon: 'ⓘ', kisayol: 'Alt+Enter', onClick: () => setMesajDlg({ baslik: `${adOf(yol)} Özellikleri`, metin: `Tür: ${klasor ? 'Dosya klasörü' : `.${uzanti(yol)} dosyası`} · Konum: ${MASA.replace(/\//g, '\\')} · Boyut: ${f?.boyut ?? '—'}` }) },
+    ];
+  }
+  function masaustuMenu(e: Parameters<AppCtx['menu']>[0]) {
+    menu(e, [
+      { ad: 'Görünüm', ikon: '▦', kisayol: '›', devreDisi: true },
+      { ad: 'Sıralama ölçütü', ikon: '⇅', kisayol: '›', devreDisi: true },
+      { ad: 'Yenile', ikon: '⟳', onClick: () => log('masaustu.yenile', {}) },
+      { ayrac: true },
+      {
+        ad: 'Yeni klasör',
+        ikon: '📁',
+        onClick: () => {
+          const n = yeniAd('Yeni klasör');
+          act('dosya.yeni-klasor', { yol: n }, (p) => ((p.fs[n] = { tur: 'klasor' }), p));
+        },
+      },
+      {
+        ad: 'Yeni metin belgesi',
+        ikon: '📝',
+        onClick: () => {
+          const n = yeniAd('Yeni Metin Belgesi', '.txt');
+          act('dosya.yeni', { yol: n }, (p) => ((p.fs[n] = { tur: 'dosya', boyut: '0 KB', icerik: '' }), p));
+        },
+      },
+      { ayrac: true },
+      { ad: 'Ekran ayarları', ikon: '🖥', onClick: () => open('ayarlar', 'ekran') },
+      { ad: 'Kişiselleştir', ikon: '🖌', onClick: () => open('ayarlar', 'arkaplan') },
+    ]);
+  }
+
   function renderApp(w: Win): ReactNode {
-    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, arg: w.arg, kopru };
+    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, arg: w.arg, kopru, dosyaAc, birlikteAc, menu };
     switch (w.id) {
       case 'ayarlar':
         return <Ayarlar {...ctx} />;
@@ -172,7 +288,11 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         return <Guvenlik {...ctx} />;
       case 'edge':
       case 'chrome':
-        return <Tarayici {...ctx} chrome={w.id === 'chrome'} />;
+        return <Tarayici key={w.arg} {...ctx} chrome={w.id === 'chrome'} />;
+      case 'notdefteri':
+        return <NotDefteri key={w.arg} {...ctx} />;
+      case 'fotograflar':
+        return <Fotograflar {...ctx} />;
       case 'word':
         return <Word {...ctx} />;
       case 'kurulum':
@@ -199,7 +319,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
     act('pc.yeniden-baslat', { mod }, (x) => yenidenBaslat(x, mod));
   };
   if (pc.acilis === 'bsod' || pc.acilis === 'kurtarma') {
-    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, kopru };
+    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, kopru, dosyaAc, birlikteAc, menu };
     return (
       <div className="w11 w11-boot">
         <Kurtarma {...ctx} />
@@ -210,7 +330,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
 
   const dark = pc.ekran.tema === 'koyu';
   return (
-    <div className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : duvarArkaPlan(pc.ekran.arkaPlan), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
+    <div ref={kok} onContextMenu={(e) => (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('w11-icons')) && masaustuMenu(e)} onMouseDown={(e) => (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('w11-icons')) && setMasaSec(null)} className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : duvarArkaPlan(pc.ekran.arkaPlan), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
       {guvenli && (
         <>
           <span className="safe-c sc-tl">Güvenli Mod</span>
@@ -237,11 +357,39 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         {kisayollar
           .filter((k) => k.masaustu)
           .map((k) => (
-            <span key={k.anahtar} className="w11-icon kisayol" onDoubleClick={k.ac} title={k.ad} aria-label={`${k.ad} kısayolu`}>
+            <span
+              key={k.anahtar}
+              className={'w11-icon kisayol' + (masaSec === k.anahtar ? ' on' : '')}
+              onClick={() => setMasaSec(k.anahtar)}
+              onDoubleClick={k.ac}
+              onContextMenu={(e) => (setMasaSec(k.anahtar), menu(e, [{ ad: 'Aç', kalin: true, ikon: 'logo:' + k.logo, onClick: k.ac }, { ayrac: true }, { ad: 'Özellikler', ikon: 'ⓘ', onClick: () => setMesajDlg({ baslik: `${k.ad} Özellikleri`, metin: `Tür: Kısayol · Hedef: ${k.ad}` }) }]))}
+              title={k.ad}
+              aria-label={`${k.ad} kısayolu`}
+            >
               <Logo id={k.logo} size="2.4em" />
               {k.ad}
             </span>
           ))}
+        {masaDosyalari.map((yol) => {
+          const f = pc.fs[yol];
+          const uz = uzanti(yol);
+          const a = acicilar(pc, yol)[0];
+          const logo = f.tur === 'klasor' ? 'dosya' : a ? a.logo : 'program';
+          return (
+            <span
+              key={yol}
+              className={'w11-icon dosya-ikon' + (masaSec === yol ? ' on' : '')}
+              onClick={() => setMasaSec(yol)}
+              onDoubleClick={() => dosyaAc(yol)}
+              onContextMenu={(e) => (setMasaSec(yol), menu(e, dosyaMenusu(yol)))}
+              aria-label={`Masaüstü: ${adOf(yol)}`}
+              title={adOf(yol)}
+            >
+              {uz === 'txt' && !a ? <Logo id="notdefteri" size="2.4em" /> : <Logo id={logo} size="2.4em" />}
+              {pc.explorer.uzanti || f.tur === 'klasor' ? adOf(yol) : adOf(yol).replace(/\.[^.]+$/, '')}
+            </span>
+          );
+        })}
       </div>
       {pc.belirti.reklam && !reklamKapali && (
         <div className="w11-ad">
@@ -393,6 +541,34 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
           ) : (
             <small className="muted">Bu bilgisayarda kablosuz ağ bağdaştırıcısı yok.</small>
           )}
+        </div>
+      )}
+      {menuDurum && <BaglamMenu x={menuDurum.x} y={menuDurum.y} ogeler={menuDurum.ogeler} kapat={() => setMenuDurum(null)} />}
+      {birlikte && (
+        <BirlikteAc
+          pc={pc}
+          yol={birlikte}
+          kapat={() => setBirlikte(null)}
+          store={() => storeAra(birlikte)}
+          sec={(id, herZaman) => {
+            const y = birlikte;
+            setBirlikte(null);
+            if (herZaman) log('dosya.varsayilan-uygulama', { uzanti: uzanti(y), uygulama: id });
+            ileAc(id, y);
+          }}
+        />
+      )}
+      {mesajDlg && (
+        <div className="ws-modal">
+          <div className="ws-dlg">
+            <div className="ws-h">{mesajDlg.baslik}</div>
+            <p>{mesajDlg.metin}</p>
+            <div className="ws-foot">
+              <button className="ws-btn primary" onClick={() => setMesajDlg(null)}>
+                Tamam
+              </button>
+            </div>
+          </div>
         </div>
       )}
       {uacReq && (
