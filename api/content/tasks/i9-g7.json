@@ -1,0 +1,355 @@
+{
+ "id": "i9-g7",
+ "istasyon": "i9",
+ "baslik": "Kurtarılamayan bilgisayar: yedekle ve sıfırla",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "B9",
+  "S8",
+  "Y4",
+  "Y1"
+ ],
+ "sure_hedef": 600,
+ "ipucu_cezasi": 5,
+ "senaryo": "Bu bilgisayardaki zararlı yazılım her temizlikten sonra geri geliyor; servis şefi Windows'un sıfırlanmasına (formatlanmasına) karar verdi. Kullanıcının Belgeler klasöründeki ödev ve projeleri kaybolmamalı. Önce Belgeler'i USB belleğe (E:) yedekle, sonra Windows'u temiz biçimde sıfırla ve dosyaları geri yükle.",
+ "ogren": [
+  "Sıfırlama/format kişisel dosyaları silebilir: önce yedek alınır. Yedek, sıfırlanacak diskten ayrı bir yerde (USB bellek, harici disk, bulut) olmalıdır.",
+  "Ayarlar › Sistem › Kurtarma › 'Bu bilgisayarı sıfırla': 'Dosyalarımı koru' programları ve ayarları siler, kişisel dosyaları tutar. 'Her şeyi kaldır' C: sürücüsündeki her şeyi siler.",
+  "Zararlı yazılım kullanıcı profiline (AppData) yerleşmişse 'Dosyalarımı koru' onu da korur; temiz kurulum için 'Her şeyi kaldır' gerekir.",
+  "Yedekten geri yüklenen dosyalar da taranmalıdır. Sıfırlamadan sonra programlar yeniden kurulur."
+ ],
+ "ipuclari": [
+  "Dosya Gezgini › Belgeler'e git; 'Belgeler' klasörünü (ya da içindeki dosyaları) seç, Kopyala; USB Sürücü (E:)'ye git, Yapıştır.",
+  "Ayarlar › Sistem › Kurtarma › Bilgisayarı sıfırla › Her şeyi kaldır › Yerel olarak yeniden yükle › Sıfırla.",
+  "Dosya Gezgini'nde E: sürücüsündeki dosyaları Belgeler'e geri kopyala."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "dosya",
+   "ayarlar",
+   "guvenlik",
+   "gorev"
+  ],
+  "baslangicUygulama": "dosya",
+  "baslangicSayfa": "C:/Kullanıcılar/Ogrenci/Belgeler",
+  "pc": {
+   "zararli": [
+    "profil"
+   ],
+   "belirti": {
+    "reklam": true
+   },
+   "fs": {
+    "C:/Kullanıcılar/Ogrenci/Belgeler": {
+     "tur": "klasor"
+    },
+    "C:/Kullanıcılar/Ogrenci/Belgeler/bitirme-projesi.docx": {
+     "tur": "dosya",
+     "boyut": "1,8 MB"
+    },
+    "C:/Kullanıcılar/Ogrenci/Belgeler/not-cizelgesi.xlsx": {
+     "tur": "dosya",
+     "boyut": "42 KB"
+    },
+    "C:/Kullanıcılar/Ogrenci/Belgeler/ders-notlari.docx": {
+     "tur": "dosya",
+     "boyut": "24 KB"
+    },
+    "C:/Kullanıcılar/Ogrenci/AppData/Roaming": {
+     "tur": "klasor",
+     "gizli": true
+    },
+    "C:/Kullanıcılar/Ogrenci/AppData/Roaming/WindowsUpdateHelper.exe": {
+     "tur": "dosya",
+     "gizli": true,
+     "boyut": "4,6 MB",
+     "tehdit": "Trojan:Win32/Persist.C!ml"
+    },
+    "E:": {
+     "tur": "klasor"
+    },
+    "E:/Ders": {
+     "tur": "klasor"
+    }
+   },
+   "surecler": [
+    {
+     "id": "explorer",
+     "ad": "Windows Gezgini",
+     "cpu": 0.6,
+     "ram": 92,
+     "sistem": true
+    },
+    {
+     "id": "profil",
+     "ad": "WindowsUpdateHelper.exe",
+     "cpu": 31.0,
+     "ram": 640
+    },
+    {
+     "id": "antimalware",
+     "ad": "Antimalware Service Executable",
+     "cpu": 0.4,
+     "ram": 180,
+     "sistem": true
+    }
+   ]
+  },
+  "notlar": [
+   "Not: Bu bilgisayardaki zararlı daha önce 3 kez karantinaya alındı ve her seferinde geri geldi. Servis şefinin kararı: yedek al, sıfırla."
+  ],
+  "sorular": [
+   {
+    "id": "once",
+    "soru": "Bilgisayar sıfırlanmadan (format) önce yapılması gereken en önemli iş nedir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "yedek",
+      "metin": "Kişisel dosyaları ayrı bir sürücüye yedeklemek",
+      "dogru": true
+     },
+     {
+      "id": "surucu",
+      "metin": "Sürücüleri güncellemek",
+      "dogru": false
+     },
+     {
+      "id": "tarama",
+      "metin": "Disk birleştirme yapmak",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "hepsi",
+    "soru": "Bu bilgisayarda neden 'Dosyalarımı koru' yerine 'Her şeyi kaldır' seçilmeli?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "profil",
+      "metin": "Zararlı yazılım kullanıcı profilinde saklandığı için dosyalar korunursa zararlı da kalır",
+      "dogru": true
+     },
+     {
+      "id": "hiz",
+      "metin": "Her şeyi kaldır daha hızlıdır",
+      "dogru": false
+     },
+     {
+      "id": "lisans",
+      "metin": "Dosyalarımı koru seçilirse Windows lisansı silinir",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "yedek",
+   "aciklama": "Belgeler sıfırlamadan önce USB belleğe yedeklendi",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S8",
+    "Y1"
+   ],
+   "kural": {
+    "all": [
+     {
+      "any": [
+       {
+        "path": "pc.dosyalar",
+        "includes": "E:/Belgeler/bitirme-projesi.docx"
+       },
+       {
+        "path": "pc.dosyalar",
+        "includes": "E:/bitirme-projesi.docx"
+       }
+      ]
+     },
+     {
+      "before": [
+       "dosya.kopyala",
+       "sifirla"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "sifirla",
+   "aciklama": "Windows 'Her şeyi kaldır' ile sıfırlandı",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "path": "pc.sifirlama",
+    "eq": "hepsi"
+   }
+  },
+  {
+   "id": "temiz",
+   "aciklama": "Zararlı yazılım tamamen gitti",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.surecAdlari",
+      "len_gte": 1
+     },
+     {
+      "path": "pc.zararli",
+      "len_eq": 0
+     },
+     {
+      "path": "pc.surecAdlari",
+      "excludes": "profil"
+     }
+    ]
+   }
+  },
+  {
+   "id": "geri",
+   "aciklama": "Dosyalar Belgeler klasörüne geri yüklendi",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.sifirlama",
+      "eq": "hepsi"
+     },
+     {
+      "path": "pc.dosyalar",
+      "includes": "C:/Kullanıcılar/Ogrenci/Belgeler/bitirme-projesi.docx"
+     },
+     {
+      "path": "pc.dosyalar",
+      "includes": "C:/Kullanıcılar/Ogrenci/Belgeler/not-cizelgesi.xlsx"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-once",
+   "aciklama": "Soru: Bilgisayar sıfırlanmadan (format) önce yapılması gereken en önemli iş nedir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "Y1"
+   ],
+   "kural": {
+    "path": "cevaplar.once",
+    "eq": "yedek"
+   }
+  },
+  {
+   "id": "q-hepsi",
+   "aciklama": "Soru: Bu bilgisayarda neden 'Dosyalarımı koru' yerine 'Her şeyi kaldır' seçilmeli?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.hepsi",
+    "eq": "profil"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "kayip",
+   "aciklama": "Yedek alınmadan sıfırlandı: kullanıcının dosyaları kayboldu",
+   "ceza": 40,
+   "kural": {
+    "all": [
+     {
+      "path": "pc.sifirlama",
+      "eq": "hepsi"
+     },
+     {
+      "path": "pc.dosyalar",
+      "excludes": "E:/Belgeler/bitirme-projesi.docx"
+     },
+     {
+      "path": "pc.dosyalar",
+      "excludes": "E:/bitirme-projesi.docx"
+     }
+    ]
+   }
+  },
+  {
+   "id": "koru",
+   "aciklama": "'Dosyalarımı koru' seçildi: zararlı profilde kaldı",
+   "ceza": 20,
+   "kural": {
+    "path": "pc.sifirlama",
+    "eq": "koru"
+   }
+  },
+  {
+   "id": "izin",
+   "aciklama": "Zararlı dosyaya izin verildi",
+   "ceza": 30,
+   "kural": {
+    "path": "pc.guvenlik.izinVerilen",
+    "len_gte": 1
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "sifirlama": "hepsi",
+    "zararli": [],
+    "surecAdlari": [
+     "explorer",
+     "antimalware"
+    ],
+    "guvenlik": {
+     "izinVerilen": []
+    },
+    "dosyalar": [
+     "E:",
+     "E:/Belgeler",
+     "E:/Belgeler/bitirme-projesi.docx",
+     "E:/Belgeler/not-cizelgesi.xlsx",
+     "C:/Kullanıcılar/Ogrenci/Belgeler/bitirme-projesi.docx",
+     "C:/Kullanıcılar/Ogrenci/Belgeler/not-cizelgesi.xlsx"
+    ]
+   },
+   "cevaplar": {
+    "once": "yedek",
+    "hepsi": "profil"
+   }
+  },
+  "events": [
+   {
+    "type": "dosya.kopyala",
+    "t": 20000,
+    "kaynak": "C:/Kullanıcılar/Ogrenci/Belgeler",
+    "hedef": "E:/Belgeler"
+   },
+   {
+    "type": "sifirla",
+    "t": 60000,
+    "secenek": "hepsi",
+    "kaynak": "yerel"
+   },
+   {
+    "type": "dosya.kopyala",
+    "t": 90000,
+    "kaynak": "E:/Belgeler/bitirme-projesi.docx",
+    "hedef": "C:/Kullanıcılar/Ogrenci/Belgeler/bitirme-projesi.docx"
+   }
+  ]
+ }
+}

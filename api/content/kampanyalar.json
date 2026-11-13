@@ -1,0 +1,85 @@
+[
+ {
+  "id": "k1",
+  "kod": "K1",
+  "ad": "Yeni ofis bilgisayarı",
+  "aciklama": "Kıbrıs'ta yeni açılan bir muhasebe bürosu için sıfırdan bilgisayar hazırla: donanım, kurulum, sürücüler, güvenlik ve programlar.",
+  "kazanimlar": [
+   "Y1",
+   "Y2",
+   "Y3"
+  ],
+  "adimlar": [
+   "i1-g5",
+   "i1-g2",
+   "i2-g3",
+   "i4-g1",
+   "i4-g3",
+   "i7-g1",
+   "i7-g2",
+   "i8-g1",
+   "i8-g2",
+   "i6-g4"
+  ]
+ },
+ {
+  "id": "k2",
+  "kod": "K2",
+  "ad": "Okul laboratuvarına Ubuntu",
+  "aciklama": "Eski bilgisayarlara açık kaynak işletim sistemi kur; kullanıcıları ve paketleri hazırla.",
+  "kazanimlar": [
+   "B5",
+   "S3",
+   "S5",
+   "Y2"
+  ],
+  "adimlar": [
+   "i3-g3",
+   "i5-g1",
+   "i5-g3",
+   "i5-g4",
+   "i8-g7"
+  ]
+ },
+ {
+  "id": "k3",
+  "kod": "K3",
+  "ad": "Servis masası günü",
+  "aciklama": "Teknik servise art arda arızalı bilgisayarlar geliyor. Her birini teşhis et ve gider.",
+  "kazanimlar": [
+   "B9",
+   "B10",
+   "S8",
+   "S9",
+   "Y4"
+  ],
+  "adimlar": [
+   "i9-g1",
+   "i9-g5",
+   "i9-g2",
+   "i9-g4",
+   "i9-g3",
+   "i9-g6"
+  ]
+ },
+ {
+  "id": "k4",
+  "kod": "K4",
+  "ad": "Virüslü bilgisayarı yeniden kur",
+  "aciklama": "Kurtarılamayan bir bilgisayarın verisini kurtar, Windows'u sıfırla ve bilgisayarı yeniden kullanıma hazırla.",
+  "kazanimlar": [
+   "S3",
+   "S8",
+   "Y1",
+   "Y3",
+   "Y4"
+  ],
+  "adimlar": [
+   "i9-g7",
+   "i4-g4",
+   "i7-g1",
+   "i7-g2",
+   "i8-g2"
+  ]
+ }
+]
