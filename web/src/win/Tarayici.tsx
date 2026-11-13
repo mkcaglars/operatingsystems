@@ -27,6 +27,7 @@ const SAHTE: Record<string, { baslik: string; dosya: string; kurulum: string; sl
   'winrar-full-crack-indir.net': { baslik: 'WinRAR Full Crack İndir', dosya: 'WinRAR_Full_Crack_2026.exe', kurulum: 'kms', slogan: 'WinRAR 7 Full Lisanslı — Ömür Boyu Ücretsiz!' },
   'photoshop-crack-2025.net': { baslik: 'Photoshop 2025 Crack Full', dosya: 'Photoshop_2025_Crack_Patch.exe', kurulum: 'kms', slogan: 'Adobe Photoshop 2025 Full Crack — Lisans gerekmez!' },
   'windows11-full-etkinlestirilmis-indir.net': { baslik: 'Windows 11 Pro Full Etkinleştirilmiş', dosya: 'Win11_Pro_Activator_Full.exe', kurulum: 'kms', slogan: 'Windows 11 Pro + Etkinleştirici — Ömür boyu lisans!' },
+  'office-2024-crack-kms-indir.net': { baslik: 'Office 2024 KMS Etkinleştirici', dosya: 'KMSPico_Office2024.exe', kurulum: 'kms', slogan: 'Office 2024 Full + KMS — Ürün anahtarı gerekmez!' },
   'pdf-reader-hizli-indir.com': { baslik: 'PDF Reader Hızlı İndir', dosya: 'PDFReader_Setup(2).exe', kurulum: 'chrome-sahte', slogan: 'En iyi PDF okuyucu — tek tık kurulum!' },
 };
 
@@ -47,6 +48,16 @@ function sonuclar(q: string): Sonuc[] {
     return [
       { url: 'www.win-rar.com/turkce', baslik: 'WinRAR Türkçe — win.rar GmbH', ozet: 'WinRAR resmi indirme sayfası. 40 günlük deneme sürümü.' },
       { url: 'winrar-full-crack-indir.net', baslik: 'WinRAR Full Crack İndir 2026', ozet: 'WinRAR full lisanslı crack, keygen dahil.' },
+    ];
+  if (/office|word|excel|powerpoint/.test(s))
+    return [
+      { url: 'www.microsoft.com/tr-tr/microsoft-365/office-2024', baslik: 'Microsoft Office 2024 - Ürün anahtarınızla yükleyin', ozet: 'Office Professional Plus 2024: Word, Excel, PowerPoint, Outlook. Yükleyiciyi indirin ve ürün anahtarıyla etkinleştirin.' },
+      { url: 'office-2024-crack-kms-indir.net', baslik: 'Office 2024 Full KMS Etkinleştirici İndir', ozet: 'Ürün anahtarı gerektirmez! KMSPico ile tek tık.', reklam: true },
+    ];
+  if (/ubuntu|linux/.test(s))
+    return [
+      { url: 'ubuntu.com/download/desktop', baslik: 'Ubuntu Desktop indir | Ubuntu', ozet: 'Ubuntu 24.04.1 LTS: 5 yıl güvenlik desteği. 64 bit ISO kalıbını indirin.' },
+      { url: 'tr.wikipedia.org/wiki/Ubuntu', baslik: 'Ubuntu - Vikipedi', ozet: 'Ubuntu, Canonical tarafından geliştirilen Debian tabanlı bir Linux dağıtımıdır.' },
     ];
   if (/windows|win ?11|iso|kurulum medya/.test(s))
     return [
@@ -297,6 +308,41 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
               64 bit İndir
             </button>
             <p className="small muted">Bağlantı 24 saat geçerlidir. SHA256 doğrulama değerleri sayfanın altında listelenir.</p>
+          </section>
+        </div>
+      );
+    if (url === 'www.microsoft.com/tr-tr/microsoft-365/office-2024')
+      return (
+        <div className="br-page ms">
+          <div className="br-ms">
+            <Logo id="microsoft" size="1.4em" /> Microsoft
+          </div>
+          <h1>Microsoft Office Professional Plus 2024</h1>
+          <p>Word, Excel, PowerPoint, Outlook ve daha fazlası. Kurumunuzun verdiği ürün anahtarıyla etkinleştirin.</p>
+          <section className="br-ms-sec">
+            <h3>1. Office'i indirin ve yükleyin</h3>
+            <button className="br-blue" onClick={() => indirBaslat({ dosya: 'OfficeSetup.exe', boyut: '7,1 MB', kurulum: 'office', kaynak: 'resmi' })}>
+              Yükleyiciyi indir
+            </button>
+            <h3>2. Etkinleştirin</h3>
+            <p className="small">Kurulumdan sonra Word'ü açın: Dosya › Hesap › Ürünü Etkinleştir ve 25 karakterlik ürün anahtarını girin.</p>
+          </section>
+        </div>
+      );
+    if (url === 'ubuntu.com/download/desktop')
+      return (
+        <div className="br-page ubuntu-site">
+          <div className="br-ubuntu">
+            <Logo id="ubuntu" size="1.6em" /> <b>Ubuntu</b>
+          </div>
+          <h1>Ubuntu Desktop indir</h1>
+          <section className="br-ms-sec">
+            <h3>Ubuntu 24.04.1 LTS</h3>
+            <p className="small">Uzun süreli destek (LTS): Nisan 2029'a kadar güvenlik güncellemeleri. En az 4 GB RAM ve 25 GB disk alanı önerilir.</p>
+            <button className="br-ubuntu-btn" onClick={() => indirBaslat({ dosya: 'ubuntu-24.04.1-desktop-amd64.iso', boyut: '5,7 GB', kurulum: '', kaynak: 'resmi' })}>
+              İndir 24.04.1 LTS
+            </button>
+            <p className="small muted">Önyüklenebilir USB oluşturmak için Windows'ta Rufus kullanın.</p>
           </section>
         </div>
       );

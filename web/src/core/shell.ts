@@ -24,6 +24,8 @@ export interface ShellState {
   sistem: { ram: string; disk: string; cpu: string; ag: string; ekran: string; ip: string };
   /** Çift önyükleme: GRUB menüsünde Windows girişi var mı (update-grub ile os-prober çalışınca) */
   grub: { windows: boolean; osProber: boolean };
+  /** Kurulu sistemde diskin gerçek bölümleri (lsblk için; yoksa canlı oturum düzeni) */
+  bolumler?: { boyut: string; baglama: string }[];
 }
 
 export interface ExecResult {
@@ -355,6 +357,14 @@ export function exec(prev: ShellState, line: string): ExecResult {
     case 'uname':
       return R(has('a') ? `Linux ${s.host} 6.8.0-45-generic #45-Ubuntu SMP PREEMPT_DYNAMIC x86_64 x86_64 x86_64 GNU/Linux` : 'Linux');
     case 'lsblk':
+      if (s.bolumler)
+        return R(
+          [
+            'NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS',
+            `sda           8:0    0 ${s.sistem.disk.padStart(6)}  0 disk`,
+            ...s.bolumler.map((b, i) => `${i === s.bolumler!.length - 1 ? '└─' : '├─'}sda${i + 1}`.padEnd(14) + `8:${i + 1}`.padEnd(7) + `0 ${b.boyut.padStart(6)}  0 part ${b.baglama}`),
+          ].join('\n'),
+        );
       return R(
         [
           'NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS',

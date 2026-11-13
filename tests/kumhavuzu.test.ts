@@ -42,3 +42,25 @@ describe('kum havuzu', () => {
     expect(r.pc.dosyalar.some((d) => d.startsWith('C:/Windows.old/') && d.endsWith('proje-odevi.docx'))).toBe(true);
   });
 });
+
+describe('kum havuzu: Ubuntu çift önyükleme', () => {
+  it('Windows kurulduktan sonra Ubuntu kurulumu Windows bölümünü görür ve birlikte kurulur', async () => {
+    const { ubuntuKurulumVeri, ubuntuKurulumuIsle, parcalardanDisk } = await import('../web/src/core/kumhavuzu');
+    const { initialUbuntuKur } = await import('../web/src/tasks/UbuntuKur');
+    let st = ilkDurum();
+    const k = initialWinSetup({ veri: kurulumVeri(st) } as never);
+    k.diskler = [{ id: 'd0', bolumler: [{ id: 'k', tur: 'kurtarma', boyutGB: 0.75 }, { id: 's', tur: 'sistem', boyutGB: 0.1 }, { id: 'm', tur: 'msr', boyutGB: 0.016 }, { id: 'w', tur: 'birincil', boyutGB: 464.9, etiket: 'Windows', windows: true }] }];
+    st = kurulumuIsle({ ...st, kurulum: { ...k, hedef: { disk: 'd0', bolum: 'w' }, kurulum: 'tamam', adim: 'bitti', ozet: { temiz: true, veriKaybi: [] } } });
+    const v = ubuntuKurulumVeri(st);
+    expect(v.windowsVar).toBe(true);
+    const u = initialUbuntuKur({ veri: v } as never);
+    // "Windows ile birlikte": Windows küçülür, yeni ext4 kök bölümü eklenir
+    const bolumler = u.bolumler.flatMap((p) => (p.windows ? [{ ...p, boyutGB: 404.9 }, { id: 'yeni', ad: '/dev/sda5', boyutGB: 60, fs: 'ext4' as const, baglama: '/', bicimlendir: true }] : [p]));
+    expect(parcalardanDisk(bolumler, st.diskler)[0].bolumler.find((b) => b.id === 'w')?.windows).toBe(true);
+    const son = ubuntuKurulumuIsle({ ...st, ukur: { ...u, bolumler, kurulum: 'tamam', adim: 'grub' } });
+    expect(son.windows).toBe('yeni');
+    expect(son.onyukleyici).toBe('grub');
+    expect(son.ubuntu?.sh.grub.windows).toBe(true);
+    expect(yapilacaklar(son).find((x) => x.id === 'ubuntu')!.tamam).toBe(true);
+  });
+});

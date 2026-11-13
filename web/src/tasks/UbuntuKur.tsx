@@ -5,8 +5,8 @@ import Sorular, { type Soru } from '../components/Sorular';
 import type { TaskDef } from '../core/types';
 import type { TaskUIProps } from './registry';
 
-type Fs = 'ext4' | 'fat32' | 'swap' | 'ntfs' | 'bos';
-interface Part {
+export type Fs = 'ext4' | 'fat32' | 'swap' | 'ntfs' | 'bos';
+export interface Part {
   id: string;
   ad: string;
   boyutGB: number;
@@ -16,11 +16,15 @@ interface Part {
   mevcut?: boolean;
   etiket?: string;
   windows?: boolean;
+  /** kum havuzu: WinSetup bölüm türü (dönüştürme için) */
+  tur?: string;
 }
-type Adim = 'dil' | 'erisim' | 'klavye' | 'ag' | 'denekur' | 'tur' | 'uygulama' | 'optimize' | 'disk' | 'elle' | 'birlikte' | 'hesap' | 'saat' | 'inceleme' | 'kuruluyor' | 'bitti' | 'grub' | 'ubuntu' | 'windows';
-interface Veri {
+export type UbuntuAdim = 'dil' | 'erisim' | 'klavye' | 'ag' | 'denekur' | 'tur' | 'uygulama' | 'optimize' | 'disk' | 'elle' | 'birlikte' | 'hesap' | 'saat' | 'inceleme' | 'kuruluyor' | 'bitti' | 'grub' | 'ubuntu' | 'windows';
+export interface UbuntuVeri {
   disk: { ad: string; boyutGB: number; bolumler: Part[] };
   windowsVar?: boolean;
+  /** kum havuzu: kurulumun ağ adımında kablosuz ağlar */
+  wifi?: { ssid: string; sifre: string; guc: number }[];
   sorular?: Soru[];
 }
 interface Ozet {
@@ -31,16 +35,20 @@ interface Ozet {
   windowsKorundu: boolean;
   diskSilindi: boolean;
 }
-interface State {
+type Adim = UbuntuAdim;
+type Veri = UbuntuVeri;
+export interface UbuntuKurState {
   adim: Adim;
   ayar: { dil: string; klavye: string; ag: string; uygulamalar: string; ucuncuParti: boolean; medya: boolean; diskSecenek: string | null; saatDilimi: string };
   bolumler: Part[];
-  hesap: { ad: string; bilgisayar: string; kullanici: string; parola: boolean; parolaIste: boolean };
+  hesap: { ad: string; bilgisayar: string; kullanici: string; parola: boolean; parolaIste: boolean; parolaDeger?: string };
   ozet: Ozet;
   kurulum: 'yok' | 'tamam';
   acilan: string[];
   cevaplar: Record<string, string | string[]>;
 }
+
+type State = UbuntuKurState;
 
 let seq = 0;
 const nid = () => 'u' + Date.now().toString(36) + seq++;
@@ -77,7 +85,7 @@ export const initialUbuntuKur = (task: TaskDef): State => {
 
 const gb = (x: number) => `${x.toFixed(1).replace('.', ',')} GB`;
 
-export default function UbuntuKur({ task, mode, sim }: TaskUIProps) {
+export default function UbuntuKur({ task, mode, sim, gomulu }: TaskUIProps & { gomulu?: boolean }) {
   const veri = task.veri as unknown as Veri;
   const s = sim.state as State;
   const learn = mode === 'ogren';
@@ -88,6 +96,7 @@ export default function UbuntuKur({ task, mode, sim }: TaskUIProps) {
   const [h, setH] = useState({ ad: '', bilgisayar: '', kullanici: '', p1: '', p2: '' });
   const [pct, setPct] = useState(0);
   const [grubSec, setGrubSec] = useState(0);
+  const [wifiPw, setWifiPw] = useState('');
 
   const go = (adim: Adim, data: Record<string, string | boolean> = {}, patch?: (x: State) => State) => {
     setHata('');
@@ -197,7 +206,7 @@ export default function UbuntuKur({ task, mode, sim }: TaskUIProps) {
     if (!/^[A-Za-z0-9-]{1,63}$/.test(h.bilgisayar)) return setHata('Bilgisayar adı yalnızca harf, rakam ve kısa çizgi içerebilir.');
     if (h.p1.length < 4) return setHata('Parola en az 4 karakter olmalı (bu görevde).');
     if (h.p1 !== h.p2) return setHata('Parolalar eşleşmiyor.');
-    go('saat', { kullanici: h.kullanici }, (x) => ({ ...x, hesap: { ad: h.ad.trim(), bilgisayar: h.bilgisayar.trim(), kullanici: h.kullanici, parola: true, parolaIste: true } }));
+    go('saat', { kullanici: h.kullanici }, (x) => ({ ...x, hesap: { ad: h.ad.trim(), bilgisayar: h.bilgisayar.trim(), kullanici: h.kullanici, parola: true, parolaIste: true, ...(veri.wifi ? { parolaDeger: h.p1 } : {}) } }));
   }
 
   const Nav = ({ geri, ileri, ileriAd = 'İleri', disabled = false }: { geri?: Adim; ileri: () => void; ileriAd?: string; disabled?: boolean }) => (
@@ -313,9 +322,32 @@ export default function UbuntuKur({ task, mode, sim }: TaskUIProps) {
         return (
           <>
             <h2>İnternete bağlanın</h2>
-            <Radio alan="ag" value="kablolu" label="Kablolu bağlantı kullan" alt="Kablolu bağlantı algılandı" />
+            {veri.wifi ? (
+              <>
+                {veri.wifi.map((w) => (
+                  <Radio key={w.ssid} alan="ag" value={'wifi:' + w.ssid} label={`📶 ${w.ssid}`} alt={w.sifre ? 'Güvenli (WPA2)' : 'Açık ağ'} />
+                ))}
+                {(() => {
+                  const w = veri.wifi.find((x) => 'wifi:' + x.ssid === s.ayar.ag);
+                  return w?.sifre ? <input type="password" value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Parola" aria-label="Wi-Fi parolası" autoFocus /> : null;
+                })()}
+              </>
+            ) : (
+              <Radio alan="ag" value="kablolu" label="Kablolu bağlantı kullan" alt="Kablolu bağlantı algılandı" />
+            )}
             <Radio alan="ag" value="yok" label="Şimdi internete bağlanmak istemiyorum" />
-            <Nav geri="klavye" ileri={() => (s.ayar.ag ? go('denekur') : setHata('Bir seçenek belirleyin.'))} />
+            <Nav
+              geri="klavye"
+              ileri={() => {
+                if (!s.ayar.ag) return setHata('Bir seçenek belirleyin.');
+                const w = veri.wifi?.find((x) => 'wifi:' + x.ssid === s.ayar.ag);
+                if (w?.sifre && wifiPw !== w.sifre) {
+                  sim.act('wifi.hata', { ssid: w.ssid }, (x: State) => x);
+                  return setHata('Kimlik doğrulama başarısız: parola yanlış.');
+                }
+                go('denekur');
+              }}
+            />
           </>
         );
       case 'denekur':
@@ -550,6 +582,20 @@ export default function UbuntuKur({ task, mode, sim }: TaskUIProps) {
   };
 
   const ekranTam = s.adim === 'grub' || s.adim === 'ubuntu' || s.adim === 'windows';
+  if (gomulu)
+    return (
+      <div className="screen-fill on">
+        <div className="ui-installer">
+          <div className="ui-top">
+            <span>Ubuntu'yu Kur</span>
+          </div>
+          <div className="ui-page">
+            {Ekran()}
+            {hata && <p className="err-text small">{hata}</p>}
+          </div>
+        </div>
+      </div>
+    );
   return (
     <div className="ubk">
       <div className="ubk-main">

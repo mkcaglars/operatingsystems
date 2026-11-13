@@ -13,6 +13,10 @@ import {
   kurulumuIsle,
   kurulumVeri,
   rufusYaz,
+  bootBellegi,
+  OFFICE_ANAHTARI,
+  ubuntuKurulumuIsle,
+  ubuntuKurulumVeri,
   URUN_ANAHTARI,
   WIFI,
   windowsVar,
@@ -21,14 +25,22 @@ import {
   type KhState,
 } from '../core/kumhavuzu';
 import { useSim, type Sim } from '../core/sim';
+import { olayMetni } from '../core/gunluk';
+import { toJpeg } from 'html-to-image';
 import type { TaskDef } from '../core/types';
 import type { WinPc } from '../core/winpc';
 import PcBios from '../tasks/PcBios';
 import WinSetup, { initialWinSetup } from '../tasks/WinSetup';
+import UbuntuKur, { initialUbuntuKur } from '../tasks/UbuntuKur';
+import { GrubMenu, UbuntuMasaustu } from '../components/UbuntuMasaustu';
+import type { ShellState } from '../core/shell';
 import Masaustu, { type Kopru, type WinVeri } from '../win/Masaustu';
 
 const SCOPE = 'kum-havuzu';
-const WIN_VERI: WinVeri = { uygulamalar: ['ayarlar', 'gorev', 'dosya', 'aygit', 'guvenlik', 'edge'], wifiAglari: WIFI };
+const GRUB_HATA = 'error: no such device: 4A1C-22F0.\nerror: disk `hd0,gpt2\' not found.\n\nPress any key to continue...';
+const WIN_VERI: WinVeri = { uygulamalar: ['ayarlar', 'gorev', 'dosya', 'aygit', 'guvenlik', 'edge'], wifiAglari: WIFI, officeAnahtar: OFFICE_ANAHTARI };
+/** Kurulumlardan çıkış (kapatma, reset): yarım kalan kurulumların disk etkisi işlenir, çalışan sistem kapanır */
+const cik = (s: KhState): KhState => ({ ...ubuntuKurulumuIsle(kurulumuIsle(s)), calisan: null });
 const blur = (e: MouseEvent<HTMLElement>) => e.currentTarget.blur();
 
 export default function KumHavuzu() {
@@ -40,29 +52,49 @@ export default function KumHavuzu() {
   const [yuklendi, setYuklendi] = useState(false);
   const version = useRef(0);
   const e = st.bios.ekran;
+  const [gunluk, setGunluk] = useState<{ t: string; m: string }[]>([]);
+  const islenen = useRef(0);
+  const ekranRef = useRef<HTMLDivElement>(null);
+  // Yeni olayları öğretmen için okunur günlüğe çevir
+  useEffect(() => {
+    const yeni = sim.events.slice(islenen.current);
+    islenen.current = sim.events.length;
+    const satirlar = yeni
+      .map((ev) => olayMetni(ev))
+      .filter((m): m is string => !!m)
+      .map((m) => ({ t: new Date().toTimeString().slice(0, 8), m }));
+    if (satirlar.length)
+      setGunluk((g) => {
+        const out = [...g];
+        for (const r of satirlar) if (out[out.length - 1]?.m !== r.m) out.push(r);
+        return out.slice(-200);
+      });
+  }, [sim.events]);
 
   // ---------- Kayıt: öğrenci kaldığı yerden devam eder ----------
   useEffect(() => {
     api
-      .get<{ data: { st: KhState } | null; version: number }>('state', { scope: SCOPE })
+      .get<{ data: { st: KhState; gunluk?: { t: string; m: string }[] } | null; version: number }>('state', { scope: SCOPE })
       .then((r) => {
         version.current = r.version;
         if (r.data?.st?.pc) {
           // Sayfa kapandığında bilgisayar kapanmış sayılır
-          const s = kurulumuIsle(r.data.st);
+          const ilk = ilkDurum();
+          const s = cik({ ...ilk, ...r.data.st, iz: { ...ilk.iz, ...r.data.st.iz } });
           sim.restore({ ...s, bios: { ...s.bios, ekran: 'kapali', setup: null } }, []);
+          if (Array.isArray((r.data as { gunluk?: unknown }).gunluk)) setGunluk((r.data as { gunluk: { t: string; m: string }[] }).gunluk);
         }
       })
       .catch(() => undefined)
       .finally(() => setYuklendi(true));
-    api.post('presence', { station: '', task_id: '', info: 'Kum havuzu' }).catch(() => undefined);
-    const t = setInterval(() => api.post('presence', { station: '', task_id: '', info: 'Kum havuzu' }).catch(() => undefined), 30000);
-    return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const gunlukRef = useRef(gunluk);
+  gunlukRef.current = gunluk;
   const kaydet = useCallback(async (s: KhState) => {
     try {
-      const r = await api.post<{ version: number }>('state/save', { scope: SCOPE, data: { st: s }, version: version.current });
+      const ozet = yapilacaklar(s).map((x) => ({ m: x.metin, ok: x.tamam }));
+      const r = await api.post<{ version: number }>('state/save', { scope: SCOPE, data: { st: s, gunluk: gunlukRef.current, ozet }, version: version.current });
       version.current = r.version;
     } catch (er) {
       if (er instanceof ApiError && er.status === 409) {
@@ -79,6 +111,42 @@ export default function KumHavuzu() {
     return () => clearTimeout(t);
   }, [sim.events.length, yuklendi, kaydet]);
 
+  // ---------- Canlı izleme: öğretmen izlerken ekran görüntüsü gönderilir ----------
+  const durumRef = useRef('');
+  useEffect(() => {
+    let alive = true;
+    let izle = false;
+    let mesgul = false;
+    const ping = async () => {
+      try {
+        const ok = yapilacaklar(son.current).filter((x) => x.tamam).length;
+        const r = await api.post<{ izle?: boolean }>('presence', { station: '', task_id: '', info: `Kum havuzu · ${durumRef.current} · ${ok}/${yapilacaklar(son.current).length}` });
+        izle = !!r.izle;
+      } catch {
+        /* ağ hatası: bir sonraki denemede */
+      }
+    };
+    const cek = async () => {
+      if (!izle || mesgul || !ekranRef.current) return;
+      mesgul = true;
+      try {
+        const img = await toJpeg(ekranRef.current, { quality: 0.6, pixelRatio: 0.75, skipFonts: true, cacheBust: false });
+        if (alive) await api.post('sandbox/screen', { img });
+      } catch {
+        /* görüntü alınamadı */
+      }
+      mesgul = false;
+    };
+    ping();
+    const t1 = setInterval(ping, 8000);
+    const t2 = setInterval(cek, 3000);
+    return () => {
+      alive = false;
+      clearInterval(t1);
+      clearInterval(t2);
+    };
+  }, []);
+
   // ---------- Güç ----------
   const ac = () => {
     sim.act('kh.guc', { acik: true }, (s) => ({ ...s, bios: { ...s.bios, ekran: 'post', setup: null } }));
@@ -87,14 +155,14 @@ export default function KumHavuzu() {
   };
   const kapat = () => {
     sim.act('kh.guc', { acik: false }, (s) => {
-      const n = kurulumuIsle(s);
+      const n = cik(s);
       return { ...n, bios: { ...n.bios, ekran: 'kapali', setup: null } };
     });
     setBilgi('Bilgisayar kapatıldı.');
   };
   const reset = () => {
     sim.act('kh.reset', {}, (s) => {
-      const n = kurulumuIsle(s);
+      const n = cik(s);
       return { ...n, bios: { ...n.bios, ekran: 'post', setup: null } };
     });
     setNonce((n) => n + 1);
@@ -118,13 +186,32 @@ export default function KumHavuzu() {
 
   // ---------- Kurulum: USB'den açılınca başlar, bitince bilgisayar yeniden başlar ----------
   const gereksinimOk = st.bios.cmos.tpm && st.bios.cmos.secureBoot;
+  const bb = bootBellegi(st);
+  const ubuntuUsb = bb?.icerik === 'ubuntu';
   useEffect(() => {
-    if (e === 'kurulum' && !st.kurulum && gereksinimOk) {
+    if (e === 'kurulum' && ubuntuUsb && !st.ukur) {
+      sim.act('kh.ubuntu-basla', {}, (s) => ({ ...s, ukur: initialUbuntuKur({ veri: ubuntuKurulumVeri(s) } as unknown as TaskDef), iz: { ...s.iz, usbAcilis: true } }));
+      setBilgi('Bilgisayar USB bellekten açıldı: Ubuntu 24.04 kurulumu.');
+      return;
+    }
+    if (e === 'kurulum' && !ubuntuUsb && !st.kurulum && gereksinimOk) {
       sim.act('kh.kurulum-basla', {}, (s) => ({ ...s, kurulum: initialWinSetup({ veri: kurulumVeri(s) } as unknown as TaskDef), iz: { ...s.iz, usbAcilis: true } }));
       setBilgi('Bilgisayar USB bellekten açıldı: Windows 11 Kurulumu.');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [e, !!st.kurulum, gereksinimOk]);
+  }, [e, !!st.kurulum, !!st.ukur, gereksinimOk, ubuntuUsb]);
+  // Ubuntu kurulumu bitti ve "Şimdi yeniden başlat"a basıldı
+  useEffect(() => {
+    if (st.ukur && st.ukur.kurulum === 'tamam' && ['grub', 'ubuntu', 'windows'].includes(st.ukur.adim)) {
+      sim.act('kh.ubuntu-bitti', {}, (s) => {
+        const n = cik(s);
+        return { ...n, bios: { ...n.bios, ekran: 'post', setup: null } };
+      });
+      setNonce((n) => n + 1);
+      setBilgi('Ubuntu kuruldu, bilgisayar yeniden başlıyor. Kurulum belleğini çıkar; açılışta GRUB menüsü gelecek.');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [st.ukur?.adim]);
   useEffect(() => {
     if (st.kurulum?.adim === 'bitti') {
       sim.act('kh.kurulum-bitti', {}, (s) => {
@@ -137,14 +224,17 @@ export default function KumHavuzu() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [st.kurulum?.adim]);
   useEffect(() => {
-    if (e === 'os' && windowsVar(st)) setBilgi(st.windows === 'eski' ? 'Windows açıldı. Bu bilgisayar çok yavaş ve reklam çıkıyor…' : 'Windows 11 açıldı.');
+    if (e === 'os' && st.onyukleyici === 'grub' && st.ubuntu && !st.calisan) setBilgi('GRUB önyükleme menüsü: ↑ ↓ ile seç, Enter ile başlat (10 sn sonra Ubuntu açılır).');
+    else if (e === 'os' && st.calisan === 'ubuntu') setBilgi('Ubuntu giriş ekranı: parolanı klavyeyle yaz, Enter.');
+    else if (e === 'os' && windowsVar(st)) setBilgi(st.windows === 'eski' ? 'Windows açıldı. Bu bilgisayar çok yavaş ve reklam çıkıyor…' : 'Windows 11 açıldı.');
     if (e === 'setup') setBilgi('BIOS Setup: ← → sekme, ↑ ↓ seçim, Enter değiştir, F10 kaydet ve çık, Esc çık.');
     if (e === 'bootmenu') setBilgi('Önyükleme menüsü: ↑ ↓ ile seç, Enter ile başlat.');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [e]);
+  }, [e, st.calisan]);
 
   // Açılış hatası ekranında bir tuşa basınca yeniden dener
-  const acilisHatasi = e === 'bootfail' || (e === 'os' && !windowsVar(st));
+  const grubVar = st.onyukleyici === 'grub' && !!st.ubuntu;
+  const acilisHatasi = e === 'bootfail' || (e === 'os' && !windowsVar(st) && !grubVar) || (e === 'os' && grubVar && st.calisan === 'windows' && !windowsVar(st));
   useEffect(() => {
     if (!acilisHatasi) return;
     setBilgi('Önyüklenebilir aygıt bulunamadı. Bir tuşa basınca bilgisayar yeniden başlar.');
@@ -160,6 +250,20 @@ export default function KumHavuzu() {
   // ---------- Alt simülasyonlar ----------
   const biosSim = altSim(sim, (s) => s.bios, (s, b) => ({ ...s, bios: b }));
   const kurSim = altSim(sim, (s) => s.kurulum!, (s, k) => ({ ...s, kurulum: k }));
+  const ukurSim = altSim(sim, (s) => s.ukur!, (s, k) => ({ ...s, ukur: k }));
+  const shSim = st.ubuntu && altSim<KhState, { sh: ShellState }>(
+    sim,
+    (s) => ({ sh: s.ubuntu!.sh }),
+    (s, v) => ({ ...s, ubuntu: { ...s.ubuntu!, sh: v.sh } }),
+  );
+  const grubSec = (hedef: 'ubuntu' | 'windows' | 'uefi') => {
+    if (hedef === 'uefi') {
+      sim.act('kh.grub', { hedef }, (s) => ({ ...s, bios: { ...s.bios, ekran: 'setup', setup: { ...s.bios.cmos } } }));
+      return;
+    }
+    sim.act('kh.grub', { hedef }, (s) => ({ ...s, calisan: hedef, iz: { ...s.iz, grubAcilan: s.iz.grubAcilan.includes(hedef) ? s.iz.grubAcilan : [...s.iz.grubAcilan, hedef] } }));
+    setBilgi(hedef === 'ubuntu' ? 'GRUB: Ubuntu başlatılıyor.' : 'GRUB: Windows Boot Manager başlatılıyor.');
+  };
   const bagliPc = useMemo(() => bagla(st.pc, st), [st]);
   const winSim: Sim<{ pc: WinPc }> = {
     state: { pc: bagliPc },
@@ -173,13 +277,17 @@ export default function KumHavuzu() {
     usbler: st.portlar.filter((x): x is FlashId => !!x).map((id) => ({ id, ad: st.flash[id].ad, harf: h[id]!, kapasite: st.flash[id].kapasite })),
     uefi: !st.bios.cmos.csm,
     rufusBitti: (y) => {
-      sim.act('kh.rufus', { flash: y.aygit, bolum: y.bolum }, (s) => rufusYaz(s, y.aygit as FlashId, y.bolum));
-      setBilgi(`Rufus bitti: ${st.flash[y.aygit as FlashId]?.ad} artık Windows 11 kurulum belleği (${y.bolum}).`);
+      sim.act('kh.rufus', { flash: y.aygit, bolum: y.bolum, iso: y.iso }, (s) => rufusYaz(s, y.aygit as FlashId, y.bolum, y.iso));
+      setBilgi(`Rufus bitti: ${st.flash[y.aygit as FlashId]?.ad} artık ${/ubuntu/i.test(y.iso) ? 'Ubuntu' : 'Windows 11'} kurulum belleği (${y.bolum}).`);
     },
     guc: (t) => (t === 'kapat' ? kapat() : reset()),
   };
 
   function Ekran() {
+    if (e === 'kurulum' && ubuntuUsb) {
+      if (!st.ukur) return <div className="screen-fill on" />;
+      return <UbuntuKur task={{ veri: ubuntuKurulumVeri(st) } as unknown as TaskDef} mode="uygula" sim={ukurSim} gomulu />;
+    }
     if (e === 'kurulum') {
       if (!gereksinimOk)
         return (
@@ -198,6 +306,15 @@ export default function KumHavuzu() {
       if (!st.kurulum) return <div className="screen-fill on ws-screen" />;
       return <WinSetup task={{ veri: kurulumVeri(st) } as unknown as TaskDef} mode="uygula" sim={kurSim} gomulu />;
     }
+    if (e === 'os' && grubVar && st.calisan === null) return <GrubMenu windows={st.ubuntu!.sh.grub.windows} sec={grubSec} log={(t) => sim.act(t, {}, (x) => x)} />;
+    if (e === 'os' && grubVar && st.calisan === 'ubuntu')
+      return (
+        <div className="screen-fill on">
+          <UbuntuMasaustu hesap={st.ubuntu!.hesap} wifi={st.ubuntu!.wifi} sim={shSim!} guc={(t) => (t === 'kapat' ? kapat() : reset())} log={(t) => sim.act(t, {}, (x) => x)} />
+        </div>
+      );
+    if (e === 'os' && grubVar && st.calisan === 'windows' && !windowsVar(st))
+      return <pre className="post-text">{GRUB_HATA}</pre>;
     if (e === 'os') {
       if (!windowsVar(st)) return <pre className="post-text">{'Reboot and Select proper Boot device\nor Insert Boot Media in selected Boot device and press a key_'}</pre>;
       return (
@@ -218,6 +335,8 @@ export default function KumHavuzu() {
         ? 'POST: Del/F2 = BIOS Setup · F8 = önyükleme menüsü'
         : bilgi;
   const islerim = yapilacaklar(st);
+  durumRef.current =
+    e === 'kapali' ? 'kapalı' : e === 'post' ? 'açılış' : e === 'setup' ? 'BIOS' : e === 'bootmenu' ? 'önyükleme menüsü' : e === 'kurulum' ? (ubuntuUsb ? 'Ubuntu kurulumu' : 'Windows kurulumu') : e === 'os' ? (grubVar && st.calisan === 'ubuntu' ? 'Ubuntu' : grubVar && !st.calisan ? 'GRUB' : st.windows === 'eski' ? 'eski Windows' : 'Windows 11') : 'açılış hatası';
   const ondrop = (i: number) => (ev: DragEvent) => {
     ev.preventDefault();
     const id = ev.dataTransfer.getData('text/flash') as FlashId;
@@ -234,7 +353,7 @@ export default function KumHavuzu() {
       </TopBar>
       <main className="kh">
         <div className="kh-ust">
-          <div className="kh-ekran" aria-label="Ekran" tabIndex={-1}>
+          <div className="kh-ekran" aria-label="Ekran" tabIndex={-1} ref={ekranRef}>
             {Ekran()}
           </div>
           <aside className="kh-kasa" aria-label="Kasa ön paneli">
@@ -307,6 +426,10 @@ export default function KumHavuzu() {
               <b>Windows 11 Pro</b>
               <code>{URUN_ANAHTARI}</code>
             </div>
+            <div className="kh-etiket office" title="Office lisans kartı">
+              <b>Office Professional Plus 2024</b>
+              <code>{OFFICE_ANAHTARI}</code>
+            </div>
             <div className="kh-not" title="Masadaki not kâğıdı">
               Wi-Fi: <b>OKUL-LAB</b>
               <br />
@@ -326,6 +449,7 @@ export default function KumHavuzu() {
                 blur(ev);
                 if (!window.confirm('Kum havuzu baştan başlasın mı? Bilgisayar ve flash bellekler ilk hâline döner.')) return;
                 sim.act('kh.sifirla', {}, () => ilkDurum());
+                setGunluk([]);
                 setBilgi('Yeni bilgisayar hazır.');
               }}
             >
@@ -337,7 +461,7 @@ export default function KumHavuzu() {
           <section className="kh-liste card">
             <b>Serbest çalışma — önerilen iş sırası</b> <small className="muted">(puan verilmez; istediğin sırayla dene)</small>
             <p className="small">
-              Bu bilgisayar çok yavaşlamış ve virüslü. Kullanıcının belgelerini kaybetmeden Windows 11'i temiz kur, internete bağla, programları yükle.
+              Bu bilgisayar çok yavaşlamış ve virüslü. Kullanıcının belgelerini kaybetmeden Windows 11'i temiz kur, internete bağla, Office ve diğer programları yükle. Sonra Ubuntu'yu Windows'un yanına kur (çift önyükleme).
             </p>
             <ol>
               {islerim.map((x) => (

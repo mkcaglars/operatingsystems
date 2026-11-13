@@ -4813,3 +4813,40 @@ select.mini {
 .br-ms-sec { border-top: 1px solid #ddd; padding: 0.8em 0; display: flex; flex-direction: column; gap: 0.5em; align-items: flex-start; }
 .br-rufus { display: flex; align-items: center; gap: 0.4em; font-size: 1.3em; margin-bottom: 0.6em; }
 .rufus-app .rf-title { display: none; }
+/* ---- Kum havuzu: Ubuntu, GRUB, öğretmen izleme ---- */
+.grub-row { white-space: pre; padding: 0 0.4em; }
+.grub-row.on { background: #ccc; color: #000; }
+.ubx, .ubx-login { position: absolute; inset: 0; font-family: Ubuntu, 'Segoe UI', system-ui, sans-serif; font-size: max(10px, 1.3cqi); color: #fff; overflow: hidden; }
+.ubx { background: radial-gradient(ellipse at 70% 60%, #e95420 0%, #77216f 45%, #2c001e 100%); }
+.ubx-login { background: linear-gradient(135deg, #2c001e, #5e2750 60%, #77216f); }
+.ubx-top { position: absolute; left: 0; right: 0; top: 0; height: 1.9em; background: #000; display: flex; justify-content: space-between; align-items: center; padding: 0 0.8em; font-size: 0.9em; z-index: 3; }
+.ubx-tray { background: none; border: 0; color: #fff; font: inherit; cursor: pointer; }
+.ubx-menu { position: absolute; right: 0; top: 1.8em; background: #2b2b2b; border-radius: 10px; padding: 0.6em; display: flex; flex-direction: column; gap: 0.3em; min-width: 13em; box-shadow: 0 8px 24px #0008; }
+.ubx-menu button { background: #3a3a3a; border: 0; color: #fff; font: inherit; padding: 0.4em 0.6em; border-radius: 6px; cursor: pointer; text-align: left; }
+.ubx-login-box { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 0.6em; }
+.ubx-avatar { width: 4em; height: 4em; border-radius: 50%; background: #e95420; display: grid; place-items: center; font-size: 1.6em; font-weight: 600; }
+.ubx-login-box input { font: inherit; padding: 0.5em 0.8em; border-radius: 8px; border: 1px solid #ffffff55; background: #ffffff22; color: #fff; width: 16em; }
+.ubx-err { color: #ffb4a8; }
+.ubx-logo { position: absolute; bottom: 1.2em; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 0.4em; font-size: 1.3em; }
+.ubx-dock { position: absolute; left: 0; top: 1.9em; bottom: 0; width: 3.6em; background: #00000066; display: flex; flex-direction: column; align-items: center; gap: 0.5em; padding-top: 0.6em; z-index: 2; }
+.ubx-app { background: none; border: 0; padding: 0.25em; border-radius: 8px; cursor: pointer; position: relative; }
+.ubx-app.on::before { content: ''; position: absolute; left: -0.2em; top: 40%; width: 0.25em; height: 0.25em; border-radius: 50%; background: #e95420; }
+.ubx-app:hover { background: #ffffff22; }
+.ubx-grid { margin-top: auto; margin-bottom: 0.8em; opacity: 0.8; }
+.ubx-wall { position: absolute; right: 2em; bottom: 1.5em; opacity: 0.35; }
+.ubx-win { position: absolute; left: 6em; top: 3.4em; right: 3em; bottom: 2.4em; background: #300a24; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 12px 30px #000a; }
+.ubx-win-title { background: #2b2b2b; display: flex; justify-content: space-between; align-items: center; padding: 0.3em 0.6em; font-size: 0.9em; }
+.ubx-win-title button { background: none; border: 0; color: #fff; cursor: pointer; }
+.ubx-win > :last-child { flex: 1; min-height: 0; }
+.ubx-toast { position: absolute; left: 50%; top: 3em; transform: translateX(-50%); background: #2b2b2b; padding: 0.5em 1em; border-radius: 8px; cursor: pointer; }
+.br-ubuntu { display: flex; align-items: center; gap: 0.4em; font-size: 1.3em; color: #e95420; margin-bottom: 0.6em; }
+.br-ubuntu-btn { background: #e95420; color: #fff; border: 0; border-radius: 4px; padding: 0.5em 1.2em; font: inherit; cursor: pointer; }
+.kh-etiket.office b { color: #d83b01; }
+.kh-izle-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
+.kh-izle-img { width: 100%; border-radius: 10px; border: 6px solid #111; display: block; }
+.kh-izle-bos { aspect-ratio: 16 / 10; background: #111; color: #aaa; display: grid; place-items: center; text-align: center; padding: 20px; border-radius: 10px; }
+.kh-izle-yan { max-height: 70vh; overflow: auto; font-size: 0.9em; }
+.kh-izle-yan .crit { list-style: none; padding: 0; }
+.kh-izle-yan .crit li.ok { color: #15803d; }
+.kh-gunluk { padding-left: 1.6em; }
+@media (max-width: 800px) { .kh-izle-grid { grid-template-columns: 1fr; } }

@@ -524,7 +524,7 @@ ilgisiz aygıtı kapatma) cezalandırılır.
 | Görev atama | İstasyon/görev/kampanya seçimi, mod (Uygula/Değerlendir), başlangıç–bitiş tarihi, süre sınırı |
 | **Canlı izleme** | (Birkaç saniyede bir yenilenir) Sınıf ızgarası: her öğrencinin o anki istasyonu, ilerlemesi, takıldığı adım, ipucu kullanımı |
 | Arıza gönderme | Ders sırasında seçili öğrencilere İ9 arıza senaryosu gönderme (F5: "servis bileti"; öğrencinin ana sayfasında bant olarak çıkar, görev değerlendirilince canlı izlemede ✔ olur) |
-| Serbest kum havuzu | Puansız tek bilgisayar: güç/reset, LED'ler, 3 USB girişi, 2 flash bellek, durum çubuğu; USB hazırla → USB'den aç → biçimlendir → kur → Wi-Fi → Windows Update → Chrome/WinRAR → ayarlar. BIOS ve önyükleme menüsü yalnızca gerçek klavyeyle |
+| Serbest kum havuzu | Puansız tek bilgisayar: güç/reset, LED'ler, 3 USB girişi, 2 flash bellek, durum çubuğu; USB hazırla → USB'den aç → biçimlendir → kur → Wi-Fi → Windows Update → Chrome/WinRAR/Office (etkinleştirme) → ayarlar → Ubuntu çift önyükleme (GRUB). BIOS, önyükleme menüsü ve GRUB yalnızca gerçek klavyeyle. Öğretmen "Ekranı izle" ile ekran görüntüsünü (yalnızca izlerken, 3 sn'de bir), yapılacakları ve Türkçe olay günlüğünü görür |
 | Deneme ayrıntısı | Raporda öğrenci adına tıklayınca tüm denemeler, kriterler, hatalar ve zaman damgalı olay geçmişi |
 | Raporlar | Kazanım × öğrenci ısı haritası; öğrenci karnesi; görev bazlı başarı; sık yapılan hatalar |
 | Dışa aktarma | PDF (karne), CSV/Excel (not listesi) |
