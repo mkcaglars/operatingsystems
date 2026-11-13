@@ -2,6 +2,7 @@
 import { useState, type ReactNode } from 'react';
 import { sifirla } from '../core/winpc';
 import { Toggle, type AppCtx } from './Masaustu';
+import Logo, { uygulamaLogo } from '../components/Logo';
 
 type Sayfa =
   | 'sistem' | 'ekran' | 'guc' | 'hakkinda' | 'kurtarma'
@@ -241,7 +242,8 @@ export default function Ayarlar(ctx: AppCtx) {
             <p className="small">{pc.uygulamalar.length} uygulama bulundu</p>
             {pc.uygulamalar.map((u) => (
               <div key={u.id} className="s-row">
-                <div>
+                <Logo id={uygulamaLogo(u.id)} size="2em" />
+                <div className="s-row-ad">
                   <b>{u.ad}</b>
                   <small>
                     {u.surum} · {u.yayinci} · {u.boyutMB >= 1000 ? (u.boyutMB / 1000).toFixed(1).replace('.', ',') + ' GB' : u.boyutMB + ' MB'}

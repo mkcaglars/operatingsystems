@@ -4850,3 +4850,40 @@ select.mini {
 .kh-izle-yan .crit li.ok { color: #15803d; }
 .kh-gunluk { padding-left: 1.6em; }
 @media (max-width: 800px) { .kh-izle-grid { grid-template-columns: 1fr; } }
+/* ---- Kurulu programlar: kısayollar, Tüm uygulamalar, program pencereleri ---- */
+.w11-icons { flex-wrap: wrap; max-height: calc(100% - 4em); align-content: flex-start; }
+.w11-start-tum { display: grid; grid-template-columns: 1fr 1fr; gap: 0.2em; max-height: 9em; overflow: auto; margin-bottom: 0.4em; }
+.w11-start-tum button { display: flex; align-items: center; gap: 0.5em; background: none; border: 0; padding: 0.35em 0.5em; border-radius: 6px; font: inherit; font-size: 0.85em; cursor: pointer; text-align: left; }
+.w11-start-tum button:hover { background: #0000000d; }
+.s-row-ad { flex: 1; display: flex; flex-direction: column; margin-left: 0.6em; }
+.pg-office { display: flex; height: 100%; background: #f5f5f5; }
+.pg-office aside { width: 9em; color: #fff; display: flex; flex-direction: column; gap: 0.6em; padding: 0.8em; }
+.pg-office aside .alt { margin-top: auto; }
+.pg-office main { flex: 1; padding: 1em 1.4em; overflow: auto; }
+.pg-uyari { background: #fde7e9; border: 1px solid #f1b9bd; padding: 0.5em 0.8em; font-size: 0.85em; margin-bottom: 0.8em; }
+.pg-sablonlar { display: flex; gap: 1em; }
+.pg-sablon { display: flex; flex-direction: column; gap: 0.3em; font-size: 0.85em; }
+.pg-sablon.on .pg-sayfa { outline: 2px solid #107c41; }
+.pg-sayfa { width: 7em; height: 5em; background: #fff; border: 1px solid #ccc; }
+.pg-sayfa.cizgili { background: repeating-linear-gradient(#fff 0 0.8em, #e5e7eb 0.8em 0.9em); }
+.pg-rar { display: flex; flex-direction: column; height: 100%; background: #fff; font-size: 0.9em; }
+.pg-rar-menu { padding: 0.3em 0.6em; border-bottom: 1px solid #ddd; }
+.pg-rar-tools { display: flex; gap: 0.2em; padding: 0.4em; border-bottom: 1px solid #ddd; background: #f6f6f6; flex-wrap: wrap; }
+.pg-rar-tools span { display: flex; flex-direction: column; align-items: center; font-size: 0.8em; padding: 0.2em 0.5em; }
+.pg-rar-yol { padding: 0.3em 0.6em; border-bottom: 1px solid #ddd; }
+.pg-rar-list { width: 100%; border-collapse: collapse; }
+.pg-rar-list th, .pg-rar-list td { text-align: left; padding: 0.2em 0.6em; border-bottom: 1px solid #f0f0f0; }
+.pg-rar-durum { margin-top: auto; padding: 0.3em 0.6em; background: #f0f0f0; font-size: 0.85em; color: #a00; }
+.pg-acro { height: 100%; background: #f4f4f4; display: flex; flex-direction: column; }
+.pg-acro-top { display: flex; align-items: center; gap: 1em; padding: 0.4em 0.8em; background: #fff; border-bottom: 1px solid #ddd; }
+.pg-acro main { padding: 1em 1.4em; }
+.pg-acro-kart { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1em; max-width: 24em; display: flex; flex-direction: column; gap: 0.4em; align-items: flex-start; }
+.pg-ps { height: 100%; background: #1e1e1e; color: #ddd; display: flex; flex-direction: column; }
+.pg-ps-top { display: flex; align-items: center; gap: 0.8em; padding: 0.3em 0.6em; background: #2b2b2b; font-size: 0.85em; }
+.pg-ps main { padding: 1.4em; display: flex; flex-direction: column; gap: 0.8em; }
+.pg-ps-btn { background: #1473e6; color: #fff; padding: 0.4em 1em; border-radius: 1em; }
+.pg-ps-btn.ikincil { background: #3a3a3a; }
+.pg-booster, .pg-genel { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5em; background: #fff; text-align: center; padding: 1em; }
+.pg-kirmizi { color: #dc2626; font-weight: 700; }
+.pg-sahte-btn { background: #dc2626; color: #fff; padding: 0.5em 1.4em; border-radius: 6px; font-weight: 700; }
+.pg-rar-ik { font-style: normal; font-size: 1.7em; line-height: 1.2; }

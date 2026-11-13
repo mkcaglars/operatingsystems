@@ -6,7 +6,8 @@ import type { Sim } from '../core/sim';
 import { derive, yenidenBaslat, type WinPc } from '../core/winpc';
 import Kurtarma from './Kurtarma';
 import Rufus from './Rufus';
-import Logo, { logoVar } from '../components/Logo';
+import Program, { PROGRAM_AD } from './Program';
+import Logo, { logoVar, uygulamaLogo } from '../components/Logo';
 import Ayarlar from './Ayarlar';
 import GorevYoneticisi from './GorevYoneticisi';
 import DosyaGezgini from './DosyaGezgini';
@@ -17,7 +18,7 @@ import Kurulum from './Kurulum';
 import Word from './Word';
 import SistemKoruma from './SistemKoruma';
 
-export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma' | 'rufus';
+export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma' | 'rufus' | 'program';
 
 export interface WinVeri {
   uygulamalar?: AppId[];
@@ -67,7 +68,14 @@ const APP_INFO: Record<AppId, { ad: string; ikon: string; renk: string }> = {
   kurulum: { ad: 'Kurulum', ikon: '📦', renk: '#6b7280' },
   sistemkoruma: { ad: 'Sistem Özellikleri', ikon: '🖥', renk: '#3a6ea5' },
   rufus: { ad: 'Rufus', ikon: '🔧', renk: '#3c3c3c' },
+  program: { ad: 'Program', ikon: '▦', renk: '#64748b' },
 };
+
+/** Pencere başlığı ve simgesi ("program" penceresinde kurulu programın kendisi) */
+function pencere(w: { id: AppId; arg?: string }): { ad: string; logo: string | null } {
+  if (w.id === 'program') return { ad: PROGRAM_AD[w.arg ?? ''] ?? w.arg ?? 'Program', logo: uygulamaLogo(w.arg ?? '') };
+  return { ad: APP_INFO[w.id].ad, logo: logoVar(w.id) ? w.id : null };
+}
 
 /** Uygulama simgesi: gerçek logo varsa SVG, yoksa renkli kutu */
 export function AppIkon({ id, size }: { id: AppId; size?: string }) {
@@ -127,6 +135,22 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
   if (pc.kurulu.includes('chrome') && !pinned.includes('chrome')) pinned.push('chrome');
   if (pc.kurulu.includes('office') && !pinned.includes('word')) pinned.push('word');
 
+  // Kurulu programların kısayolları (masaüstü ve Başlat › Tüm uygulamalar)
+  type Kisayol = { anahtar: string; ad: string; logo: string; ac: () => void; masaustu: boolean };
+  const kisayollar: Kisayol[] = [];
+  for (const u of pc.uygulamalar) {
+    if (u.id === 'kms') continue;
+    if (u.id === 'edge') kisayollar.push({ anahtar: 'edge', ad: 'Microsoft Edge', logo: 'edge', ac: () => open('edge'), masaustu: false });
+    else if (u.id === 'chrome') kisayollar.push({ anahtar: 'chrome', ad: 'Google Chrome', logo: 'chrome', ac: () => open('chrome'), masaustu: true });
+    else if (u.id === 'office') {
+      for (const b of pc.bilesenler.office ?? ['word', 'excel', 'powerpoint', 'outlook']) {
+        const ad = b === 'word' ? 'Word' : (PROGRAM_AD[b] ?? b);
+        kisayollar.push({ anahtar: b, ad, logo: logoVar(b) ? b : 'office', ac: () => (b === 'word' ? open('word') : open('program', b)), masaustu: ['word', 'excel', 'powerpoint'].includes(b) });
+      }
+    } else kisayollar.push({ anahtar: u.id, ad: PROGRAM_AD[u.id] ?? u.ad, logo: uygulamaLogo(u.id), ac: () => open('program', u.id), masaustu: u.id !== 'teams' && u.id !== 'onedrive' });
+  }
+  kisayollar.sort((a, b) => a.ad.localeCompare(b.ad, 'tr'));
+
   function renderApp(w: Win): ReactNode {
     const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, arg: w.arg, kopru };
     switch (w.id) {
@@ -151,6 +175,8 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         return <SistemKoruma {...ctx} />;
       case 'rufus':
         return <Rufus {...ctx} />;
+      case 'program':
+        return <Program key={w.arg} {...ctx} />;
     }
   }
 
@@ -194,12 +220,23 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
           <Logo id="geridonusum" size="2.4em" />
           Geri Dönüşüm Kutusu
         </span>
-        {pinned.slice(0, 3).map((a) => (
-          <span key={a} className="w11-icon" onDoubleClick={() => open(a)}>
-            {logoVar(a) ? <Logo id={a} size="2.4em" /> : <i>{APP_INFO[a].ikon}</i>}
-            {APP_INFO[a].ad}
-          </span>
-        ))}
+        {pinned
+          .filter((a) => a !== 'chrome' && a !== 'word')
+          .slice(0, 3)
+          .map((a) => (
+            <span key={a} className="w11-icon" onDoubleClick={() => open(a)}>
+              {logoVar(a) ? <Logo id={a} size="2.4em" /> : <i>{APP_INFO[a].ikon}</i>}
+              {APP_INFO[a].ad}
+            </span>
+          ))}
+        {kisayollar
+          .filter((k) => k.masaustu)
+          .map((k) => (
+            <span key={k.anahtar} className="w11-icon kisayol" onDoubleClick={k.ac} title={k.ad} aria-label={`${k.ad} kısayolu`}>
+              <Logo id={k.logo} size="2.4em" />
+              {k.ad}
+            </span>
+          ))}
       </div>
       {pc.belirti.reklam && !reklamKapali && (
         <div className="w11-ad">
@@ -214,19 +251,19 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         <div key={w.id} className={'w11-win' + (aktif === w.id ? ' on' : '') + ' app-' + w.id} onMouseDown={() => setAktif(w.id)}>
           <div className="w11-titlebar">
             <span>
-              {logoVar(w.id) ? (
-                <Logo id={w.id} size="1.2em" />
+              {pencere(w).logo ? (
+                <Logo id={pencere(w).logo!} size="1.2em" />
               ) : (
                 <i className="ti" style={{ background: APP_INFO[w.id].renk }}>
                   {APP_INFO[w.id].ikon}
                 </i>
               )}
-              {APP_INFO[w.id].ad}
+              {pencere(w).ad}
             </span>
             <span className="win11-ctrl">
               <i onClick={() => setAktif(null)}>─</i>
               <i>☐</i>
-              <i className="x" onClick={() => close(w.id)} role="button" aria-label={`${APP_INFO[w.id].ad} kapat`}>
+              <i className="x" onClick={() => close(w.id)} role="button" aria-label={`${pencere(w).ad} kapat`}>
                 ✕
               </i>
             </span>
@@ -249,6 +286,19 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
                 </button>
               ))}
           </div>
+          {kisayollar.length > 0 && (
+            <>
+              <div className="w11-start-h">Tüm uygulamalar</div>
+              <div className="w11-start-tum">
+                {kisayollar.map((k) => (
+                  <button key={k.anahtar} onClick={k.ac}>
+                    <Logo id={k.logo} size="1.5em" />
+                    {k.ad}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
           <div className="w11-start-foot">
             <span>👤 {pc.cihaz.kullanici}</span>
             <span className="rel">
@@ -277,8 +327,8 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         {wins
           .filter((w) => !pinned.includes(w.id))
           .map((w) => (
-            <button key={w.id} className={'tb-app open' + (aktif === w.id ? ' on' : '')} title={APP_INFO[w.id].ad} onClick={() => setAktif(w.id)}>
-              <AppIkon id={w.id} />
+            <button key={w.id} className={'tb-app open' + (aktif === w.id ? ' on' : '')} title={pencere(w).ad} onClick={() => setAktif(w.id)}>
+              {w.id === 'program' ? <Logo id={pencere(w).logo!} /> : <AppIkon id={w.id} />}
             </button>
           ))}
         <span className="tb-tray">
