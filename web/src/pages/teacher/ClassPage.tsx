@@ -368,8 +368,78 @@ function ArizaGonder({ cls, rows, onSent }: { cls: ClassInfo; rows: LiveRow[]; o
   );
 }
 
+interface KhView {
+  ekran: { img: string; t: number } | null;
+  gunluk: { t: string; m: string }[];
+  ozet: { m: string; ok: boolean }[];
+  now: number;
+}
+
+/** Öğrencinin kum havuzu ekranını ve ne yaptığını canlı izleme penceresi */
+function KhIzle({ ogrenci, onClose }: { ogrenci: { id: number; name: string }; onClose: () => void }) {
+  const [v, setV] = useState<KhView | null>(null);
+  const [err, setErr] = useState('');
+  useEffect(() => {
+    let alive = true;
+    const yukle = () =>
+      api
+        .get<KhView>('sandbox/view', { student_id: ogrenci.id })
+        .then((d) => alive && (setV(d), setErr('')))
+        .catch((e) => alive && setErr(e.message));
+    yukle();
+    const t = setInterval(yukle, 3000);
+    return () => {
+      alive = false;
+      clearInterval(t);
+    };
+  }, [ogrenci.id]);
+  const yas = v?.ekran ? v.now - v.ekran.t : null;
+  return (
+    <div className="modal-back" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal wide kh-izle" role="dialog" aria-label={`${ogrenci.name} kum havuzu`}>
+        <div className="row space">
+          <h3>🖥 {ogrenci.name} — kum havuzu</h3>
+          <button className="btn" onClick={onClose}>
+            Kapat
+          </button>
+        </div>
+        {err && <div className="note error">{err}</div>}
+        <div className="kh-izle-grid">
+          <div>
+            {v?.ekran && yas !== null && yas < 30 ? (
+              <img src={v.ekran.img} alt={`${ogrenci.name} ekranı`} className="kh-izle-img" />
+            ) : (
+              <div className="kh-izle-bos">Ekran görüntüsü bekleniyor… (öğrencinin kum havuzu sayfası açık olmalı; ilk görüntü ~10 sn içinde gelir)</div>
+            )}
+            <small className="muted">{yas !== null ? `${yas} sn önce · 3 sn'de bir yenilenir` : ''}</small>
+          </div>
+          <div className="kh-izle-yan">
+            <b>Yapılacaklar</b>
+            <ul className="crit">
+              {(v?.ozet ?? []).map((o) => (
+                <li key={o.m} className={o.ok ? 'ok' : ''}>
+                  {o.ok ? '✔' : '○'} {o.m}
+                </li>
+              ))}
+            </ul>
+            <b>Ne yaptı? (son olaylar)</b>
+            <ol className="olaylar kh-gunluk" reversed>
+              {[...(v?.gunluk ?? [])].reverse().slice(0, 60).map((g, i) => (
+                <li key={i}>
+                  <code>{g.t}</code> {g.m}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Live({ cls }: { cls: ClassInfo }) {
   const [rows, setRows] = useState<LiveRow[]>([]);
+  const [izle, setIzle] = useState<{ id: number; name: string } | null>(null);
   const [err, setErr] = useState('');
   const [nonce, setNonce] = useState(0);
   useEffect(() => {
@@ -394,6 +464,7 @@ function Live({ cls }: { cls: ClassInfo }) {
       </p>
       {err && <div className="note error">{err}</div>}
       <ArizaGonder cls={cls} rows={rows} onSent={() => setNonce((n) => n + 1)} />
+      {izle && <KhIzle ogrenci={izle} onClose={() => setIzle(null)} />}
       <div className="live-grid">
         {rows.map((r) => {
           const on = r.seen !== null && r.seen < 60;
@@ -406,6 +477,11 @@ function Live({ cls }: { cls: ClassInfo }) {
               </b>
               <span>{on ? (t ? `${st?.kod ?? ''} ${t.baslik}` : r.info || 'Ana sayfada') : r.seen === null ? 'Hiç girmedi' : `Son görülme: ${ago(r.seen)}`}</span>
               {on && t && <small>{r.info}</small>}
+              {on && r.info?.startsWith('Kum havuzu') && (
+                <button className="btn small" onClick={() => setIzle({ id: r.id, name: r.name })}>
+                  🖥 Ekranı izle
+                </button>
+              )}
               {r.biletler.length > 0 && (
                 <span className="bilet-row">
                   {r.biletler.slice(-4).map((b, i) => (

@@ -1,7 +1,9 @@
 // Serbest kum havuzu: tek bir gerçekçi bilgisayar. Güç/reset düğmeleri, 3 USB girişi, 2 flash bellek,
 // BIOS, USB'den önyükleme, Windows 11 kurulumu ve kurulu Windows. Puan yok; isteğe bağlı yapılacaklar listesi var.
 import type { BiosState, BiosVeri } from '../tasks/PcBios';
-import type { Disk, WinSetupState, WinSetupVeri } from '../tasks/WinSetup';
+import type { Bolum, Disk, WinSetupState, WinSetupVeri } from '../tasks/WinSetup';
+import type { Part, UbuntuKurState, UbuntuVeri } from '../tasks/UbuntuKur';
+import { defaultShell, type ShellState } from './shell';
 import type { Sim } from './sim';
 import { defaultPc, derive, KULLANICI, pcWith, type DosyaGirdi, type WinPc } from './winpc';
 
@@ -11,7 +13,7 @@ export interface Flash {
   ad: string;
   kapasite: string;
   etiket: string;
-  icerik: 'veri' | 'win11';
+  icerik: 'veri' | 'win11' | 'ubuntu';
   bolum?: 'GPT' | 'MBR';
   /** Bellekteki dosyalar (göreli yol → girdi) */
   dosyalar: Record<string, DosyaGirdi>;
@@ -24,8 +26,16 @@ export interface KhState {
   /** Diskteki Windows: eski (format öncesi), yeni (temiz kurulum) ya da yok */
   windows: 'eski' | 'yeni' | null;
   kurulum: WinSetupState | null;
+  /** Ubuntu kurulum sihirbazı (USB'den Ubuntu ile açılınca) */
+  ukur: UbuntuKurState | null;
+  /** Kurulu Ubuntu (kabuk durumu ve hesap) */
+  ubuntu: { hesap: { ad: string; kullanici: string; bilgisayar: string; parola: string }; sh: ShellState; wifi: string } | null;
+  /** Diskten açılışta hangi önyükleyici çalışır: son kurulan sistemin önyükleyicisi */
+  onyukleyici: 'windows' | 'grub';
+  /** Şu an çalışan sistem (GRUB'dan seçilen) */
+  calisan: 'windows' | 'ubuntu' | null;
   pc: WinPc;
-  iz: { usbAcilis: boolean; temiz: boolean; kurulumSayisi: number; turuncuSilindi: boolean };
+  iz: { usbAcilis: boolean; temiz: boolean; kurulumSayisi: number; turuncuSilindi: boolean; grubAcilan: string[]; yazilan?: string[] };
 }
 
 export const URUN_ANAHTARI = 'VK7JG-NPHTM-C97JM-9MPGT-3V66T';
@@ -39,6 +49,17 @@ export const ONEMLI_DOSYA = 'proje-odevi.docx';
 
 export const BILGI = { anakart: 'ASUS PRIME B560M-A', bios: '1601 x64', islemci: 'Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz', bellek: '16384 MB (DDR4)' };
 const CMOS = { tarih: '2026-03-02', saat: '09:40:00', bootOrder: ['ssd', 'usb', 'pxe'], sata: 'AHCI' as const, vt: false, ses: true, lan: true, fastBoot: false, usbBoot: true, csm: false, adminSifre: false, secureBoot: true, tpm: true };
+
+export const OFFICE_ANAHTARI = 'NKJ7P-W3QXV-8TRMB-H9D4C-2YF6G';
+
+const UBUNTU_USB: Record<string, DosyaGirdi> = {
+  boot: { tur: 'klasor' },
+  casper: { tur: 'klasor' },
+  'casper/filesystem.squashfs': { tur: 'dosya', boyut: '5,3 GB' },
+  EFI: { tur: 'klasor' },
+  pool: { tur: 'klasor' },
+  'md5sum.txt': { tur: 'dosya', boyut: '28 KB' },
+};
 
 const WIN11_USB: Record<string, DosyaGirdi> = {
   boot: { tur: 'klasor' },
@@ -157,8 +178,12 @@ export function ilkDurum(): KhState {
     ],
     windows: 'eski',
     kurulum: null,
+    ukur: null,
+    ubuntu: null,
+    onyukleyici: 'windows',
+    calisan: null,
     pc: silTanimsiz(eskiPc()),
-    iz: { usbAcilis: false, temiz: false, kurulumSayisi: 0, turuncuSilindi: false },
+    iz: { usbAcilis: false, temiz: false, kurulumSayisi: 0, turuncuSilindi: false, grubAcilan: [] },
   };
 }
 
@@ -201,13 +226,17 @@ export function ayir(st: KhState, pcBagli: WinPc): KhState {
 }
 
 /** Rufus yazdı: bellek biçimlendirilir ve Windows 11 kurulum belleği olur */
-export function rufusYaz(st: KhState, id: FlashId, bolum: string): KhState {
+export function rufusYaz(st: KhState, id: FlashId, bolum: string, iso = 'Win11'): KhState {
   const f = st.flash[id];
   const turuncuSilindi = st.iz.turuncuSilindi || (id === 'turuncu' && Object.keys(f.dosyalar).length > 0 && f.icerik === 'veri');
+  const ubuntu = /ubuntu/i.test(iso);
   return {
     ...st,
-    flash: { ...st.flash, [id]: { ...f, icerik: 'win11', bolum: bolum === 'GPT' ? 'GPT' : 'MBR', etiket: 'CCCOMA_X64FRE', dosyalar: { ...WIN11_USB } } },
-    iz: { ...st.iz, turuncuSilindi },
+    flash: {
+      ...st.flash,
+      [id]: { ...f, icerik: ubuntu ? 'ubuntu' : 'win11', bolum: bolum === 'GPT' ? 'GPT' : 'MBR', etiket: ubuntu ? 'Ubuntu 24.04.1 LTS amd64' : 'CCCOMA_X64FRE', dosyalar: { ...(ubuntu ? UBUNTU_USB : WIN11_USB) } },
+    },
+    iz: { ...st.iz, turuncuSilindi, yazilan: [...new Set([...(st.iz.yazilan ?? []), ubuntu ? 'ubuntu' : 'win11'])] },
   };
 }
 
@@ -218,7 +247,7 @@ export function windowsVar(st: KhState) {
 /** BIOS'un gördüğü aygıtlar (USB, takılı belleğe göre) */
 export function biosVeri(st: KhState): BiosVeri {
   const takili = st.portlar.filter((x): x is FlashId => !!x).map((id) => st.flash[id]);
-  const kurulumBellegi = takili.find((f) => f.icerik === 'win11');
+  const kurulumBellegi = takili.find((f) => f.icerik !== 'veri');
   const c = st.bios.cmos;
   // GPT (UEFI) bellek CSM kapalıyken, MBR bellek CSM açıkken önyüklenir
   const uyumlu = !!kurulumBellegi && (kurulumBellegi.bolum === 'GPT' ? !c.csm : c.csm);
@@ -226,7 +255,7 @@ export function biosVeri(st: KhState): BiosVeri {
   return {
     cmos: c,
     aygitlar: [
-      { id: 'ssd', ad: windowsVar(st) ? 'Windows Boot Manager (Samsung SSD 870 EVO 500GB)' : 'Samsung SSD 870 EVO 500GB' },
+      { id: 'ssd', ad: st.onyukleyici === 'grub' && st.ubuntu ? 'ubuntu (Samsung SSD 870 EVO 500GB)' : windowsVar(st) ? 'Windows Boot Manager (Samsung SSD 870 EVO 500GB)' : 'Samsung SSD 870 EVO 500GB' },
       { id: 'usb', ad: usbAd },
       { id: 'pxe', ad: 'UEFI: PXE IPv4 Realtek PCIe GbE Family Controller' },
     ],
@@ -245,18 +274,100 @@ export function kurulumuIsle(st: KhState): KhState {
   if (!k) return st;
   if (k.kurulum === 'tamam' && k.adim === 'bitti') {
     const eski = st.windows === 'eski' ? st.pc : null;
+    // Windows'un kurulduğu bölüm artık sistem dosyaları içerir
+    const diskler = k.diskler.map((d) => ({ ...d, bolumler: d.bolumler.map((b) => (b.id === k.hedef?.bolum ? { ...b, veri: true } : b)) }));
     return {
       ...st,
-      diskler: k.diskler,
+      diskler,
       windows: 'yeni',
       kurulum: null,
+      // Windows kurulumu önyükleyiciyi kendine çevirir: GRUB menüsü artık görünmez
+      onyukleyici: 'windows',
+      ubuntu: ubuntuBolumuVar(diskler) ? st.ubuntu : null,
       pc: yeniPc(k, eski),
       iz: { ...st.iz, temiz: k.ozet.temiz, kurulumSayisi: st.iz.kurulumSayisi + 1 },
     };
   }
   // Yarım kalan kurulum: bölüm silindi/biçimlendirildiyse ya da kopyalama başladıysa Windows artık açılmaz
   const bozuldu = k.adim === 'yukleniyor' || k.kurulum === 'tamam' || !k.diskler.some((d) => d.bolumler.some((b) => b.windows && b.veri));
-  return { ...st, diskler: k.diskler, kurulum: null, windows: bozuldu ? null : st.windows };
+  return { ...st, diskler: k.diskler, kurulum: null, windows: bozuldu ? null : st.windows, ubuntu: ubuntuBolumuVar(k.diskler) ? st.ubuntu : null };
+}
+
+export function ubuntuBolumuVar(d: Disk[]) {
+  return d.some((x) => x.bolumler.some((b) => b.tur === 'linux' && b.baglama === '/'));
+}
+
+/** Açılış belleği: takılı ilk kurulum belleği */
+export function bootBellegi(st: KhState): Flash | undefined {
+  return st.portlar.filter((x): x is FlashId => !!x).map((id) => st.flash[id]).find((f) => f.icerik !== 'veri');
+}
+
+// ---------- Ubuntu kurulumu ile disk dönüşümü ----------
+export function ubuntuParcalari(d: Disk[]): Part[] {
+  let n = 0;
+  return d[0].bolumler.map((b) => {
+    if (b.tur === 'ayrilmamis') return { id: b.id, ad: 'boş alan', boyutGB: b.boyutGB, fs: 'bos' as const, baglama: null, bicimlendir: false };
+    n++;
+    const ad = `/dev/sda${n}`;
+    if (b.tur === 'sistem') return { id: b.id, ad, boyutGB: b.boyutGB, fs: 'fat32' as const, baglama: null, bicimlendir: false, mevcut: true, etiket: 'EFI' };
+    if (b.tur === 'linux') return { id: b.id, ad, boyutGB: b.boyutGB, fs: b.fs ?? 'ext4', baglama: null, bicimlendir: false, mevcut: true, etiket: b.etiket };
+    const etiket = b.tur === 'msr' ? 'Microsoft reserved' : b.tur === 'kurtarma' ? 'Kurtarma' : b.etiket;
+    return { id: b.id, ad, boyutGB: b.boyutGB, fs: 'ntfs' as const, baglama: null, bicimlendir: false, mevcut: true, etiket, windows: !!b.windows && !!b.veri };
+  });
+}
+
+export function parcalardanDisk(parcalar: Part[], once: Disk[]): Disk[] {
+  const eski = new Map(once[0].bolumler.map((b) => [b.id, b] as const));
+  const bolumler: Bolum[] = parcalar.map((p) => {
+    const o = eski.get(p.id);
+    if (p.fs === 'bos') return { id: p.id, tur: 'ayrilmamis', boyutGB: p.boyutGB };
+    if (o && !p.bicimlendir) return { ...o, boyutGB: p.boyutGB, ...(o.tur === 'linux' && p.baglama ? { baglama: p.baglama } : {}) };
+    if (p.fs === 'fat32') return { id: p.id, tur: 'sistem', boyutGB: p.boyutGB };
+    return { id: p.id, tur: 'linux', boyutGB: p.boyutGB, fs: p.fs === 'swap' ? 'swap' : 'ext4', baglama: p.baglama ?? undefined, etiket: p.baglama === '/' ? 'Ubuntu' : (p.baglama ?? undefined) };
+  });
+  return [{ id: once[0].id, bolumler }];
+}
+
+export function ubuntuKurulumVeri(st: KhState): UbuntuVeri {
+  const parcalar = ubuntuParcalari(st.diskler);
+  return { disk: { ad: '/dev/sda Samsung SSD 870 EVO 500GB', boyutGB: 465.8, bolumler: parcalar }, windowsVar: parcalar.some((p) => p.windows), wifi: WIFI };
+}
+
+/** Ubuntu kurulumundan çıkılınca: kurulum bittiyse disk + Ubuntu + GRUB kalıcı olur */
+export function ubuntuKurulumuIsle(st: KhState): KhState {
+  const u = st.ukur;
+  if (!u) return st;
+  const basladi = u.kurulum === 'tamam' || u.adim === 'kuruluyor';
+  if (!basladi) return { ...st, ukur: null };
+  const diskler = parcalardanDisk(u.bolumler, st.diskler);
+  const winVar = diskler[0].bolumler.some((b) => b.windows && b.veri);
+  if (u.kurulum !== 'tamam') return { ...st, ukur: null, diskler, windows: winVar ? st.windows : null, ubuntu: null };
+  const k = u.hesap.kullanici || 'ogrenci';
+  const sh = defaultShell(k, u.hesap.bilgisayar || 'ubuntu-pc');
+  return {
+    ...st,
+    ukur: null,
+    diskler,
+    windows: winVar ? st.windows : null,
+    onyukleyici: 'grub',
+    ubuntu: {
+      hesap: { ad: u.hesap.ad, kullanici: k, bilgisayar: u.hesap.bilgisayar, parola: u.hesap.parolaDeger ?? '' },
+      // Kurulum os-prober ile diğer sistemleri bulur ve GRUB menüsüne ekler
+      sh: {
+        ...sh,
+        history: [],
+        grub: { windows: winVar, osProber: true },
+        sistem: { ...sh.sistem, disk: '465.8G', ag: 'Intel Corporation Wi-Fi 6 AX201', ram: '15.5Gi' },
+        bolumler: diskler[0].bolumler
+          .filter((b) => b.tur !== 'ayrilmamis')
+          .map((b) => ({
+            boyut: b.boyutGB < 1 ? `${Math.round(b.boyutGB * 1024)}M` : `${b.boyutGB.toFixed(1)}G`,
+            baglama: b.tur === 'sistem' ? '/boot/efi' : b.tur === 'linux' ? (b.fs === 'swap' ? '[SWAP]' : (b.baglama ?? '')) : '',
+          })),
+      },
+      wifi: u.ayar.ag.startsWith('wifi:') ? u.ayar.ag.slice(5) : '',
+    },
+  };
 }
 
 /** İsteğe bağlı yapılacaklar (puan yok) */
@@ -266,7 +377,7 @@ export function yapilacaklar(st: KhState): { id: string; metin: string; tamam: b
   const yedek = Object.keys(st.flash.turuncu.dosyalar).some((k) => k.endsWith(ONEMLI_DOSYA)) || Object.keys(st.flash.mavi.dosyalar).some((k) => k.endsWith(ONEMLI_DOSYA));
   return [
     { id: 'yedek', metin: "Kullanıcının belgeleri bir flash belleğe yedeklendi", tamam: yedek },
-    { id: 'usb', metin: 'Windows 11 kurulum belleği hazırlandı (Rufus)', tamam: st.flash.mavi.icerik === 'win11' || st.flash.turuncu.icerik === 'win11' },
+    { id: 'usb', metin: 'Windows 11 kurulum belleği hazırlandı (Rufus)', tamam: !!st.iz.yazilan?.includes('win11') || st.flash.mavi.icerik === 'win11' || st.flash.turuncu.icerik === 'win11' },
     { id: 'acilis', metin: 'Bilgisayar USB bellekten açıldı', tamam: st.iz.usbAcilis },
     { id: 'kurulum', metin: 'Windows 11 temiz kuruldu (eski bölüm silindi/biçimlendirildi)', tamam: yeni && st.iz.temiz },
     { id: 'wifi', metin: 'Kablosuz ağa bağlanıldı (OKUL-LAB)', tamam: yeni && pc.internet },
@@ -276,6 +387,9 @@ export function yapilacaklar(st: KhState): { id: string; metin: string; tamam: b
     { id: 'varsayilan', metin: 'Chrome varsayılan tarayıcı yapıldı', tamam: yeni && pc.varsayilan.tarayici === 'chrome' },
     { id: 'geri', metin: 'Belgeler yeni Windows\'a geri yüklendi', tamam: yeni && pc.dosyalar.some((k) => k.startsWith(BELGE + '/') && k.endsWith(ONEMLI_DOSYA)) },
     { id: 'guvenlik', metin: "Windows Güvenliği'nde uyarı yok", tamam: yeni && pc.uyariSayisi === 0 && pc.zararli.length === 0 },
+    { id: 'office', metin: 'Microsoft Office kuruldu ve ürün anahtarıyla etkinleştirildi', tamam: yeni && pc.etkinUygulamalar.includes('office') },
+    { id: 'ubuntu', metin: "Ubuntu, Windows'un yanına kuruldu (çift önyükleme)", tamam: !!st.ubuntu && windowsVar(st) && st.ubuntu.sh.grub.windows },
+    { id: 'grub', metin: 'GRUB menüsünden hem Ubuntu hem Windows açıldı', tamam: st.iz.grubAcilan.includes('ubuntu') && st.iz.grubAcilan.includes('windows') },
   ];
 }
 

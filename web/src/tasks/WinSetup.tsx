@@ -6,7 +6,7 @@ import Sorular, { type Soru } from '../components/Sorular';
 import type { TaskDef } from '../core/types';
 import type { TaskUIProps } from './registry';
 
-type Tur = 'ayrilmamis' | 'sistem' | 'msr' | 'birincil' | 'kurtarma';
+type Tur = 'ayrilmamis' | 'sistem' | 'msr' | 'birincil' | 'kurtarma' | 'linux';
 export interface Bolum {
   id: string;
   tur: Tur;
@@ -17,6 +17,9 @@ export interface Bolum {
   windows?: boolean;
   /** Kişisel dosyalar (korunmalı) */
   kisisel?: boolean;
+  /** Linux bölümü (Ubuntu kurulumundan): dosya sistemi ve bağlama noktası */
+  fs?: 'ext4' | 'swap';
+  baglama?: string;
 }
 export interface Disk {
   id: string;
@@ -84,7 +87,7 @@ export const initialWinSetup = (task: TaskDef): State => {
   };
 };
 
-const TUR_AD: Record<Tur, string> = { ayrilmamis: 'Ayrılmamış Alan', sistem: 'Sistem', msr: 'MSR (Ayrılmış)', birincil: 'Birincil', kurtarma: 'Kurtarma' };
+const TUR_AD: Record<Tur, string> = { ayrilmamis: 'Ayrılmamış Alan', sistem: 'Sistem', msr: 'MSR (Ayrılmış)', birincil: 'Birincil', kurtarma: 'Kurtarma', linux: 'Birincil' };
 const gb = (x: number) => (x < 1 ? `${Math.round(x * 1024)} MB` : `${x.toFixed(1).replace('.', ',')} GB`);
 
 /** Ardışık ayrılmamış alanları birleştirir */

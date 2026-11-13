@@ -44,8 +44,10 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - **Serbest kum havuzu** (`#/kum-havuzu`, puansız): tek bir gerçekçi bilgisayar — On/off ve reset düğmeleri, güç ve disk
   ışıkları, 3 USB girişi, sürükle-tak 2 flash bellek, durum çubuğu. Eski (virüslü) Windows'ta belgeleri belleğe yedekle,
   Microsoft'tan ISO, rufus.ie'den Rufus indirip kurulum belleği hazırla, F8/BIOS ile USB'den aç, diski biçimlendirip Windows 11'i
-  kur, Wi-Fi şifresiyle bağlan, Windows Update ile sürücüleri yükle, Chrome ve WinRAR kur, ayarları yap. BIOS'a giriş, BIOS'ta
-  gezinme ve yazı yazma **gerçek klavyeden** yapılır. Çalışma sunucuya kaydedilir; isteğe bağlı yapılacaklar listesi vardır
+  kur, Wi-Fi şifresiyle bağlan, Windows Update ile sürücüleri yükle, Chrome, WinRAR ve Office kur (ürün anahtarıyla etkinleştir),
+  ayarları yap; sonra Ubuntu'yu Windows'un yanına kur ve GRUB menüsünden iki sistemi de aç. BIOS'a giriş, BIOS'ta gezinme,
+  GRUB ve yazı yazma **gerçek klavyeden** yapılır. Çalışma sunucuya kaydedilir; isteğe bağlı yapılacaklar listesi vardır.
+  Öğretmen canlı izlemede **Ekranı izle** ile öğrencinin ekranını (3 sn'de bir), yapılacaklarını ve ne yaptığını görür
 - Yarım kalan çalışma sunucuya kaydedilir; başka bilgisayardan kaldığı yerden devam edilir
 - Görev sonunda puan, kriterler, hatalar ve kazanım düzeyleri
 

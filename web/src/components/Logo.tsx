@@ -125,6 +125,28 @@ const L: Record<string, (u: string) => ReactElement> = {
       <rect x="15" y="37" width="18" height="3" rx="1" fill="#777" />
     </svg>
   ),
+  ubuntu: () => (
+    <svg viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="22" fill="#e95420" />
+      <circle cx="24" cy="24" r="9.5" fill="none" stroke="#fff" strokeWidth="4" />
+      <circle cx="12" cy="24" r="4" fill="#fff" stroke="#e95420" strokeWidth="2" />
+      <circle cx="30" cy="13.6" r="4" fill="#fff" stroke="#e95420" strokeWidth="2" />
+      <circle cx="30" cy="34.4" r="4" fill="#fff" stroke="#e95420" strokeWidth="2" />
+    </svg>
+  ),
+  terminal: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="4" y="7" width="40" height="34" rx="4" fill="#2c2c2c" />
+      <path d="M11 17l7 6-7 6" stroke="#fff" strokeWidth="3" fill="none" strokeLinecap="round" />
+      <path d="M21 31h14" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  ),
+  firefox: () => (
+    <svg viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="#7542e5" />
+      <path d="M24 4a20 20 0 1 0 20 20c0-4-1-7-3-10 0 4-2 6-4 7 0-7-4-12-10-15 1 4-1 7-4 9-4 3-6 6-6 10 0 7 5 12 12 12a11 11 0 0 0 10-6c-3 2-8 2-11-1-2-2-3-5-2-8 1 2 3 3 5 3" fill="#ff9500" />
+    </svg>
+  ),
   geridonusum: () => (
     <svg viewBox="0 0 48 48">
       <path d="M12 12h24l-3 30H15z" fill="#d9e6f2" stroke="#8aa4bd" strokeWidth="2" />

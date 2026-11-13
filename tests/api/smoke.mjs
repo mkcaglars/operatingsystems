@@ -234,6 +234,19 @@ try {
     assert.equal(det.data.events.length, 1);
     assert.equal((await t2.api('GET', `attempt&id=${a.data.attempt_id}`)).status, 403);
   });
+  await step('kum havuzu: öğretmen izlerken ekran görüntüsü gelir', async () => {
+    assert.equal((await st.api('POST', 'presence', { station: '', task_id: '', info: 'Kum havuzu · BIOS · 0/14' })).data.izle, false);
+    await st.api('POST', 'state/save', { scope: 'kum-havuzu', data: { st: {}, gunluk: [{ t: '09:00', m: 'Bilgisayarı açtı' }], ozet: [{ m: 'x', ok: false }] }, version: 0 });
+    const v1 = await t1.api('GET', `sandbox/view&student_id=${students[0].id}`);
+    assert.equal(v1.data.ekran, null);
+    assert.equal(v1.data.gunluk[0].m, 'Bilgisayarı açtı');
+    assert.equal((await st.api('POST', 'presence', { station: '', task_id: '', info: 'Kum havuzu' })).data.izle, true);
+    assert.equal((await st.api('POST', 'sandbox/screen', { img: 'data:image/png;base64,AAAA' })).status, 400);
+    await st.api('POST', 'sandbox/screen', { img: 'data:image/jpeg;base64,/9j/AAAA' });
+    assert.equal((await t1.api('GET', `sandbox/view&student_id=${students[0].id}`)).data.ekran.img, 'data:image/jpeg;base64,/9j/AAAA');
+    assert.equal((await t2.api('GET', `sandbox/view&student_id=${students[0].id}`)).status, 403);
+    assert.equal((await st.api('GET', `sandbox/view&student_id=${students[0].id}`)).status, 403);
+  });
   await step('durum kaydetme ve sürüm çakışması', async () => {
     assert.equal((await st.api('POST', 'state/save', { scope: 'vm', data: { a: 1 }, version: 0 })).data.version, 1);
     assert.equal((await st.api('POST', 'state/save', { scope: 'vm', data: { a: 2 }, version: 1 })).data.version, 2);
