@@ -181,6 +181,16 @@ export const PROGRAM_DOSYALARI: Record<string, Record<string, string>> = {
   booster: { 'C:/Program Files (x86)/SpeedySoft': '', 'C:/Program Files (x86)/SpeedySoft/PCBooster': '', 'C:/Program Files (x86)/SpeedySoft/PCBooster/booster.exe': '7,7 MB' },
 };
 
+/** Eski sürümde kaydedilmiş bilgisayarı tamamlar: eksik sistem klasörleri ve kurulu programların klasörleri eklenir */
+export function sistemiTamamla(pc: WinPc): WinPc {
+  if (!pc?.fs?.['C:']) return pc;
+  const out: WinPc = JSON.parse(JSON.stringify(pc));
+  for (const [k, v] of Object.entries(SISTEM_FS)) if (!out.fs[k]) out.fs[k] = { ...v };
+  for (const u of out.uygulamalar ?? []) programDosyalari(out, u.id, true);
+  if (!out.ag) out.ag = { kablo: true, wifi: '' };
+  return derive(out);
+}
+
 /** Program kurulunca/kaldırılınca Program Files klasörünü ekler/siler */
 export function programDosyalari(pc: WinPc, id: string, ekle: boolean): void {
   const d = PROGRAM_DOSYALARI[id];
