@@ -1,0 +1,378 @@
+{
+ "id": "i9-g4",
+ "istasyon": "i9",
+ "baslik": "Yavaşlayan bilgisayar",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "B9",
+  "S8",
+  "Y4"
+ ],
+ "sure_hedef": 480,
+ "ipucu_cezasi": 5,
+ "senaryo": "Kullanıcı bilgisayarının son günlerde çok yavaşladığını ve sürekli reklam çıktığını söylüyor. Görev Yöneticisi ile nedeni bul; Windows Güvenliği ile tam tarama yapıp tehdidi temizle, istenmeyen programı kaldır ve şüpheli başlangıç öğesini devre dışı bırak. Windows'u sıfırlama.",
+ "ogren": [
+  "Yavaşlığın genel nedenleri: çok sayıda başlangıç programı, az boş disk alanı, eksik güncelleştirme ve zararlı yazılımlar.",
+  "Görev Yöneticisi'nde yüksek CPU/bellek kullanan işlemler ve Başlangıç sekmesindeki 'etki' sütunu incelenir.",
+  "Zararlılar gerçek sistem dosyalarına benzer adlar kullanır (svchost32.exe ≠ svchost.exe). Tam tarama ile bulunur, karantinaya alınır.",
+  "Sahte 'hızlandırıcı' ve 'temizleyici' programlar reklam yazılımıdır (adware); Ayarlar › Uygulamalar'dan kaldırılır."
+ ],
+ "ipuclari": [
+  "Görev Yöneticisi › İşlemler'de CPU sütununa bak.",
+  "Windows Güvenliği › Virüs ve tehdit koruması › Tarama seçenekleri › Tam tarama; bulunan tehdidi karantinaya al.",
+  "Ayarlar › Uygulamalar'dan PC Speed Booster PRO'yu kaldır; Görev Yöneticisi › Başlangıç'ta şüpheli öğeyi devre dışı bırak."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "gorev",
+   "guvenlik",
+   "ayarlar",
+   "dosya",
+   "edge"
+  ],
+  "baslangicUygulama": "gorev",
+  "pc": {
+   "zararli": [
+    "trojan"
+   ],
+   "belirti": {
+    "reklam": true
+   },
+   "fs": {
+    "C:/Windows": {
+     "tur": "klasor"
+    },
+    "C:/Windows/System32": {
+     "tur": "klasor"
+    },
+    "C:/Windows/System32/svchost32.exe": {
+     "tur": "dosya",
+     "boyut": "1,2 MB",
+     "tehdit": "Trojan:Win32/CoinMiner.AB!MTB"
+    }
+   },
+   "surecler": [
+    {
+     "id": "explorer",
+     "ad": "Windows Gezgini",
+     "cpu": 0.6,
+     "ram": 92,
+     "sistem": true
+    },
+    {
+     "id": "svchost32",
+     "ad": "svchost32.exe",
+     "cpu": 67.4,
+     "ram": 1450
+    },
+    {
+     "id": "booster",
+     "ad": "PC Speed Booster PRO",
+     "cpu": 8.2,
+     "ram": 310
+    },
+    {
+     "id": "msedge",
+     "ad": "Microsoft Edge (6)",
+     "cpu": 1.2,
+     "ram": 610
+    },
+    {
+     "id": "antimalware",
+     "ad": "Antimalware Service Executable",
+     "cpu": 0.4,
+     "ram": 180,
+     "sistem": true
+    },
+    {
+     "id": "host",
+     "ad": "Hizmet Ana Bilgisayarı: Yerel Sistem (14)",
+     "cpu": 0.3,
+     "ram": 120,
+     "sistem": true
+    }
+   ],
+   "baslangic": [
+    {
+     "id": "svchost32",
+     "ad": "svchost32",
+     "yayinci": "",
+     "etki": "Yüksek",
+     "acik": true
+    },
+    {
+     "id": "booster",
+     "ad": "PC Speed Booster PRO",
+     "yayinci": "Speedy Soft Ltd",
+     "etki": "Yüksek",
+     "acik": true
+    },
+    {
+     "id": "onedrive",
+     "ad": "Microsoft OneDrive",
+     "yayinci": "Microsoft Corporation",
+     "etki": "Yüksek",
+     "acik": true
+    },
+    {
+     "id": "security",
+     "ad": "Windows Security notification icon",
+     "yayinci": "Microsoft Corporation",
+     "etki": "Düşük",
+     "acik": true
+    }
+   ],
+   "uygulamalar": [
+    {
+     "id": "edge",
+     "ad": "Microsoft Edge",
+     "yayinci": "Microsoft Corporation",
+     "surum": "130.0.2849.80",
+     "boyutMB": 520
+    },
+    {
+     "id": "teams",
+     "ad": "Microsoft Teams",
+     "yayinci": "Microsoft Corporation",
+     "surum": "24295.605",
+     "boyutMB": 410
+    },
+    {
+     "id": "booster",
+     "ad": "PC Speed Booster PRO",
+     "yayinci": "Speedy Soft Ltd",
+     "surum": "3.1.0",
+     "boyutMB": 96,
+     "kaynak": "sahte"
+    }
+   ]
+  },
+  "sorular": [
+   {
+    "id": "belirti",
+    "soru": "Aşağıdakilerden hangisi zararlı yazılım belirtisidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "hepsi",
+      "metin": "Tanımadığın bir işlemin sürekli yüksek CPU kullanması ve istenmeyen reklam pencereleri",
+      "dogru": true
+     },
+     {
+      "id": "guncelleme",
+      "metin": "Windows Update'in güncelleştirme indirmesi",
+      "dogru": false
+     },
+     {
+      "id": "fan",
+      "metin": "Oyun oynarken fanın hızlanması",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "svchost",
+    "soru": "'svchost32.exe' neden şüphelidir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "taklit",
+      "metin": "Gerçek Windows işlemi 'svchost.exe'dir; zararlılar benzer adlar kullanarak gizlenir",
+      "dogru": true
+     },
+     {
+      "id": "gercek",
+      "metin": "Şüpheli değildir, Windows'un parçasıdır",
+      "dogru": false
+     },
+     {
+      "id": "32",
+      "metin": "32 bitlik programlar Windows 11'de çalışmaz",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "tarama",
+   "aciklama": "Tam tarama yapıldı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "event": "guvenlik.tarama",
+    "where": {
+     "tur": "tam"
+    }
+   }
+  },
+  {
+   "id": "trojan",
+   "aciklama": "Truva atı karantinaya alındı / kaldırıldı",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.guvenlik.karantina",
+      "includes": "C:/Windows/System32/svchost32.exe"
+     },
+     {
+      "path": "pc.zararli",
+      "len_eq": 0
+     }
+    ]
+   }
+  },
+  {
+   "id": "booster",
+   "aciklama": "Reklam yazılımı kaldırıldı",
+   "agirlik": 2,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.kurulu",
+      "includes": "edge"
+     },
+     {
+      "path": "pc.kurulu",
+      "excludes": "booster"
+     },
+     {
+      "path": "pc.belirti.reklam",
+      "eq": false
+     }
+    ]
+   }
+  },
+  {
+   "id": "baslangic",
+   "aciklama": "Şüpheli başlangıç öğesi devre dışı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acikBaslangic",
+      "includes": "security"
+     },
+     {
+      "path": "pc.acikBaslangic",
+      "excludes": "svchost32"
+     }
+    ]
+   }
+  },
+  {
+   "id": "q-belirti",
+   "aciklama": "Soru: Aşağıdakilerden hangisi zararlı yazılım belirtisidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.belirti",
+    "eq": "hepsi"
+   }
+  },
+  {
+   "id": "q-svchost",
+   "aciklama": "Soru: 'svchost32.exe' neden şüphelidir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.svchost",
+    "eq": "taklit"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "izin",
+   "aciklama": "Zararlı dosyaya izin verildi",
+   "ceza": 40,
+   "kural": {
+    "path": "pc.guvenlik.izinVerilen",
+    "len_gte": 1
+   }
+  },
+  {
+   "id": "sifirla",
+   "aciklama": "Gereksiz yere bilgisayar sıfırlandı",
+   "ceza": 30,
+   "kural": {
+    "path": "pc.sifirlama",
+    "in": [
+     "koru",
+     "hepsi"
+    ]
+   }
+  },
+  {
+   "id": "guvenlik",
+   "aciklama": "Windows Güvenliği bildirimi başlangıçtan kaldırıldı",
+   "ceza": 10,
+   "kural": {
+    "all": [
+     {
+      "path": "pc.acikBaslangic",
+      "includes": "onedrive"
+     },
+     {
+      "path": "pc.acikBaslangic",
+      "excludes": "security"
+     }
+    ]
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "guvenlik": {
+     "karantina": [
+      "C:/Windows/System32/svchost32.exe"
+     ],
+     "izinVerilen": []
+    },
+    "zararli": [],
+    "kurulu": [
+     "edge",
+     "teams"
+    ],
+    "belirti": {
+     "reklam": false
+    },
+    "acikBaslangic": [
+     "onedrive",
+     "security"
+    ],
+    "sifirlama": ""
+   },
+   "cevaplar": {
+    "belirti": "hepsi",
+    "svchost": "taklit"
+   }
+  },
+  "events": [
+   {
+    "type": "guvenlik.tarama",
+    "t": 30000,
+    "tur": "tam"
+   }
+  ]
+ }
+}

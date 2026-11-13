@@ -20,6 +20,7 @@ export default function TeacherApp({ path }: { path: string[] }) {
           </a>
         )}
         <a href="#/gorevler">Görevleri dene</a>
+        <a href="#/kum-havuzu">Kum havuzu</a>
       </TopBar>
       <main className="container wide">
         {sec === 'sinif' && id ? <ClassPage classId={Number(id)} tab={tab ?? 'ogrenciler'} /> : sec === 'ogretmenler' ? <Teachers /> : <Classes />}

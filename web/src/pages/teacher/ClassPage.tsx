@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { api, type ClassInfo, type ClassSettings, type Credential, type StudentRow } from '../../api';
 import { useAuth } from '../../App';
-import { outcomes, outcomeText, stationById, taskById, tasks } from '../../content';
+import { campaignProgress, campaigns, outcomes, outcomeText, stationById, taskById, tasks } from '../../content';
 import { levelOf, LEVEL_LABEL } from '../../core/scoring';
 import { go } from '../../router';
 import { CredentialCards } from './Credentials';
@@ -306,11 +306,72 @@ interface LiveRow {
   task_id: string | null;
   info: string | null;
   seen: number | null;
+  biletler: { task_id: string; tamam: boolean; okundu: boolean }[];
+}
+
+function ArizaGonder({ cls, rows, onSent }: { cls: ClassInfo; rows: LiveRow[]; onSent: () => void }) {
+  const ariza = tasks.filter((t) => t.istasyon === 'i9' || ['i6-g1', 'i7-g1', 'i7-g2', 'i7-g3', 'i8-g6', 'i2-g6', 'i2-g7'].includes(t.id));
+  const [taskId, setTaskId] = useState(ariza[0]?.id ?? '');
+  const [secili, setSecili] = useState<number[]>([]);
+  const [mesaj, setMesaj] = useState('');
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const gonder = async (e: FormEvent) => {
+    e.preventDefault();
+    setMsg(null);
+    try {
+      const r = await api.post<{ gonderilen: number }>('commands/send', { class_id: cls.id, task_id: taskId, student_ids: secili, mesaj });
+      setMsg({ ok: true, text: `${r.gonderilen} öğrenciye servis bileti gönderildi.` });
+      setMesaj('');
+      onSent();
+    } catch (er) {
+      setMsg({ ok: false, text: (er as Error).message });
+    }
+  };
+  return (
+    <details className="card ariza-panel">
+      <summary>
+        <b>🛠 Arıza gönder (servis bileti)</b> <small className="muted">— seçili öğrencilerin ekranına bir arıza görevi düşer</small>
+      </summary>
+      <form onSubmit={gonder} className="stack">
+        <label>
+          Arıza / görev
+          <select value={taskId} onChange={(e) => setTaskId(e.target.value)} aria-label="Arıza görevi">
+            {ariza.map((t) => (
+              <option key={t.id} value={t.id}>
+                {stationById(t.istasyon)?.kod} · {t.baslik}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Not (isteğe bağlı)
+          <input value={mesaj} maxLength={255} onChange={(e) => setMesaj(e.target.value)} placeholder="Ör. Müşteri acele ediyor, 10 dakikan var" aria-label="Bilet notu" />
+        </label>
+        <div className="chips">
+          <button type="button" className="btn small" onClick={() => setSecili(secili.length === rows.length ? [] : rows.map((r) => r.id))}>
+            {secili.length === rows.length ? 'Seçimi kaldır' : 'Tümünü seç'}
+          </button>
+          {rows.map((r) => (
+            <label key={r.id} className={'chip sel' + (secili.includes(r.id) ? ' on' : '')}>
+              <input type="checkbox" checked={secili.includes(r.id)} onChange={(e) => setSecili(e.target.checked ? [...secili, r.id] : secili.filter((x) => x !== r.id))} /> {r.name}
+            </label>
+          ))}
+        </div>
+        <div className="row">
+          <button className="btn primary" disabled={!taskId || secili.length === 0}>
+            Gönder ({secili.length})
+          </button>
+          {msg && <span className={msg.ok ? 'ok-text' : 'err-text'}>{msg.text}</span>}
+        </div>
+      </form>
+    </details>
+  );
 }
 
 function Live({ cls }: { cls: ClassInfo }) {
   const [rows, setRows] = useState<LiveRow[]>([]);
   const [err, setErr] = useState('');
+  const [nonce, setNonce] = useState(0);
   useEffect(() => {
     let alive = true;
     const load = () =>
@@ -324,7 +385,7 @@ function Live({ cls }: { cls: ClassInfo }) {
       alive = false;
       clearInterval(t);
     };
-  }, [cls.id]);
+  }, [cls.id, nonce]);
   const online = rows.filter((r) => r.seen !== null && r.seen < 60).length;
   return (
     <>
@@ -332,6 +393,7 @@ function Live({ cls }: { cls: ClassInfo }) {
         {online} / {rows.length} öğrenci çevrimiçi · 5 saniyede bir yenilenir
       </p>
       {err && <div className="note error">{err}</div>}
+      <ArizaGonder cls={cls} rows={rows} onSent={() => setNonce((n) => n + 1)} />
       <div className="live-grid">
         {rows.map((r) => {
           const on = r.seen !== null && r.seen < 60;
@@ -344,6 +406,15 @@ function Live({ cls }: { cls: ClassInfo }) {
               </b>
               <span>{on ? (t ? `${st?.kod ?? ''} ${t.baslik}` : r.info || 'Ana sayfada') : r.seen === null ? 'Hiç girmedi' : `Son görülme: ${ago(r.seen)}`}</span>
               {on && t && <small>{r.info}</small>}
+              {r.biletler.length > 0 && (
+                <span className="bilet-row">
+                  {r.biletler.slice(-4).map((b, i) => (
+                    <span key={i} className={'bilet ' + (b.tamam ? 'tamam' : b.okundu ? 'okundu' : 'yeni')} title={`${taskById(b.task_id)?.baslik ?? b.task_id}: ${b.tamam ? 'tamamlandı' : b.okundu ? 'üzerinde çalışıyor' : 'henüz açılmadı'}`}>
+                      🛠 {b.task_id.toUpperCase()} {b.tamam ? '✔' : b.okundu ? '…' : '•'}
+                    </span>
+                  ))}
+                </span>
+              )}
             </div>
           );
         })}
@@ -368,7 +439,8 @@ interface ReportData {
 function Report({ cls }: { cls: ClassInfo }) {
   const [data, setData] = useState<ReportData | null>(null);
   const [err, setErr] = useState('');
-  const [view, setView] = useState<'kazanim' | 'gorev'>('kazanim');
+  const [view, setView] = useState<'kazanim' | 'gorev' | 'kampanya'>('kazanim');
+  const [detay, setDetay] = useState<{ id: number; name: string } | null>(null);
   const esik = cls.settings.esik;
   const focus = Number(new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('ogrenci')) || null;
 
@@ -406,6 +478,9 @@ function Report({ cls }: { cls: ClassInfo }) {
           <button className={view === 'gorev' ? 'on' : ''} onClick={() => setView('gorev')}>
             Görevler
           </button>
+          <button className={view === 'kampanya' ? 'on' : ''} onClick={() => setView('kampanya')}>
+            Kampanyalar
+          </button>
         </div>
         <div className="row">
           <button className="btn" onClick={csv}>
@@ -431,7 +506,13 @@ function Report({ cls }: { cls: ClassInfo }) {
           <thead>
             <tr>
               <th>Öğrenci</th>
-              {view === 'kazanim'
+              {view === 'kampanya'
+                ? campaigns.map((c) => (
+                    <th key={c.id} title={c.aciklama}>
+                      {c.kod} {c.ad}
+                    </th>
+                  ))
+                : view === 'kazanim'
                 ? outcomes.map((o) => (
                     <th key={o.kod} title={o.metin} className="rot">
                       {o.kod}
@@ -447,8 +528,21 @@ function Report({ cls }: { cls: ClassInfo }) {
           <tbody>
             {data.students.map((s) => (
               <tr key={s.id} className={focus === s.id ? 'focus' : ''}>
-                <th>{s.name}</th>
-                {view === 'kazanim'
+                <th>
+                  <button className="link-btn" onClick={() => setDetay(s)} title="Denemeleri ve olay geçmişini gör">
+                    {s.name}
+                  </button>
+                </th>
+                {view === 'kampanya'
+                  ? campaigns.map((c) => {
+                      const p = campaignProgress(c, (tid) => score(s.id, tid)?.score ?? null);
+                      return (
+                        <td key={c.id} className={'level ' + (p.biten ? levelOf(p.puan, esik) : 'baslamadi')} title={`${p.biten}/${c.adimlar.length} adım tamam`}>
+                          {p.biten ? `${p.puan} (${p.biten}/${c.adimlar.length})` : ''}
+                        </td>
+                      );
+                    })
+                  : view === 'kazanim'
                   ? outcomes.map((o) => {
                       const v = data.outcomes[s.id]?.[o.kod];
                       return (
@@ -471,7 +565,106 @@ function Report({ cls }: { cls: ClassInfo }) {
         </table>
       </div>
       {view === 'gorev' && <p className="small muted">★ Değerlendirme modunda alınan puan</p>}
+      {view === 'kampanya' && <p className="small muted">Kampanya puanı, adımlardaki en iyi puanların ortalamasıdır (yapılmayan adım 0 sayılır). Parantez içinde 50 ve üzeri alınan adım sayısı.</p>}
+      <p className="small muted no-print">Bir öğrencinin denemelerini ve adım adım ne yaptığını görmek için adına tıklayın.</p>
+      {detay && <OgrenciDetay ogrenci={detay} onClose={() => setDetay(null)} />}
     </>
+  );
+}
+
+// ---------------------------------------------------------------- Öğrenci deneme ayrıntısı
+interface AttemptRow {
+  id: number;
+  task_id: string;
+  mode: string;
+  started_at: number;
+  duration: number | null;
+  hints: number;
+  score: number | null;
+}
+interface AttemptDetail extends AttemptRow {
+  result: { kriterler: { id: string; aciklama: string; gecti: boolean }[]; hatalar: { id: string; aciklama: string; ceza: number }[] } | null;
+  events: { type: string; t: number; [k: string]: unknown }[];
+}
+const MOD_AD: Record<string, string> = { ogren: 'Öğren', uygula: 'Uygula', degerlendir: 'Değerlendir' };
+
+function OgrenciDetay({ ogrenci, onClose }: { ogrenci: { id: number; name: string }; onClose: () => void }) {
+  const [list, setList] = useState<AttemptRow[] | null>(null);
+  const [sec, setSec] = useState<AttemptDetail | null>(null);
+  const [err, setErr] = useState('');
+  useEffect(() => {
+    api.get<AttemptRow[]>('attempts', { student_id: ogrenci.id }).then(setList).catch((e) => setErr(e.message));
+  }, [ogrenci.id]);
+  const ac = (id: number) => api.get<AttemptDetail>('attempt', { id }).then(setSec).catch((e) => setErr(e.message));
+  const sure = (n: number | null) => (n === null ? '—' : `${Math.floor(n / 60)} dk ${n % 60} sn`);
+  return (
+    <div className="modal-back" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal wide" role="dialog" aria-label={`${ogrenci.name} denemeleri`}>
+        <div className="row space">
+          <h3>{ogrenci.name} — denemeler</h3>
+          <button className="btn" onClick={onClose}>
+            Kapat
+          </button>
+        </div>
+        {err && <div className="note error">{err}</div>}
+        <div className="detay-grid">
+          <div className="detay-list">
+            {list === null && <p>Yükleniyor…</p>}
+            {list?.length === 0 && <p className="muted">Henüz deneme yok.</p>}
+            {list?.map((a) => (
+              <button key={a.id} className={'detay-item' + (sec?.id === a.id ? ' on' : '')} onClick={() => ac(a.id)}>
+                <b>{taskById(a.task_id)?.baslik ?? a.task_id}</b>
+                <small>
+                  {MOD_AD[a.mode] ?? a.mode} · {fmtDate(new Date(a.started_at * 1000).toISOString().slice(0, 19).replace('T', ' '))} · {a.score === null ? 'bitmedi' : `${a.score} puan`}
+                </small>
+              </button>
+            ))}
+          </div>
+          <div className="detay-body">
+            {!sec ? (
+              <p className="muted">Soldan bir deneme seçin.</p>
+            ) : (
+              <>
+                <h4>
+                  {taskById(sec.task_id)?.baslik} <span className={'level ' + levelOf(sec.score ?? undefined)}>{sec.score ?? '—'}</span>
+                </h4>
+                <p className="small muted">
+                  {MOD_AD[sec.mode]} · süre {sure(sec.duration)} · ipucu {sec.hints}
+                </p>
+                {sec.result && (
+                  <ul className="crit">
+                    {sec.result.kriterler.map((k) => (
+                      <li key={k.id} className={k.gecti ? 'ok' : 'no'}>
+                        {k.gecti ? '✔' : '✘'} {k.aciklama}
+                      </li>
+                    ))}
+                    {sec.result.hatalar.map((h) => (
+                      <li key={h.id} className="no">
+                        ⚠ {h.aciklama} (−{h.ceza})
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <h4>Olay geçmişi ({sec.events.length})</h4>
+                <ol className="olaylar">
+                  {sec.events.map((e, i) => {
+                    const { type, t, ...rest } = e;
+                    const ek = Object.entries(rest)
+                      .map(([k, v]) => `${k}: ${typeof v === 'string' ? v : JSON.stringify(v)}`)
+                      .join(' · ');
+                    return (
+                      <li key={i}>
+                        <code>{(t / 1000).toFixed(1)} sn</code> <b>{type}</b> {ek && <small className="muted">{ek.length > 140 ? ek.slice(0, 140) + '…' : ek}</small>}
+                      </li>
+                    );
+                  })}
+                </ol>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

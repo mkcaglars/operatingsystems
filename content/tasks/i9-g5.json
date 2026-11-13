@@ -1,0 +1,251 @@
+{
+ "id": "i9-g5",
+ "istasyon": "i9",
+ "baslik": "İnternet bağlantısı yok",
+ "arayuz": "windows",
+ "kazanimlar": [
+  "B9",
+  "S8",
+  "Y4"
+ ],
+ "sure_hedef": 300,
+ "ipucu_cezasi": 5,
+ "senaryo": "Kullanıcı 'internet gitti' diyor. Kablo takılı ve modem ışıkları normal; diğer bilgisayarlar internete çıkabiliyor. Sorunu Windows'ta bul ve gider, ardından tarayıcıda bir web sitesine girerek internetin geldiğini doğrula.",
+ "ogren": [
+  "Ağ sorunlarında sırayla: fiziksel bağlantı (kablo, Wi-Fi), ağ bağdaştırıcısı (Aygıt Yöneticisi), IP ayarları, DNS ve tarayıcı kontrol edilir.",
+  "Görev çubuğundaki ağ simgesi, bağlantı durumunu gösterir.",
+  "Aygıt Yöneticisi'nde aşağı oklu simge, aygıtın devre dışı bırakıldığını gösterir (Kod 22). 'Aygıtı etkinleştir' ile açılır."
+ ],
+ "ipuclari": [
+  "Görev çubuğundaki ağ simgesine bak; tarayıcıyı açıp dene.",
+  "Aygıt Yöneticisi › Ağ bağdaştırıcıları › Realtek PCIe GbE'ye çift tıkla.",
+  "'Aygıtı etkinleştir' de, ardından tarayıcıda bir siteye gir."
+ ],
+ "veri": {
+  "uygulamalar": [
+   "aygit",
+   "ayarlar",
+   "edge",
+   "dosya"
+  ],
+  "baslangicUygulama": "edge",
+  "pc": {
+   "aygitlar": [
+    {
+     "id": "cpu",
+     "kategori": "İşlemciler",
+     "ad": "Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz",
+     "durum": "ok"
+    },
+    {
+     "id": "disk",
+     "kategori": "Disk sürücüleri",
+     "ad": "Samsung SSD 870 EVO 500GB",
+     "durum": "ok"
+    },
+    {
+     "id": "gpu",
+     "kategori": "Görüntü bağdaştırıcıları",
+     "ad": "NVIDIA GeForce GTX 1650",
+     "durum": "ok"
+    },
+    {
+     "id": "lan",
+     "kategori": "Ağ bağdaştırıcıları",
+     "ad": "Realtek PCIe GbE Family Controller",
+     "durum": "devre-disi"
+    },
+    {
+     "id": "ses",
+     "kategori": "Ses, video ve oyun denetleyicileri",
+     "ad": "Realtek High Definition Audio",
+     "durum": "ok"
+    },
+    {
+     "id": "klavye",
+     "kategori": "Klavyeler",
+     "ad": "HID Klavye Aygıtı",
+     "durum": "ok"
+    },
+    {
+     "id": "fare",
+     "kategori": "Fareler ve diğer işaret aygıtları",
+     "ad": "HID uyumlu fare",
+     "durum": "ok"
+    }
+   ]
+  },
+  "sorular": [
+   {
+    "id": "sira",
+    "soru": "İnternet yoksa önce hangisi kontrol edilir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "fiziksel",
+      "metin": "Kablo/kablosuz bağlantı ve ağ bağdaştırıcısının durumu",
+      "dogru": true
+     },
+     {
+      "id": "format",
+      "metin": "Windows sıfırlanır",
+      "dogru": false,
+      "aciklama": "Format son çaredir; basit nedenler önce kontrol edilir."
+     },
+     {
+      "id": "tarayici",
+      "metin": "Başka bir tarayıcı kurulur",
+      "dogru": false
+     }
+    ]
+   },
+   {
+    "id": "kod22",
+    "soru": "Aygıt Yöneticisi'nde aşağı oklu (⬇) simge ne anlama gelir?",
+    "coklu": false,
+    "secenekler": [
+     {
+      "id": "devre",
+      "metin": "Aygıt devre dışı bırakılmış (Kod 22)",
+      "dogru": true
+     },
+     {
+      "id": "surucu",
+      "metin": "Sürücü yok",
+      "dogru": false,
+      "aciklama": "Sürücü yoksa sarı ünlem görünür."
+     },
+     {
+      "id": "indir",
+      "metin": "Aygıt güncelleştirme indiriyor",
+      "dogru": false
+     }
+    ]
+   }
+  ]
+ },
+ "kriterler": [
+  {
+   "id": "lan",
+   "aciklama": "Ağ bağdaştırıcısı etkinleştirildi",
+   "agirlik": 3,
+   "kazanimlar": [
+    "S8",
+    "Y4"
+   ],
+   "kural": {
+    "all": [
+     {
+      "path": "pc.internet",
+      "eq": true
+     },
+     {
+      "event": "aygit.etkinlestir",
+      "where": {
+       "aygit": "lan"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "dogrula",
+   "aciklama": "İnternet tarayıcıda doğrulandı",
+   "agirlik": 1,
+   "kazanimlar": [
+    "S8"
+   ],
+   "kural": {
+    "event": "tarayici.git",
+    "where": {
+     "cevrimici": true
+    }
+   }
+  },
+  {
+   "id": "q-sira",
+   "aciklama": "Soru: İnternet yoksa önce hangisi kontrol edilir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.sira",
+    "eq": "fiziksel"
+   }
+  },
+  {
+   "id": "q-kod22",
+   "aciklama": "Soru: Aygıt Yöneticisi'nde aşağı oklu (⬇) simge ne anlama gelir?",
+   "agirlik": 1,
+   "kazanimlar": [
+    "B9"
+   ],
+   "kural": {
+    "path": "cevaplar.kod22",
+    "eq": "devre"
+   }
+  }
+ ],
+ "hatalar": [
+  {
+   "id": "sifirla",
+   "aciklama": "Basit bir sorun için bilgisayar sıfırlandı",
+   "ceza": 30,
+   "kural": {
+    "path": "pc.sifirlama",
+    "in": [
+     "koru",
+     "hepsi"
+    ]
+   }
+  },
+  {
+   "id": "baska",
+   "aciklama": "İlgisiz bir aygıt devre dışı bırakıldı",
+   "ceza": 10,
+   "kural": {
+    "any": [
+     {
+      "path": "pc.devreDisi",
+      "includes": "gpu"
+     },
+     {
+      "path": "pc.devreDisi",
+      "includes": "ses"
+     },
+     {
+      "path": "pc.devreDisi",
+      "includes": "disk"
+     }
+    ]
+   }
+  }
+ ],
+ "test_cozum": {
+  "state": {
+   "pc": {
+    "internet": true,
+    "devreDisi": [],
+    "sifirlama": ""
+   },
+   "cevaplar": {
+    "sira": "fiziksel",
+    "kod22": "devre"
+   }
+  },
+  "events": [
+   {
+    "type": "aygit.etkinlestir",
+    "t": 20000,
+    "aygit": "lan"
+   },
+   {
+    "type": "tarayici.git",
+    "t": 30000,
+    "url": "www.meb.gov.tr",
+    "cevrimici": true
+   }
+  ]
+ }
+}

@@ -2,12 +2,21 @@
 import { useState } from 'react';
 import type { AppCtx } from './Masaustu';
 
+function durumMetni(a: { durum: string; cakisan?: string; sorunluSurucu?: boolean; ad: string }, ) {
+  if (a.durum === 'devre-disi') return 'Bu aygıt devre dışı. (Kod 22)';
+  if (a.durum === 'surucu-yok') return 'Bu aygıtın sürücüleri yüklenmedi. (Kod 28)\nBu aygıt için uyumlu sürücü yok.';
+  if (a.durum === 'cakisma') return `Bu aygıt kullanabileceği yeterli boş kaynak bulamıyor. (Kod 12)\nBu aygıtı kullanmak istiyorsanız, bu sistemdeki diğer aygıtlardan birini devre dışı bırakmanız gerekecek. Çakışan kaynak: IRQ 17 (${a.cakisan === 'ses' ? 'Realtek High Definition Audio' : (a.cakisan ?? 'başka bir aygıt')}).`;
+  if (a.sorunluSurucu) return 'Bu aygıt düzgün çalışıyor.\nNot: Bu aygıtın sürücüsü yakın zamanda güncelleştirildi.';
+  return 'Bu aygıt düzgün çalışıyor.';
+}
+
 export default function AygitYoneticisi(ctx: AppCtx) {
   const { pc, act } = ctx;
   const [sec, setSec] = useState<string | null>(null);
   const [ozellik, setOzellik] = useState<string | null>(null);
   const [sihirbaz, setSihirbaz] = useState<'secim' | 'gozat' | 'sonuc' | null>(null);
   const [sonuc, setSonuc] = useState<{ ok: boolean; metin: string } | null>(null);
+  const [onay, setOnay] = useState(false);
   const [kapali, setKapali] = useState<Record<string, boolean>>({});
   const kategoriler = Array.from(new Set(pc.aygitlar.map((a) => (a.durum === 'surucu-yok' && !a.kategori.startsWith('Diğer') ? 'Diğer aygıtlar' : a.kategori)))).sort((a, b) => a.localeCompare(b, 'tr'));
   const katOf = (a: (typeof pc.aygitlar)[number]) => (a.durum === 'surucu-yok' ? 'Diğer aygıtlar' : a.kategori);
@@ -46,8 +55,8 @@ export default function AygitYoneticisi(ctx: AppCtx) {
               </button>
               {acik &&
                 list.map((a) => (
-                  <button key={a.id} className={'dm-dev' + (sec === a.id ? ' on' : '')} onClick={() => setSec(a.id)} onDoubleClick={() => (setOzellik(a.id), setSihirbaz(null))}>
-                    {a.durum === 'surucu-yok' ? <i className="warn">⚠</i> : a.durum === 'devre-disi' ? <i>⬇</i> : <i>▫</i>}
+                  <button key={a.id} className={'dm-dev' + (sec === a.id ? ' on' : '')} onClick={() => setSec(a.id)} onDoubleClick={() => (setOzellik(a.id), setSihirbaz(null), setOnay(false))}>
+                    {a.durum === 'surucu-yok' || a.durum === 'cakisma' ? <i className="warn">⚠</i> : a.durum === 'devre-disi' ? <i>⬇</i> : <i>▫</i>}
                     {a.durum === 'surucu-yok' ? (a.bilinmeyenAd ?? a.ad) : a.ad}
                   </button>
                 ))}
@@ -64,12 +73,63 @@ export default function AygitYoneticisi(ctx: AppCtx) {
               <>
                 <div className="dm-status">
                   <b>Aygıt durumu</b>
-                  <p>{ay.durum === 'ok' ? 'Bu aygıt düzgün çalışıyor.' : ay.durum === 'devre-disi' ? 'Bu aygıt devre dışı. (Kod 22)' : 'Bu aygıtın sürücüleri yüklenmedi. (Kod 28)\nBu aygıt için uyumlu sürücü yok.'}</p>
+                  <p>{durumMetni(ay)}</p>
                 </div>
+                <dl className="dm-kv small">
+                  <dt>Sürücü sürümü</dt>
+                  <dd>{ay.durum === 'surucu-yok' ? 'Yok' : (ay.surucuSurum ?? '10.0.26100.1')}</dd>
+                </dl>
+                {onay && (
+                  <div className="dm-onay">
+                    <p>⚠ Bu aygıtın devre dışı bırakılması, çalışmasının durmasına neden olur. Gerçekten devre dışı bırakmak istiyor musunuz?</p>
+                    <button
+                      className="ws-btn primary"
+                      onClick={() => {
+                        setOnay(false);
+                        act('aygit.devre-disi', { aygit: ay.id }, (p) => ((p.aygitlar.find((q) => q.id === ay.id)!.durum = 'devre-disi'), p));
+                      }}
+                    >
+                      Evet
+                    </button>
+                    <button className="ws-btn" onClick={() => setOnay(false)}>
+                      Hayır
+                    </button>
+                  </div>
+                )}
                 <div className="ws-foot">
-                  <button className="ws-btn primary" onClick={() => setSihirbaz('secim')}>
-                    Sürücüyü güncelleştir
+                  {ay.durum !== 'devre-disi' && (
+                    <button className="ws-btn primary" onClick={() => setSihirbaz('secim')}>
+                      Sürücüyü güncelleştir
+                    </button>
+                  )}
+                  <button
+                    className="ws-btn"
+                    disabled={!ay.oncekiSurucu}
+                    title={ay.oncekiSurucu ? `Önceki sürüm: ${ay.oncekiSurucu}` : 'Bu aygıt için önceki sürücü yok'}
+                    onClick={() => {
+                      act('surucu.geri-al', { aygit: ay.id }, (p) => {
+                        const x = p.aygitlar.find((q) => q.id === ay.id)!;
+                        x.surucuSurum = x.oncekiSurucu;
+                        x.oncekiSurucu = undefined;
+                        x.sorunluSurucu = false;
+                        return p;
+                      });
+                    }}
+                  >
+                    Sürücüyü Geri Al
                   </button>
+                  {ay.durum === 'devre-disi' ? (
+                    <button className="ws-btn" onClick={() => act('aygit.etkinlestir', { aygit: ay.id }, (p) => ((p.aygitlar.find((q) => q.id === ay.id)!.durum = 'ok'), p))}>
+                      Aygıtı etkinleştir
+                    </button>
+                  ) : (
+                    <button
+                      className="ws-btn"
+                      onClick={() => setOnay(true)}
+                    >
+                      Aygıtı devre dışı bırak
+                    </button>
+                  )}
                   <button className="ws-btn" onClick={() => setOzellik(null)}>
                     Kapat
                   </button>

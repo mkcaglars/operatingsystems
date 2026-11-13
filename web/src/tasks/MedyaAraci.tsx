@@ -13,17 +13,20 @@ interface Iso {
   ad: string;
   boyut: string;
 }
-interface Veri {
+export interface MedyaVeri {
   aygitlar: Aygit[];
   isolar: Iso[];
   hedefPc: { ad: string; satirlar: { ad: string; deger: string }[] };
   sorular?: Soru[];
 }
-interface State {
+type Veri = MedyaVeri;
+export interface MedyaState {
   medya: { aygit: string | null; iso: string | null; bolum: 'GPT' | 'MBR'; hedef: 'UEFI' | 'BIOS'; dosya: 'NTFS' | 'FAT32'; etiket: string; durum: 'hazir' | 'yaziliyor' | 'bitti' };
   yazilan: { aygit: string; iso: string; bolum: string; hedef: string } | null;
   cevaplar: Record<string, string | string[]>;
 }
+
+type State = MedyaState;
 
 export const initialMedyaAraci = (): State => ({
   medya: { aygit: null, iso: null, bolum: 'MBR', hedef: 'BIOS', dosya: 'NTFS', etiket: '', durum: 'hazir' },
@@ -31,7 +34,7 @@ export const initialMedyaAraci = (): State => ({
   cevaplar: {},
 });
 
-export default function MedyaAraci({ task, mode, sim }: TaskUIProps) {
+export default function MedyaAraci({ task, mode, sim, gomulu }: TaskUIProps & { gomulu?: { kapat: () => void } }) {
   const veri = task.veri as unknown as Veri;
   const s = sim.state as State;
   const m = s.medya;
@@ -78,8 +81,7 @@ export default function MedyaAraci({ task, mode, sim }: TaskUIProps) {
   };
 
   const aygitAd = veri.aygitlar.find((a) => a.id === m.aygit)?.ad ?? '';
-  return (
-    <div className="ma">
+  const rufus = (
       <div className="rufus" role="dialog" aria-label="Rufus">
         <div className="rf-title">
           <span>🔧 Rufus 4.6.2208</span>
@@ -148,7 +150,7 @@ export default function MedyaAraci({ task, mode, sim }: TaskUIProps) {
             <button className="btn" disabled={!m.aygit || !m.iso || m.durum === 'yaziliyor'} onClick={() => setOnay(true)}>
               BAŞLAT
             </button>
-            <button className="btn" disabled>
+            <button className="btn" disabled={!gomulu || m.durum === 'yaziliyor'} onClick={() => gomulu?.kapat()}>
               KAPAT
             </button>
           </div>
@@ -177,6 +179,11 @@ export default function MedyaAraci({ task, mode, sim }: TaskUIProps) {
           </div>
         )}
       </div>
+  );
+  if (gomulu) return rufus;
+  return (
+    <div className="ma">
+      {rufus}
       <div className="ma-side">
         <section className="doc">
           <h4>{veri.hedefPc.ad}</h4>

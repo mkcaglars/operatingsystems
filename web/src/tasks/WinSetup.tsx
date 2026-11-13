@@ -7,7 +7,7 @@ import type { TaskDef } from '../core/types';
 import type { TaskUIProps } from './registry';
 
 type Tur = 'ayrilmamis' | 'sistem' | 'msr' | 'birincil' | 'kurtarma';
-interface Bolum {
+export interface Bolum {
   id: string;
   tur: Tur;
   boyutGB: number;
@@ -18,12 +18,12 @@ interface Bolum {
   /** Kişisel dosyalar (korunmalı) */
   kisisel?: boolean;
 }
-interface Disk {
+export interface Disk {
   id: string;
   bolumler: Bolum[];
 }
 type Adim = 'dil' | 'secenek' | 'anahtar' | 'surum' | 'lisans' | 'disk' | 'yukleniyor' | 'bolge' | 'klavye2' | 'ag' | 'ad' | 'hesap' | 'gizlilik' | 'bitti';
-interface Veri {
+export interface WinSetupVeri {
   baslangic?: Adim;
   anahtar: string;
   surum: string;
@@ -31,8 +31,11 @@ interface Veri {
   diskNotu?: { disk: string; metin: string }[];
   /** true ise kurulumdan sonra ilk açılış (OOBE) adımları atlanır */
   oobeYok?: boolean;
+  /** Kurulumun ağ adımında görünen kablosuz ağlar (kum havuzu) */
+  wifi?: { ssid: string; sifre: string; guc: number }[];
   sorular?: Soru[];
 }
+type Veri = WinSetupVeri;
 interface Gizlilik {
   konum: boolean;
   cihazBul: boolean;
@@ -41,7 +44,7 @@ interface Gizlilik {
   ozel: boolean;
   reklam: boolean;
 }
-interface State {
+export interface WinSetupState {
   adim: Adim;
   dil: { dil: string; bicim: string; klavye: string };
   secenek: string | null;
@@ -55,6 +58,8 @@ interface State {
   oobe: { bolge: string; klavye: string; ikinciDuzen: boolean; ag: string; cihazAdi: string; kullanici: string; parola: boolean; guvenlik: number; gizlilik: Gizlilik };
   cevaplar: Record<string, string | string[]>;
 }
+
+type State = WinSetupState;
 
 const norm = (k: string) => k.toUpperCase().replace(/[^A-Z0-9]/g, '');
 let nid = 0;
@@ -93,7 +98,7 @@ function birlestir(b: Bolum[]): Bolum[] {
   return out;
 }
 
-export default function WinSetup({ task, mode, sim }: TaskUIProps) {
+export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { gomulu?: boolean }) {
   const veri = task.veri as unknown as Veri;
   const s = sim.state as State;
   const learn = mode === 'ogren';
@@ -105,6 +110,8 @@ export default function WinSetup({ task, mode, sim }: TaskUIProps) {
   const [form, setForm] = useState({ ad: '', kullanici: '', p1: '', p2: '' });
   const [guv, setGuv] = useState(['', '', '']);
   const [gz, setGz] = useState<Gizlilik>(s.oobe.gizlilik);
+  const [wifiSec, setWifiSec] = useState<string | null>(null);
+  const [wifiPw, setWifiPw] = useState('');
 
   const go = (adim: Adim) => {
     setHata('');
@@ -450,13 +457,40 @@ export default function WinSetup({ task, mode, sim }: TaskUIProps) {
           <>
             <h2>Hadi sizi bir ağa bağlayalım</h2>
             <div className="oobe-list">
-              <button className="oobe-item" onClick={() => setO({ ag: 'ethernet' }, 'oobe.ag', 'ad')}>
-                🖧 Ethernet — Bağlı
-              </button>
+              {veri.wifi ? (
+                veri.wifi.map((w) => (
+                  <div key={w.ssid} className={'oobe-item wifi' + (wifiSec === w.ssid ? ' on' : '')}>
+                    <button className="oobe-wifi" onClick={() => (setWifiSec(w.ssid), setWifiPw(''), setHata(''))}>
+                      <span className="wifi-bars" data-guc={w.guc} aria-hidden /> {w.ssid} <small>{w.sifre ? 'Güvenli' : 'Açık'}</small>
+                    </button>
+                    {wifiSec === w.ssid && (
+                      <form
+                        className="oobe-wifi-form"
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (w.sifre && wifiPw !== w.sifre) {
+                            sim.act('oobe.wifi-hata', { ssid: w.ssid }, (x: State) => x);
+                            return setHata('Ağ güvenlik anahtarı doğru değil. Yeniden deneyin.');
+                          }
+                          setO({ ag: 'wifi:' + w.ssid }, 'oobe.ag', 'ad');
+                        }}
+                      >
+                        {w.sifre && <input type="password" autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
+                        <button className="ws-btn primary">Bağlan</button>
+                      </form>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <button className="oobe-item" onClick={() => setO({ ag: 'ethernet' }, 'oobe.ag', 'ad')}>
+                  🖧 Ethernet — Bağlı
+                </button>
+              )}
               <button className="oobe-item" onClick={() => setO({ ag: 'yok' }, 'oobe.ag', 'ad')}>
                 İnternetim yok
               </button>
             </div>
+            {hata && <p className="err-text small">{hata}</p>}
           </>
         );
         break;
@@ -553,6 +587,28 @@ export default function WinSetup({ task, mode, sim }: TaskUIProps) {
       </div>
     );
   }
+
+  const modal = dlg && (
+    <div className="ws-modal">
+      <div className="ws-dlg">
+        <div className="ws-h">Windows Kurulumu</div>
+        <p>{dlg.msg}</p>
+        <div className="ws-foot">
+          <Btn onClick={dlg.onOk}>Tamam</Btn>
+          <Btn primary={false} onClick={() => setDlg(null)}>
+            İptal
+          </Btn>
+        </div>
+      </div>
+    </div>
+  );
+  if (gomulu)
+    return (
+      <div className="screen-fill on ws-screen">
+        {Ekran()}
+        {modal}
+      </div>
+    );
 
   const notlar = veri.diskNotu;
   return (

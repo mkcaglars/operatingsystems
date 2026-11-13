@@ -421,6 +421,7 @@ try {
                 $now, $duration, $score, json_encode($result, JSON_UNESCAPED_UNICODE),
                 json_encode($events, JSON_UNESCAPED_UNICODE), json_encode($state, JSON_UNESCAPED_UNICODE), $id,
             ]);
+            if ($a['mode'] !== 'ogren') q('UPDATE commands SET tamam = 1, okundu = 1 WHERE user_id = ? AND task_id = ? AND tamam = 0', [$u['id'], $a['task_id']]);
             out(['sonuc' => $result, 'sure' => $duration, 'mode' => $a['mode']]);
         }
 
@@ -616,7 +617,7 @@ try {
             $u = require_staff();
             $s = require_student($u, int_arg('id'));
             db()->beginTransaction();
-            foreach (['class_students' => 'student_id', 'attempts' => 'user_id', 'sim_state' => 'user_id', 'presence' => 'user_id', 'users' => 'id'] as $t => $col) {
+            foreach (['class_students' => 'student_id', 'attempts' => 'user_id', 'sim_state' => 'user_id', 'presence' => 'user_id', 'commands' => 'user_id', 'users' => 'id'] as $t => $col) {
                 q("DELETE FROM $t WHERE $col = ?", [$s['id']]);
             }
             db()->commit();
@@ -665,7 +666,12 @@ try {
                        JOIN users u ON u.id = cs.student_id LEFT JOIN presence p ON p.user_id = u.id
                        WHERE cs.class_id = ? ORDER BY u.name', [$c['id']])->fetchAll();
             $now = time();
+            $bilet = [];
+            foreach (q('SELECT user_id, task_id, tamam, okundu FROM commands WHERE class_id = ? ORDER BY id', [$c['id']])->fetchAll() as $b) {
+                $bilet[(int)$b['user_id']][] = ['task_id' => $b['task_id'], 'tamam' => (bool)$b['tamam'], 'okundu' => (bool)$b['okundu']];
+            }
             out(['now' => $now, 'students' => array_map(fn($r) => [
+                'biletler' => $bilet[(int)$r['id']] ?? [],
                 'id' => (int)$r['id'], 'name' => $r['name'], 'station' => $r['station'], 'task_id' => $r['task_id'], 'info' => $r['info'],
                 'seen' => $r['updated_at'] !== null ? $now - (int)$r['updated_at'] : null,
             ], $rows)]);
@@ -698,6 +704,51 @@ try {
                 'finished_at' => $r['finished_at'] !== null ? (int)$r['finished_at'] : null, 'duration' => $r['duration'] !== null ? (int)$r['duration'] : null,
                 'hints' => (int)$r['hints'], 'score' => $r['score'] !== null ? (int)$r['score'] : null, 'result' => $r['result'] ? json_decode($r['result'], true) : null,
             ], $rows));
+        }
+
+        // ---------------- Servis biletleri ----------------
+        case 'POST commands/send': {
+            $u = require_staff();
+            $c = require_class($u, int_arg('class_id'));
+            $taskId = str_arg('task_id', 40);
+            if (!load_task($taskId)) fail('Görev bulunamadı.', 404);
+            $mesaj = mb_substr(trim((string)arg('mesaj', '')), 0, 255);
+            $ids = array_map('intval', (array)arg('student_ids', []));
+            $sinif = array_map('intval', q('SELECT student_id FROM class_students WHERE class_id = ?', [$c['id']])->fetchAll(PDO::FETCH_COLUMN));
+            $hedef = $ids ? array_values(array_intersect($ids, $sinif)) : $sinif;
+            if (!$hedef) fail('Öğrenci seçilmedi.');
+            foreach ($hedef as $sid) {
+                q('INSERT INTO commands (user_id, class_id, task_id, mesaj, gonderen_id, created_at) VALUES (?, ?, ?, ?, ?, ?)', [$sid, $c['id'], $taskId, $mesaj, $u['id'], now_str()]);
+            }
+            out(['gonderilen' => count($hedef)]);
+        }
+
+        case 'GET commands/mine': {
+            $u = require_user();
+            $rows = q('SELECT cm.id, cm.task_id, cm.mesaj, cm.created_at, cm.okundu, u.name AS gonderen FROM commands cm JOIN users u ON u.id = cm.gonderen_id WHERE cm.user_id = ? AND cm.tamam = 0 ORDER BY cm.id DESC LIMIT 20', [$u['id']])->fetchAll();
+            out(array_map(fn($r) => ['id' => (int)$r['id'], 'task_id' => $r['task_id'], 'mesaj' => $r['mesaj'], 'gonderen' => $r['gonderen'], 'created_at' => $r['created_at'], 'okundu' => (bool)$r['okundu']], $rows));
+        }
+
+        case 'POST commands/ack': {
+            $u = require_user();
+            q('UPDATE commands SET okundu = 1 WHERE id = ? AND user_id = ?', [int_arg('id'), $u['id']]);
+            out(['tamam' => true]);
+        }
+
+        case 'GET attempt': {
+            $u = require_user();
+            $a = q('SELECT * FROM attempts WHERE id = ?', [(int)($_GET['id'] ?? 0)])->fetch();
+            if (!$a) fail('Deneme bulunamadı.', 404);
+            if ((int)$a['user_id'] !== $u['id']) {
+                require_staff();
+                require_student($u, (int)$a['user_id']);
+            }
+            out([
+                'id' => (int)$a['id'], 'task_id' => $a['task_id'], 'mode' => $a['mode'], 'started_at' => (int)$a['started_at'],
+                'finished_at' => $a['finished_at'] !== null ? (int)$a['finished_at'] : null, 'duration' => $a['duration'] !== null ? (int)$a['duration'] : null,
+                'hints' => (int)$a['hints'], 'score' => $a['score'] !== null ? (int)$a['score'] : null,
+                'result' => $a['result'] ? json_decode($a['result'], true) : null, 'events' => $a['events'] ? json_decode($a['events'], true) : [],
+            ]);
         }
 
         // ---------------- Yönetici: öğretmenler ----------------

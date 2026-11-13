@@ -1,9 +1,12 @@
 // Sanal Windows 11 masaüstü: görev çubuğu, başlat menüsü, pencereler, UAC (Kullanıcı Hesabı Denetimi).
 // Uygulamalar win/ altında; hepsi sim durumundaki "pc" (WinPc) üzerinde çalışır.
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Json } from '../core/rules';
 import type { Sim } from '../core/sim';
-import { derive, type WinPc } from '../core/winpc';
+import { derive, yenidenBaslat, type WinPc } from '../core/winpc';
+import Kurtarma from './Kurtarma';
+import Rufus from './Rufus';
+import Logo, { logoVar } from '../components/Logo';
 import Ayarlar from './Ayarlar';
 import GorevYoneticisi from './GorevYoneticisi';
 import DosyaGezgini from './DosyaGezgini';
@@ -14,7 +17,7 @@ import Kurulum from './Kurulum';
 import Word from './Word';
 import SistemKoruma from './SistemKoruma';
 
-export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma';
+export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma' | 'rufus';
 
 export interface WinVeri {
   uygulamalar?: AppId[];
@@ -25,6 +28,17 @@ export interface WinVeri {
   adobeHesap?: { eposta: string; parola: string };
   baslangicUygulama?: AppId;
   baslangicSayfa?: string;
+  /** Görev çubuğundaki ağ menüsünde görünen kablosuz ağlar */
+  wifiAglari?: { ssid: string; sifre: string; guc: number }[];
+}
+
+/** Kum havuzunda sanal Windows'un gerçek donanımla (USB bellekler, güç) konuşması için */
+export interface Kopru {
+  usbler: { id: string; ad: string; harf: string; kapasite: string }[];
+  /** Bilgisayar UEFI (CSM kapalı) mı */
+  uefi: boolean;
+  rufusBitti: (y: { aygit: string; iso: string; bolum: string; hedef: string }) => void;
+  guc: (t: 'kapat' | 'yeniden') => void;
 }
 
 export interface AppCtx {
@@ -38,6 +52,7 @@ export interface AppCtx {
   veri: WinVeri;
   learn: boolean;
   arg?: string;
+  kopru?: Kopru;
 }
 
 const APP_INFO: Record<AppId, { ad: string; ikon: string; renk: string }> = {
@@ -51,18 +66,41 @@ const APP_INFO: Record<AppId, { ad: string; ikon: string; renk: string }> = {
   word: { ad: 'Word', ikon: 'W', renk: '#185abd' },
   kurulum: { ad: 'Kurulum', ikon: '📦', renk: '#6b7280' },
   sistemkoruma: { ad: 'Sistem Özellikleri', ikon: '🖥', renk: '#3a6ea5' },
+  rufus: { ad: 'Rufus', ikon: '🔧', renk: '#3c3c3c' },
 };
+
+/** Uygulama simgesi: gerçek logo varsa SVG, yoksa renkli kutu */
+export function AppIkon({ id, size }: { id: AppId; size?: string }) {
+  if (logoVar(id)) return <Logo id={id} size={size} />;
+  return <i style={{ background: APP_INFO[id].renk }}>{APP_INFO[id].ikon}</i>;
+}
 
 type Win = { id: AppId; arg?: string };
 
-export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>; veri: WinVeri; learn: boolean }) {
+export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: WinPc }>; veri: WinVeri; learn: boolean; kopru?: Kopru }) {
   const pc = sim.state.pc;
   const [wins, setWins] = useState<Win[]>(veri.baslangicUygulama ? [{ id: veri.baslangicUygulama, arg: veri.baslangicSayfa }] : []);
   const [aktif, setAktif] = useState<AppId | null>(veri.baslangicUygulama ?? null);
   const [start, setStart] = useState(false);
+  const [guc, setGuc] = useState(false);
+  const [reklamKapali, setReklamKapali] = useState(false);
+  const [agMenu, setAgMenu] = useState(false);
+  const [wifiSec, setWifiSec] = useState<string | null>(null);
+  const [wifiPw, setWifiPw] = useState('');
+  const [wifiHata, setWifiHata] = useState('');
   const [uacReq, setUacReq] = useState<{ ad: string; yayinci: string; ok: () => void } | null>(null);
   const [uacPw, setUacPw] = useState('');
   const [uacErr, setUacErr] = useState('');
+
+  // "Bu bilgisayarı sıfırla" sonrası bilgisayar yeniden başlar: açık pencereler kapanır
+  const sonSifirlama = useRef(pc.sifirlama);
+  useEffect(() => {
+    if (pc.sifirlama !== sonSifirlama.current) {
+      sonSifirlama.current = pc.sifirlama;
+      setWins([]);
+      setAktif(null);
+    }
+  }, [pc.sifirlama]);
 
   const act: AppCtx['act'] = (type, data, f) => sim.act(type, data, (st) => ({ ...st, pc: derive(f(JSON.parse(JSON.stringify(st.pc)))) }));
   const log: AppCtx['log'] = (type, data) => sim.act(type, data, (st) => st);
@@ -85,12 +123,12 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
   const standart = ben?.tur === 'standart';
 
   const izinli = (veri.uygulamalar ?? ['ayarlar', 'gorev', 'dosya', 'aygit', 'guvenlik', 'edge']) as AppId[];
-  const pinned: AppId[] = izinli.filter((a) => a !== 'kurulum' && a !== 'sistemkoruma' && a !== 'word');
+  const pinned: AppId[] = izinli.filter((a) => a !== 'kurulum' && a !== 'sistemkoruma' && a !== 'word' && a !== 'rufus');
   if (pc.kurulu.includes('chrome') && !pinned.includes('chrome')) pinned.push('chrome');
   if (pc.kurulu.includes('office') && !pinned.includes('word')) pinned.push('word');
 
   function renderApp(w: Win): ReactNode {
-    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, arg: w.arg };
+    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, arg: w.arg, kopru };
     switch (w.id) {
       case 'ayarlar':
         return <Ayarlar {...ctx} />;
@@ -111,26 +149,63 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
         return <Kurulum key={w.arg} {...ctx} />;
       case 'sistemkoruma':
         return <SistemKoruma {...ctx} />;
+      case 'rufus':
+        return <Rufus {...ctx} />;
     }
   }
+
+  const yeniden = (mod: 'normal' | 'guvenli' = 'normal', kapat = false) => {
+    setStart(false);
+    setGuc(false);
+    if (kopru) {
+      sim.act(kapat ? 'pc.kapat' : 'pc.yeniden-baslat', { mod }, (st) => st);
+      kopru.guc(kapat ? 'kapat' : 'yeniden');
+      return;
+    }
+    setWins([]);
+    setAktif(null);
+    act('pc.yeniden-baslat', { mod }, (x) => yenidenBaslat(x, mod));
+  };
+  if (pc.acilis === 'bsod' || pc.acilis === 'kurtarma') {
+    const ctx: AppCtx = { pc, act, log, open, close, uac, veri, learn, kopru };
+    return (
+      <div className="w11 w11-boot">
+        <Kurtarma {...ctx} />
+      </div>
+    );
+  }
+  const guvenli = pc.acilis === 'guvenli';
 
   const duvar = { bloom: 'radial-gradient(ellipse at 40% 60%, #4a8df5, #1c4fa8 55%, #0d2a63)', girne: 'linear-gradient(180deg,#f59e0b 0%,#fb7185 35%,#1e3a8a 75%)', karpaz: 'linear-gradient(180deg,#7dd3fc 0%,#22d3ee 45%,#fde68a 75%)', soyut: 'linear-gradient(135deg,#4c1d95,#1e3a8a 50%,#0f766e)' } as Record<string, string>;
   const dark = pc.ekran.tema === 'koyu';
   return (
-    <div className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '')} style={{ background: duvar[pc.ekran.arkaPlan] ?? duvar.bloom, ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
+    <div className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : (duvar[pc.ekran.arkaPlan] ?? duvar.bloom), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
+      {guvenli && (
+        <>
+          <span className="safe-c sc-tl">Güvenli Mod</span>
+          <span className="safe-c sc-tr">Güvenli Mod</span>
+          <span className="safe-c sc-bl">Güvenli Mod</span>
+          <span className="safe-c sc-br">Güvenli Mod</span>
+          <span className="safe-ver">Windows 11 Pro Derleme 26100</span>
+        </>
+      )}
       <div className="w11-icons">
         <span className="w11-icon">
-          <i>🗑</i>Geri Dönüşüm Kutusu
+          <Logo id="geridonusum" size="2.4em" />
+          Geri Dönüşüm Kutusu
         </span>
         {pinned.slice(0, 3).map((a) => (
           <span key={a} className="w11-icon" onDoubleClick={() => open(a)}>
-            <i>{APP_INFO[a].ikon}</i>
+            {logoVar(a) ? <Logo id={a} size="2.4em" /> : <i>{APP_INFO[a].ikon}</i>}
             {APP_INFO[a].ad}
           </span>
         ))}
       </div>
-      {pc.belirti.reklam && (
+      {pc.belirti.reklam && !reklamKapali && (
         <div className="w11-ad">
+          <button className="ad-x" onClick={() => setReklamKapali(true)} aria-label="Reklamı kapat">
+            ✕
+          </button>
           <b>🎉 TEBRİKLER! Bilgisayarınız 3 virüs içeriyor!</b>
           <span>Hemen temizlemek için PC Speed Booster PRO'yu satın alın</span>
         </div>
@@ -139,9 +214,13 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
         <div key={w.id} className={'w11-win' + (aktif === w.id ? ' on' : '') + ' app-' + w.id} onMouseDown={() => setAktif(w.id)}>
           <div className="w11-titlebar">
             <span>
-              <i className="ti" style={{ background: APP_INFO[w.id].renk }}>
-                {APP_INFO[w.id].ikon}
-              </i>
+              {logoVar(w.id) ? (
+                <Logo id={w.id} size="1.2em" />
+              ) : (
+                <i className="ti" style={{ background: APP_INFO[w.id].renk }}>
+                  {APP_INFO[w.id].ikon}
+                </i>
+              )}
               {APP_INFO[w.id].ad}
             </span>
             <span className="win11-ctrl">
@@ -161,39 +240,52 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
           <div className="w11-start-h">Sabitlenmiş</div>
           <div className="w11-start-grid">
             {izinli
-              .filter((a) => a !== 'kurulum' && a !== 'sistemkoruma' && (a !== 'word' || pc.kurulu.includes('office')))
+              .filter((a) => a !== 'kurulum' && a !== 'sistemkoruma' && a !== 'rufus' && (a !== 'word' || pc.kurulu.includes('office')))
               .concat(pc.kurulu.includes('chrome') && !izinli.includes('chrome') ? (['chrome'] as AppId[]) : [])
               .map((a) => (
                 <button key={a} onClick={() => open(a)}>
-                  <i style={{ background: APP_INFO[a].renk }}>{APP_INFO[a].ikon}</i>
+                  <AppIkon id={a} size="2em" />
                   {APP_INFO[a].ad}
                 </button>
               ))}
           </div>
           <div className="w11-start-foot">
             <span>👤 {pc.cihaz.kullanici}</span>
-            <span>⏻</span>
+            <span className="rel">
+              <button className="w11-power" onClick={() => setGuc((g) => !g)} aria-label="Güç">
+                ⏻
+              </button>
+              {guc && (
+                <span className="w11-power-menu">
+                  <button onClick={() => yeniden()}>↻ Yeniden başlat</button>
+                  <button onClick={() => yeniden('normal', true)}>⏻ Kapat</button>
+                </span>
+              )}
+            </span>
           </div>
         </div>
       )}
       <div className="w11-taskbar">
         <button className="tb-start" onClick={() => setStart((x) => !x)} aria-label="Başlat">
-          <span className="win-logo" />
+          <Logo id="windows" size="1.5em" />
         </button>
         {pinned.map((a) => (
           <button key={a} className={'tb-app' + (wins.some((w) => w.id === a) ? ' open' : '') + (aktif === a ? ' on' : '')} title={APP_INFO[a].ad} onClick={() => (wins.some((w) => w.id === a) ? setAktif(aktif === a ? null : a) : open(a))}>
-            <i style={{ background: APP_INFO[a].renk }}>{APP_INFO[a].ikon}</i>
+            <AppIkon id={a} />
           </button>
         ))}
         {wins
           .filter((w) => !pinned.includes(w.id))
           .map((w) => (
             <button key={w.id} className={'tb-app open' + (aktif === w.id ? ' on' : '')} title={APP_INFO[w.id].ad} onClick={() => setAktif(w.id)}>
-              <i style={{ background: APP_INFO[w.id].renk }}>{APP_INFO[w.id].ikon}</i>
+              <AppIkon id={w.id} />
             </button>
           ))}
         <span className="tb-tray">
           {pc.uyariSayisi > 0 && <span title="Windows Güvenliği: eylem gerekiyor">🛡⚠</span>}
+          <button className="tb-net" onClick={() => setAgMenu((x) => !x)} title={pc.internet ? 'İnternet erişimi' : 'İnternet yok'} aria-label={pc.internet ? 'Ağ: bağlı' : 'Ağ: internet yok'}>
+            {pc.internet ? (pc.ag?.wifi ? '📶' : '🖧') : '🌐⃠'}
+          </button>
           <span>TUR</span>
           <span className="tb-clock">
             09:41
@@ -202,6 +294,54 @@ export default function Masaustu({ sim, veri, learn }: { sim: Sim<{ pc: WinPc }>
           </span>
         </span>
       </div>
+      {agMenu && (
+        <div className="w11-agmenu" role="dialog" aria-label="Ağ ve İnternet">
+          <b>Ağ ve İnternet</b>
+          <div className="ag-satir">
+            🖧 Ethernet — {pc.ag?.kablo ? (pc.aygitlar.find((a) => a.id === 'lan')?.durum === 'ok' ? 'Bağlı' : 'Bağdaştırıcı çalışmıyor') : 'Ağ kablosu takılı değil'}
+          </div>
+          {pc.aygitlar.some((a) => a.id === 'wifi') ? (
+            <>
+              <div className="ag-h">Wi-Fi</div>
+              {(veri.wifiAglari ?? []).map((w) => {
+                const bagli = pc.ag?.wifi === w.ssid;
+                return (
+                  <div key={w.ssid} className={'ag-wifi' + (bagli ? ' bagli' : '')}>
+                    <button className="ag-wifi-ad" onClick={() => (setWifiSec(wifiSec === w.ssid ? null : w.ssid), setWifiPw(''), setWifiHata(''))}>
+                      📶 {w.ssid} <small>{bagli ? 'Bağlı, güvenli' : w.sifre ? 'Güvenli' : 'Açık'}</small>
+                    </button>
+                    {wifiSec === w.ssid &&
+                      (bagli ? (
+                        <button className="ws-btn" onClick={() => (act('wifi.kes', { ssid: w.ssid }, (x) => ((x.ag = { ...x.ag, wifi: '' }), x)), setWifiSec(null))}>
+                          Bağlantıyı kes
+                        </button>
+                      ) : (
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            if (w.sifre && wifiPw !== w.sifre) {
+                              log('wifi.hata', { ssid: w.ssid });
+                              setWifiHata('Ağ güvenlik anahtarı doğru değil.');
+                              return;
+                            }
+                            act('wifi.baglan', { ssid: w.ssid }, (x) => ((x.ag = { ...x.ag, wifi: w.ssid }), x));
+                            setWifiSec(null);
+                          }}
+                        >
+                          {w.sifre && <input type="password" autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
+                          <button className="ws-btn primary">Bağlan</button>
+                          {wifiHata && <small className="err-text">{wifiHata}</small>}
+                        </form>
+                      ))}
+                  </div>
+                );
+              })}
+            </>
+          ) : (
+            <small className="muted">Bu bilgisayarda kablosuz ağ bağdaştırıcısı yok.</small>
+          )}
+        </div>
+      )}
       {uacReq && (
         <div className="uac-back">
           <div className="uac">

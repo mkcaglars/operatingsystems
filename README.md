@@ -8,7 +8,7 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - Okul portalı (portal.mkcaglar.com) entegrasyonu: [docs/PORTAL.md](docs/PORTAL.md)
 - Görsel üretim listesi: [docs/GORSEL_PROMPTLARI.md](docs/GORSEL_PROMPTLARI.md)
 
-## Neler var? (F1–F4)
+## Neler var? (F1–F5)
 
 **Öğrenci**
 - Okul portalından otomatik giriş ya da kullanıcı adı + şifre ile giriş
@@ -35,6 +35,17 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - **İ8 Uygulama yazılımları** (S6, Y3, S5, B6): Chrome (resmî site, varsayılan tarayıcı), Microsoft Office (özel kurulum,
   ürün anahtarıyla etkinleştirme; KMS tuzağı), Office onarma ve istenmeyen program kaldırma, Ubuntu'da .deb ile Chrome;
   öğretmenin açtığı isteğe bağlı WinRAR, Acrobat Reader (McAfee teklifleri) ve Photoshop (gereksinimler, hesap)
+- **İ9 Arıza giderme** (B9, B10, S8, S9, Y4): gevşek SATA kablosu, Kod 12 donanım çakışması, hatalı sürücü → mavi ekran →
+  Windows Kurtarma Ortamı → Güvenli Mod → Sürücüyü Geri Al, yavaşlayan bilgisayar (truva atı + reklam yazılımı), internet yok,
+  çift önyüklemede GRUB'da Windows yok, kurtarılamayan bilgisayarı yedekleyip "Bu bilgisayarı sıfırla"
+- **Kampanyalar K1–K4** (Y1–Y4): yeni ofis bilgisayarı, laboratuvara Ubuntu, servis masası günü, virüslü bilgisayarı yeniden kur;
+  adımlar sırayla açılır
+- **Servis biletleri:** öğretmenin gönderdiği arıza ana sayfada bant olarak çıkar
+- **Serbest kum havuzu** (`#/kum-havuzu`, puansız): tek bir gerçekçi bilgisayar — On/off ve reset düğmeleri, güç ve disk
+  ışıkları, 3 USB girişi, sürükle-tak 2 flash bellek, durum çubuğu. Eski (virüslü) Windows'ta belgeleri belleğe yedekle,
+  Microsoft'tan ISO, rufus.ie'den Rufus indirip kurulum belleği hazırla, F8/BIOS ile USB'den aç, diski biçimlendirip Windows 11'i
+  kur, Wi-Fi şifresiyle bağlan, Windows Update ile sürücüleri yükle, Chrome ve WinRAR kur, ayarları yap. BIOS'a giriş, BIOS'ta
+  gezinme ve yazı yazma **gerçek klavyeden** yapılır. Çalışma sunucuya kaydedilir; isteğe bağlı yapılacaklar listesi vardır
 - Yarım kalan çalışma sunucuya kaydedilir; başka bilgisayardan kaldığı yerden devam edilir
 - Görev sonunda puan, kriterler, hatalar ve kazanım düzeyleri
 
@@ -43,7 +54,9 @@ web tabanlı sanal bilgisayar laboratuvarı. Yayın adresi: **https://isistem.mk
 - Sınıf açma, portaldan gelen sınıfa katılma
 - Öğrenci ekleme (tek tek ya da Excel'den yapıştırarak toplu), kullanıcı adı/şifre üretme, yazdırılabilir giriş kartları,
   şifre sıfırlama, pasifleştirme, sınıf değiştirme, silme, portal ve şifreli hesabı **birleştirme**
-- **Canlı izleme** (5 sn'de bir yenilenir), **kazanım raporu** (ısı haritası, Excel/CSV, yazdır/PDF)
+- **Canlı izleme** (5 sn'de bir yenilenir) ve **arıza gönderme** (seçili öğrencilere servis bileti)
+- **Kazanım raporu** (ısı haritası; kazanım / görev / kampanya görünümleri, Excel/CSV, yazdır/PDF); öğrenci adına
+  tıklayınca tüm denemeler, kriterler ve zaman damgalı olay geçmişi
 - Sınıf ayarları: değerlendirme modu, isteğe bağlı yazılımlar (WinRAR, Acrobat Reader, Photoshop), hızlandırılmış kurulum, eşikler
 
 **Yönetici**: öğretmen hesapları, yönetici yetkisi, sınıflara öğretmen atama.

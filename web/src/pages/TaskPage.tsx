@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, ApiError } from '../api';
 import { TopBar } from '../App';
-import { outcomeText, stationById, taskById } from '../content';
+import { campaigns, outcomeText, stationById, taskById } from '../content';
 import { evaluate, type Rule, type SimEvent } from '../core/rules';
 import { levelOf, LEVEL_LABEL, type ScoreResult } from '../core/scoring';
 import { useSim } from '../core/sim';
@@ -346,7 +346,25 @@ function ResultView({ task, r, onRetry }: { task: TaskDef; r: { sonuc: ScoreResu
         <a className="btn" href="#/">
           Görevlere dön
         </a>
+        <KampanyaSonraki taskId={task.id} puan={s.puan} />
       </div>
     </div>
+  );
+}
+
+/** Kampanyadan gelindiyse (…?k=k1) sonraki adıma geçiş düğmesi */
+function KampanyaSonraki({ taskId, puan }: { taskId: string; puan: number }) {
+  const k = new URLSearchParams(window.location.hash.split('?')[1] ?? '').get('k');
+  const c = campaigns.find((x) => x.id === k);
+  if (!c) return null;
+  const i = c.adimlar.indexOf(taskId);
+  if (i < 0) return null;
+  if (i === c.adimlar.length - 1) return <span className="ok-text">🏁 {c.kod} {c.ad} kampanyasının son adımı!</span>;
+  if (puan < 50) return <span className="muted small">Kampanyada ilerlemek için en az 50 puan gerekir.</span>;
+  const next = taskById(c.adimlar[i + 1]);
+  return (
+    <a className="btn primary" href={`#/gorev/${c.adimlar[i + 1]}?k=${c.id}`}>
+      {c.kod} adım {i + 2}/{c.adimlar.length}: {next?.baslik} →
+    </a>
   );
 }

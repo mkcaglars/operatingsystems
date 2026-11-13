@@ -1,6 +1,6 @@
 # İşletim Sistemleri Sanal Laboratuvarı — Tasarım Dokümanı
 
-> Durum: **v0.4 — onaylandı.** F1 (iskelet), F2 (İ1–İ2), F3 (İ3–İ5) ve F4 (İ6 Ayarlar, İ7 Sürücü ve Güvenlik, İ8 Uygulama yazılımları) tamamlandı; sıradaki faz F5.
+> Durum: **v0.5 — onaylandı.** F1 (iskelet), F2 (İ1–İ2), F3 (İ3–İ5), F4 (İ6 Ayarlar, İ7 Sürücü ve Güvenlik, İ8 Uygulama yazılımları) ve F5 (İ9 Arıza giderme, kampanyalar K1–K4, servis biletleri, deneme ayrıntısı) tamamlandı; sıradaki faz F6 (pilot uygulama).
 > Yayın adresi: **https://isistem.mkcaglar.com** (Hostinger). Hedef: **9. sınıf Bilişim Teknolojileri**.
 > Son bölümdeki **Açık Sorular** karara bağlanmalıdır.
 
@@ -472,7 +472,21 @@ sorunu çözer ama süreç puanı düşer. Yedeksiz format her durumda puan kayb
 
 ---
 
+**F5'te uygulanan İ9 görevleri:** g1 SATA kablosu gevşek (BIOS'ta "Not Present" → kasayı kapatıp kabloyu tak),
+g2 Kod 12 kaynak çakışması (yeni PCIe ses kartı ↔ tümleşik Realtek; tümleşik aygıt devre dışı), g3 hatalı ekran kartı
+sürücüsü → mavi ekran → Otomatik Onarım → Başlangıç Ayarları → Güvenli Mod → Sürücüyü Geri Al (ya da Sistem Geri Yükleme),
+g4 yavaşlık (sahte svchost32.exe madenci truva atı + reklam yazılımı + başlangıç öğesi), g5 internet yok (ağ bağdaştırıcısı
+devre dışı; çevrimdışı tarayıcı sayfası), g6 Ubuntu güncellemesinden sonra GRUB'da Windows yok (os-prober + update-grub),
+g7 kurtarılamayan bilgisayar: Belgeler → USB (E:) yedek → "Her şeyi kaldır" ile sıfırla → geri yükle ("Dosyalarımı koru"
+profildeki zararlıyı bırakır; yedeksiz sıfırlama veri kaybı cezası). Her görevde orantısız müdahale (gereksiz sıfırlama,
+ilgisiz aygıtı kapatma) cezalandırılır.
+
 ### Yeterlilik Senaryoları (Y1–Y4) — Kampanya
+
+> **F5 uygulaması:** Kampanyalar `content/kampanyalar.json` dosyasında sıralı görev dizileridir. Bir adımda ≥ 50 puan alınca
+> sonraki adım açılır; kampanya puanı adımların en iyi puanlarının ortalamasıdır. Öğretmen raporunda "Kampanyalar" görünümü vardır.
+> K1: i1-g5, i1-g2, i2-g3, i4-g1, i4-g3, i7-g1, i7-g2, i8-g1, i8-g2, i6-g4 · K2: i3-g3, i5-g1, i5-g3, i5-g4, i8-g7 ·
+> K3: i9-g1, i9-g5, i9-g2, i9-g4, i9-g3, i9-g6 · K4: i9-g7, i4-g4, i7-g1, i7-g2, i8-g2.
 | Senaryo | Kapsadığı istasyonlar | Ölçülen |
 |---|---|---|
 | **K1 "Laboratuvara yeni bilgisayar"**: kutudan çıkar, bağla, BIOS'u ayarla, uygun işletim sistemini seç, medyayı hazırla, kur, sürücüleri ve güvenliği tamamla, Office ve Chrome gibi gerekli programları kur, kişiselleştir | İ1→İ8 | Y1, Y2, Y3 |
@@ -509,7 +523,9 @@ sorunu çözer ama süreç puanı düşer. Yedeksiz format her durumda puan kayb
 | **Çoklu öğretmen** | Birden fazla öğretmen kullanır. Her öğretmen **yalnızca kendi sınıflarını** görür ve yönetir; bir sınıf birden çok öğretmenle paylaşılabilir. Yönetici tüm öğretmen ve sınıfları görür. |
 | Görev atama | İstasyon/görev/kampanya seçimi, mod (Uygula/Değerlendir), başlangıç–bitiş tarihi, süre sınırı |
 | **Canlı izleme** | (Birkaç saniyede bir yenilenir) Sınıf ızgarası: her öğrencinin o anki istasyonu, ilerlemesi, takıldığı adım, ipucu kullanımı |
-| Arıza gönderme | Ders sırasında seçili öğrencilere İ9 arıza senaryosu gönderme |
+| Arıza gönderme | Ders sırasında seçili öğrencilere İ9 arıza senaryosu gönderme (F5: "servis bileti"; öğrencinin ana sayfasında bant olarak çıkar, görev değerlendirilince canlı izlemede ✔ olur) |
+| Serbest kum havuzu | Puansız tek bilgisayar: güç/reset, LED'ler, 3 USB girişi, 2 flash bellek, durum çubuğu; USB hazırla → USB'den aç → biçimlendir → kur → Wi-Fi → Windows Update → Chrome/WinRAR → ayarlar. BIOS ve önyükleme menüsü yalnızca gerçek klavyeyle |
+| Deneme ayrıntısı | Raporda öğrenci adına tıklayınca tüm denemeler, kriterler, hatalar ve zaman damgalı olay geçmişi |
 | Raporlar | Kazanım × öğrenci ısı haritası; öğrenci karnesi; görev bazlı başarı; sık yapılan hatalar |
 | Dışa aktarma | PDF (karne), CSV/Excel (not listesi) |
 | Tekrar izleme | Öğrencinin bir görevdeki eylem günlüğünü adım adım izleme |
@@ -637,7 +653,7 @@ Kullanıcı portalda "İşletim Sistemleri" bağlantısına tıklar
 | F2 ✅ | İ1 Donanım + İ2 POST/BIOS + temel öğretmen raporu | İlk deneme sürümü (pilot) |
 | F3 ✅ | İ3 Seçim + İ4 Windows 11 kurulumu + İ5 Ubuntu kurulumu (terminal) | Kurulum modülleri |
 | F4 ✅ | İ6 Ayarlar + İ7 Sürücü & Windows Güvenliği + İ8 Uygulama Yazılımları (Office, Chrome, isteğe bağlı WinRAR/Acrobat/Photoshop) + Windows 11/Ubuntu masaüstü | Gelişmiş özellikler |
-| F5 | İ9 Arıza + format/yeniden kurulum + kampanyalar K1–K4 (Y1–Y4) + canlı izleme + arıza gönderme + CSV/PDF raporlar | Tam kapsam |
+| F5 ✅ | İ9 Arıza + format/yeniden kurulum + kampanyalar K1–K4 (Y1–Y4) + canlı izleme + arıza gönderme + CSV/PDF raporlar | Tam kapsam |
 | F6 | Pilot uygulama geri bildirimi, içerik zenginleştirme, performans | Sürüm 1.0 |
 
 Her faz sonunda öğretmen değerlendirmesi yapılır; içerik ve görevler bu geri bildirime göre düzeltilir.

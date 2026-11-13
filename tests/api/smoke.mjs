@@ -218,6 +218,22 @@ try {
     const s2 = await st.api('GET', 'tasks/status');
     assert.equal(s2.data.ayarlar.istege_bagli.winrar, true);
   });
+  await step('servis bileti: öğretmen gönderir, öğrenci görür, teslimde kapanır', async () => {
+    const r = await t1.api('POST', 'commands/send', { class_id: classId, student_ids: [students[0].id], task_id: 'i1-g5', mesaj: 'Müdür yardımcısının bilgisayarı' });
+    assert.equal(r.data.gonderilen, 1);
+    const mine = (await st.api('GET', 'commands/mine')).data;
+    assert.equal(mine.length, 1);
+    assert.equal(mine[0].gonderen, 'Mehmet Kaya');
+    await st.api('POST', 'commands/ack', { id: mine[0].id });
+    const live = (await t1.api('GET', `live&class_id=${classId}`)).data.students.find((x) => x.id === students[0].id);
+    assert.deepEqual(live.biletler, [{ task_id: 'i1-g5', tamam: false, okundu: true }]);
+    const a = await st.api('POST', 'attempts/start', { task_id: 'i1-g5', mode: 'uygula' });
+    await st.api('POST', 'attempts/submit', { attempt_id: a.data.attempt_id, events: [{ type: 'x', t: 1 }], final_state: fullState });
+    assert.equal((await st.api('GET', 'commands/mine')).data.length, 0);
+    const det = await t1.api('GET', `attempt&id=${a.data.attempt_id}`);
+    assert.equal(det.data.events.length, 1);
+    assert.equal((await t2.api('GET', `attempt&id=${a.data.attempt_id}`)).status, 403);
+  });
   await step('durum kaydetme ve sürüm çakışması', async () => {
     assert.equal((await st.api('POST', 'state/save', { scope: 'vm', data: { a: 1 }, version: 0 })).data.version, 1);
     assert.equal((await st.api('POST', 'state/save', { scope: 'vm', data: { a: 2 }, version: 1 })).data.version, 2);
