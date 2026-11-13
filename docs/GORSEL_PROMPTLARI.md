@@ -29,8 +29,11 @@ donanım (`kasa-on`, `kasa-arka`, `kasa-ic`, `monitor`, `guc-kaynagi`, `hdd`, `s
 **Düzeltilenler:** `kasa-on-panel` → `kh-kasa-on` olarak adlandırıldı; `kh-flash-turuncu` beyaz arka planı ve `hdd`
 içine basılmış dama deseni temizlendi.
 
-**Hâlâ eksik (isteğe bağlı):** `duvar-kagidi-1..3` (kolajdakiler masaüstü için çok küçük; 16:9 ve en az 1920 px
-gerekir) ve `modem`.
+**13 Kasım ikinci yükleme:** `os-win11-duvar`, `os-win11-kilit`, `duvar-kagidi-1..3`, `modem`, yeni portreler
+(`kisi-ogretmen`, `kisi-grafiker`, `kisi-ogrenci`; boy çekimi `kisi-ogrenci-tam` olarak saklandı) ✅
+
+**Hâlâ eksik (isteğe bağlı):** `kisi-muhasebeci` yeni portrelerle aynı tarzda ve çözünürlükte yeniden; `os-ubuntu-duvar`,
+`os-ubuntu-giris` ve `ikon-*` uygulama simgeleri (bölüm 11).
 
 Logolar (Windows, Ubuntu, Chrome, Office…) kodla çiziliyor; onlar için görsel gerekmez.
 
