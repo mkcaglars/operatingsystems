@@ -8,6 +8,8 @@ import Kurtarma from './Kurtarma';
 import Rufus from './Rufus';
 import Program, { PROGRAM_AD } from './Program';
 import Logo, { logoVar, uygulamaLogo } from '../components/Logo';
+import { duvarArkaPlan } from '../components/Photo';
+import { WindowsSaat } from '../components/Saat';
 import Ayarlar from './Ayarlar';
 import GorevYoneticisi from './GorevYoneticisi';
 import DosyaGezgini from './DosyaGezgini';
@@ -206,10 +208,9 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
   }
   const guvenli = pc.acilis === 'guvenli';
 
-  const duvar = { bloom: 'radial-gradient(ellipse at 40% 60%, #4a8df5, #1c4fa8 55%, #0d2a63)', girne: 'linear-gradient(180deg,#f59e0b 0%,#fb7185 35%,#1e3a8a 75%)', karpaz: 'linear-gradient(180deg,#7dd3fc 0%,#22d3ee 45%,#fde68a 75%)', soyut: 'linear-gradient(135deg,#4c1d95,#1e3a8a 50%,#0f766e)' } as Record<string, string>;
   const dark = pc.ekran.tema === 'koyu';
   return (
-    <div className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : (duvar[pc.ekran.arkaPlan] ?? duvar.bloom), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
+    <div className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : duvarArkaPlan(pc.ekran.arkaPlan), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
       {guvenli && (
         <>
           <span className="safe-c sc-tl">Güvenli Mod</span>
@@ -342,9 +343,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
           </button>
           <span>TUR</span>
           <span className="tb-clock">
-            09:41
-            <br />
-            2.03.2026
+            <WindowsSaat />
           </span>
         </span>
       </div>

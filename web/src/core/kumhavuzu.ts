@@ -34,6 +34,10 @@ export interface KhState {
   onyukleyici: 'windows' | 'grub';
   /** Şu an çalışan sistem (GRUB'dan seçilen) */
   calisan: 'windows' | 'ubuntu' | null;
+  /** Windows oturum parolası (kurulumda belirlenen; boşsa parola yok) */
+  winParola: string;
+  /** Kurulumdan sonraki ilk açılış ("Merhaba" ekranları) */
+  winIlk: boolean;
   pc: WinPc;
   iz: { usbAcilis: boolean; temiz: boolean; kurulumSayisi: number; turuncuSilindi: boolean; grubAcilan: string[]; yazilan?: string[] };
 }
@@ -144,7 +148,7 @@ export function yeniPc(k: WinSetupState, eski: WinPc | null): WinPc {
     { id: 'fare', kategori: 'Fareler ve diğer işaret aygıtları', ad: 'HID uyumlu fare', durum: 'ok' },
   ];
   // Temiz kurulumda kişisel klasörler boştur
-  for (const key of Object.keys(pc.fs)) if (pc.fs[key].tur === 'dosya') delete pc.fs[key];
+  for (const key of Object.keys(pc.fs)) if (key.startsWith(KULLANICI + '/') && pc.fs[key].tur === 'dosya') delete pc.fs[key];
   // Bölüm biçimlendirilmeden kurulduysa eski Windows dosyaları Windows.old klasörüne taşınır
   if (eski && !k.ozet.temiz) {
     pc.fs['C:/Windows.old'] = { tur: 'klasor' };
@@ -186,6 +190,8 @@ export function ilkDurum(): KhState {
     ubuntu: null,
     onyukleyici: 'windows',
     calisan: null,
+    winParola: '',
+    winIlk: false,
     pc: silTanimsiz(eskiPc()),
     iz: { usbAcilis: false, temiz: false, kurulumSayisi: 0, turuncuSilindi: false, grubAcilan: [] },
   };
@@ -287,6 +293,8 @@ export function kurulumuIsle(st: KhState): KhState {
       kurulum: null,
       // Windows kurulumu önyükleyiciyi kendine çevirir: GRUB menüsü artık görünmez
       onyukleyici: 'windows',
+      winParola: k.oobe.parolaDeger ?? '',
+      winIlk: true,
       ubuntu: ubuntuBolumuVar(diskler) ? st.ubuntu : null,
       pc: yeniPc(k, eski),
       iz: { ...st.iz, temiz: k.ozet.temiz, kurulumSayisi: st.iz.kurulumSayisi + 1 },

@@ -2,6 +2,8 @@
 // Ayrıca GRUB önyükleme menüsü: ↑ ↓ ile seçim, Enter ile başlatma, 10 sn sonra varsayılan.
 import { useEffect, useState, type FormEvent } from 'react';
 import Logo from './Logo';
+import { photoUrl } from './Photo';
+import { UbuntuSaat } from './Saat';
 import Terminal from './Terminal';
 import type { Sim } from '../core/sim';
 import type { ShellState } from '../core/shell';
@@ -36,10 +38,10 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log }: Props) {
 
   if (!girdi)
     return (
-      <div className="ubx-login">
+      <div className="ubx-login" style={photoUrl('os-ubuntu-giris') ? { background: `center / cover url(${photoUrl('os-ubuntu-giris')})` } : undefined}>
         <div className="ubx-top">
           <span />
-          <span>2 Mar 09:58</span>
+          <UbuntuSaat />
           <span>{wifi ? '📶' : '🌐'} 🔊 ⏻</span>
         </div>
         <form className="ubx-login-box" onSubmit={giris}>
@@ -61,10 +63,10 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log }: Props) {
     { id: 'ayarlar', ad: 'Ayarlar', logo: 'ayarlar' },
   ];
   return (
-    <div className="ubx">
+    <div className="ubx" style={photoUrl('os-ubuntu-duvar') ? { background: `center / cover url(${photoUrl('os-ubuntu-duvar')})` } : undefined}>
       <div className="ubx-top">
         <span>Etkinlikler</span>
-        <span>2 Mar 09:58</span>
+        <UbuntuSaat />
         <span className="rel">
           <button className="ubx-tray" onClick={() => setMenu((m) => !m)} aria-label="Sistem menüsü">
             {wifi ? '📶' : '🌐'} 🔊 ⏻ ▾
