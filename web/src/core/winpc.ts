@@ -65,6 +65,8 @@ export interface DosyaGirdi {
   parola?: string;
   /** Excel çalışma kitabı hücreleri (A1 → ham değer/formül) */
   tablo?: Record<string, string>;
+  /** Metin dosyası içeriği (Not Defteri) */
+  icerik?: string;
 }
 
 export interface WinPc {

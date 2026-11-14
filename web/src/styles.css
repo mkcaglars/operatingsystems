@@ -4974,3 +4974,35 @@ select.mini {
 .ubuntu-dots i:nth-child(2) { animation-delay: 0.2s; } .ubuntu-dots i:nth-child(3) { animation-delay: 0.4s; } .ubuntu-dots i:nth-child(4) { animation-delay: 0.6s; } .ubuntu-dots i:nth-child(5) { animation-delay: 0.8s; }
 @keyframes ub-nokta { 30% { opacity: 1; } }
 .w11-icon { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.5); }
+/* ---- Sağ tık menüsü, seçim kutusu, sürükle-bırak, Birlikte aç, Not Defteri, Fotoğraflar ---- */
+.ctx-menu { position: absolute; z-index: 40; min-width: 15em; background: #f9f9f9; border: 1px solid #d8d8d8; border-radius: 8px; box-shadow: 0 8px 24px #0003; padding: 0.3em; display: flex; flex-direction: column; font-size: 0.9em; color: #1b1b1b; }
+.w11.dark .ctx-menu { background: #2c2c2c; color: #fff; border-color: #444; }
+.ctx-oge { display: grid; grid-template-columns: 1.6em 1fr auto; align-items: center; gap: 0.4em; padding: 0.4em 0.6em; border: 0; background: none; font: inherit; color: inherit; text-align: left; border-radius: 4px; cursor: default; }
+.ctx-oge:hover:not(:disabled) { background: #0000000f; }
+.ctx-oge:disabled { opacity: 0.45; }
+.ctx-oge.kalin .ctx-ad { font-weight: 600; }
+.ctx-kisayol { color: #666; font-size: 0.85em; }
+.ctx-ayrac { height: 1px; background: #e0e0e0; margin: 0.25em 0.3em; }
+.fe-list { position: relative; outline: none; user-select: none; min-height: 100%; }
+.fe-row.kesik { opacity: 0.5; }
+.fe-row.birak, .fe-nav button.birak, .fe-list.birak { outline: 2px dashed #0067c0; outline-offset: -2px; background: #cce4f7; }
+.fe-ad[draggable='true'] { cursor: default; }
+.fe-kutu { position: absolute; background: #0067c033; border: 1px solid #0067c0; pointer-events: none; z-index: 2; }
+.w11-icon.on { background: #ffffff40; outline: 1px solid #ffffff80; border-radius: 4px; }
+.ba { width: 30em !important; }
+.ba-oge { display: flex; align-items: center; gap: 0.7em; width: 100%; padding: 0.5em 0.7em; border: 0; background: none; font: inherit; text-align: left; border-radius: 6px; cursor: pointer; }
+.ba-oge:hover { background: #0000000a; }
+.ba-oge.on { background: #e5f1fb; outline: 1px solid #0067c0; }
+.ba-oge.store { color: #0067c0; }
+.ba-store { font-size: 1.3em; width: 1.4em; text-align: center; }
+.ba-baslik { font-size: 0.8em; color: #666; margin: 0.6em 0 0.2em; }
+.ba-yok { background: #fff4ce; border-radius: 6px; padding: 0.6em 0.8em; display: flex; flex-direction: column; gap: 0.2em; margin-bottom: 0.4em; }
+.nd { display: flex; flex-direction: column; height: 100%; background: #fff; }
+.nd-menu { display: flex; align-items: center; gap: 1em; padding: 0.3em 0.8em; border-bottom: 1px solid #e5e5e5; font-size: 0.9em; }
+.nd-metin { flex: 1; border: 0; resize: none; padding: 0.6em 0.8em; font: 0.95em/1.45 Consolas, 'Cascadia Mono', monospace; outline: none; white-space: pre-wrap; }
+.nd-durum { display: flex; justify-content: space-between; padding: 0.2em 0.8em; background: #f3f3f3; font-size: 0.8em; color: #555; }
+.ft { display: flex; flex-direction: column; height: 100%; background: #1f1f1f; color: #eee; }
+.ft-ust { display: flex; justify-content: space-between; padding: 0.4em 0.8em; font-size: 0.9em; }
+.ft-alan { flex: 1; display: grid; place-items: center; overflow: hidden; padding: 0.6em; }
+.ft-alan img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
+.ft-yer { font-size: 5em; opacity: 0.4; }

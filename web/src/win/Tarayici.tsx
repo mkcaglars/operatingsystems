@@ -78,8 +78,8 @@ function sonuclar(q: string): Sonuc[] {
 
 export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
   const { pc, act } = ctx;
-  const [url, setUrl] = useState('yeni');
-  const [adres, setAdres] = useState('');
+  const [url, setUrl] = useState(ctx.arg || 'yeni');
+  const [adres, setAdres] = useState(ctx.arg && ctx.arg !== 'yeni' ? ctx.arg : '');
   const [q, setQ] = useState('');
   const [indir, setIndir] = useState<string[]>([]);
   const [uyari, setUyari] = useState<Indirme | null>(null);
