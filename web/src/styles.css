@@ -5032,3 +5032,4 @@ select.mini {
 .konsol-satir { display: flex; align-items: baseline; }
 .konsol-satir pre { flex: none; }
 .konsol-satir input { flex: 1; min-width: 2em; background: transparent; border: 0; outline: 0; color: inherit; font: inherit; padding: 0; caret-color: currentColor; }
+.br-dym { margin: 0.2em 0 0.8em; color: #c5221f; font-size: 0.95em; } .br-dym .br-link { display: inline; font-size: inherit; }
