@@ -4,6 +4,8 @@ import Logo, { uygulamaLogo } from '../components/Logo';
 import { adOf, children, gorunenAd, KULLANICI } from '../core/winpc';
 import type { AppCtx } from './Masaustu';
 import WinRar from './WinRar';
+import { useState } from 'react';
+import { EtkinlestirPenceresi, HesapPaneli } from './OfficeEtkinlestir';
 import Excel from './Excel';
 
 export const PROGRAM_AD: Record<string, string> = {
@@ -31,44 +33,7 @@ export default function Program(ctx: AppCtx) {
   const [arg, dosyaYolu] = (ctx.arg ?? '').split('|');
   if (arg === 'excel') return <Excel ctx={ctx} dosya={dosyaYolu} />;
   if (arg === 'winrar') return <WinRar ctx={ctx} baslangic={dosyaYolu} />;
-  const office = pc.uygulamalar.find((u) => u.id === 'office');
-
-  if (OFFICE.includes(arg)) {
-    const renk = arg === 'excel' ? '#107c41' : arg === 'powerpoint' ? '#c43e1c' : '#185abd';
-    const bos = arg === 'excel' ? 'Boş çalışma kitabı' : arg === 'powerpoint' ? 'Boş sunu' : 'Yeni';
-    return (
-      <div className="pg-office">
-        <aside style={{ background: renk }}>
-          <Logo id={uygulamaLogo(arg)} size="2.2em" />
-          <b>{PROGRAM_AD[arg]}</b>
-          <span>Giriş</span>
-          <span>Yeni</span>
-          <span>Aç</span>
-          <span className="alt">Hesap</span>
-        </aside>
-        <main>
-          {!office?.etkin && (
-            <div className="pg-uyari">
-              <b>ÜRÜN ETKİNLEŞTİRİLMEDİ</b> Bu ürünün çoğu özelliği devre dışı. Etkinleştirmek için Word'ü açıp Dosya › Hesap › Ürünü Etkinleştir'i kullanın.
-            </div>
-          )}
-          <h2>Günaydın</h2>
-          <div className="pg-sablonlar">
-            <div className="pg-sablon on">
-              <div className="pg-sayfa" />
-              {bos}
-            </div>
-            <div className="pg-sablon">
-              <div className="pg-sayfa cizgili" />
-              {arg === 'excel' ? 'Aylık bütçe' : 'Ders sunusu'}
-            </div>
-          </div>
-          <h3>Son kullanılanlar</h3>
-          <p className="small muted">Son kullanılan dosya yok.</p>
-        </main>
-      </div>
-    );
-  }
+  if (OFFICE.includes(arg)) return <OfficeUygulama ctx={ctx} arg={arg} />;
 
   if (arg === 'winrar') {
     const yol = `${KULLANICI}/Belgeler`;
@@ -179,6 +144,61 @@ export default function Program(ctx: AppCtx) {
       <Logo id={uygulamaLogo(arg)} size="3em" />
       <h2>{PROGRAM_AD[arg] ?? pc.uygulamalar.find((u) => u.id === arg)?.ad ?? arg}</h2>
       <p className="small muted">Program çalışıyor.</p>
+    </div>
+  );
+}
+
+/** Excel dışındaki Office uygulamalarının başlangıç ekranı (PowerPoint, Outlook…): Hesap ve etkinleştirme çalışır */
+function OfficeUygulama({ ctx, arg }: { ctx: AppCtx; arg: string }) {
+  const office = ctx.pc.uygulamalar.find((u) => u.id === 'office');
+  const [sayfa, setSayfa] = useState<'giris' | 'hesap'>('giris');
+  const [dlg, setDlg] = useState(false);
+  const renk = arg === 'powerpoint' ? '#c43e1c' : arg === 'outlook' ? '#0f6cbd' : arg === 'access' ? '#a4373a' : arg === 'onenote' ? '#7719aa' : '#185abd';
+  const bos = arg === 'powerpoint' ? 'Boş sunu' : 'Yeni';
+  return (
+    <div className="pg-office">
+      <aside style={{ background: renk }}>
+        <Logo id={uygulamaLogo(arg)} size="2.2em" />
+        <b>{PROGRAM_AD[arg]}</b>
+        <button className={sayfa === 'giris' ? 'on' : ''} onClick={() => setSayfa('giris')}>
+          Giriş
+        </button>
+        <button onClick={() => setSayfa('giris')}>Yeni</button>
+        <button onClick={() => setSayfa('giris')}>Aç</button>
+        <button className={'alt' + (sayfa === 'hesap' ? ' on' : '')} onClick={() => setSayfa('hesap')}>
+          Hesap
+        </button>
+      </aside>
+      <main>
+        {!office?.etkin && (
+          <div className="pg-uyari">
+            <b>ÜRÜN ETKİNLEŞTİRİLMEDİ</b> Bu ürünün çoğu özelliği devre dışı. Kullanmaya devam etmek için etkinleştirin.{' '}
+            <button className="ws-btn" onClick={() => setDlg(true)}>
+              Etkinleştir
+            </button>
+          </div>
+        )}
+        {sayfa === 'hesap' ? (
+          <HesapPaneli ctx={ctx} etkinlestir={() => setDlg(true)} />
+        ) : (
+          <>
+            <h2>Günaydın</h2>
+            <div className="pg-sablonlar">
+              <div className="pg-sablon on">
+                <div className="pg-sayfa" />
+                {bos}
+              </div>
+              <div className="pg-sablon">
+                <div className="pg-sayfa cizgili" />
+                Ders sunusu
+              </div>
+            </div>
+            <h3>Son kullanılanlar</h3>
+            <p className="small muted">Son kullanılan dosya yok.</p>
+          </>
+        )}
+      </main>
+      {dlg && <EtkinlestirPenceresi ctx={ctx} kapat={() => setDlg(false)} tamam={() => setSayfa('hesap')} />}
     </div>
   );
 }

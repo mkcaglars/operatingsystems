@@ -42,6 +42,40 @@ export interface KhState {
   iz: { usbAcilis: boolean; temiz: boolean; kurulumSayisi: number; turuncuSilindi: boolean; grubAcilan: string[]; yazilan?: string[] };
 }
 
+/** Masaüstündeki kısa kılavuz (Not Defteri'nde açılır) */
+export const OKU_BENI = [
+  'KUM HAVUZU — KISA KILAVUZ',
+  '=========================',
+  'Bu bilgisayar yavaşladı ve virüs bulaştı. Görevin: belgeleri yedekle, Windows 11\'i',
+  'temiz kur, internete bağlan ve programları yükle. Puan yok, istediğin gibi dene.',
+  '',
+  '1) YEDEK    Belgeler klasöründeki dosyaları turuncu USB belleğe (E:) sürükle.',
+  '2) İNDİR    Tarayıcının arama kutusuna yaz:',
+  '              Windows 11 kalıbı (ISO) .... windows 11',
+  '              USB hazırlama aracı ........ rufus',
+  '              Google Chrome .............. chrome',
+  '              Microsoft Office ........... microsoft office',
+  '              WinRAR ..................... winrar',
+  '              Adobe Acrobat Reader ....... acrobat reader',
+  '              Ubuntu ..................... ubuntu',
+  '            "Reklam" etiketli ve "crack" sitelerinden indirme yapma!',
+  '3) USB      Rufus ile mavi belleğe Windows 11 ISO dosyasını yaz (GPT).',
+  '4) KUR      Yeniden başlat; açılışta F8 ile USB\'yi seç (BIOS için Del).',
+  '            Disk ekranında eski Windows bölümünü sil ya da biçimlendir.',
+  '5) SONRA    Wi-Fi\'ye bağlan, Windows Update, Chrome, WinRAR, Office (etkinleştir),',
+  '            belgeleri geri yükle. İstersen Ubuntu\'yu Windows\'un yanına kur.',
+  '',
+  'Ürün anahtarları kasanın yanındaki etiketlerde, Wi-Fi şifresi sarı notta.',
+  'İpucu: Sağ tık menüleri çalışır; dosyaları fareyle seçip sürükleyebilirsin.',
+  'Komut İstemi ve PowerShell Başlat menüsündedir (dir, cd, ipconfig, ping…).',
+  '',
+  '---',
+  'Bu simülatör tamamen eğitim amaçlıdır; gerçek bir bilgisayarda değişiklik yapmaz.',
+  'Windows, Office, Edge, Chrome, Google, Bing, WinRAR, Adobe, Ubuntu ve diğer ürün',
+  'adları ile logoların hakları ilgili sahiplerine aittir.',
+  'Simgeler: Iconify (SVG Logos, VS Code Icons, Microsoft Fluent UI). Hazırlayan: mkcaglar.com',
+].join('\r\n');
+
 export const URUN_ANAHTARI = 'VK7JG-NPHTM-C97JM-9MPGT-3V66T';
 export const WIFI = [
   { ssid: 'OKUL-LAB', sifre: 'Kibris2026', guc: 4 },
@@ -97,12 +131,7 @@ function eskiPc(): WinPc {
       },
       [`${BELGE}/sunum-isletim-sistemleri.pptx`]: { tur: 'dosya', boyut: '6,1 MB' },
       [`${KULLANICI}/Resimler/girne-gezisi.jpg`]: { tur: 'dosya', boyut: '3,2 MB' },
-      [`${KULLANICI}/Masaüstü/OKU-BENİ.txt`]: {
-        tur: 'dosya',
-        boyut: '1 KB',
-        icerik:
-          'Merhaba teknisyen arkadaşım,\r\n\r\nBilgisayar çok yavaşladı ve sürekli reklam çıkıyor. Windows\'u baştan kurabilirsin ama\r\nBelgeler klasöründeki proje ödevim ve bütçe dosyam ÇOK ÖNEMLİ, lütfen önce bir USB belleğe yedekle!\r\n\r\nKurulumdan sonra Chrome, WinRAR ve Office lazım. Wi-Fi şifresi masadaki sarı kâğıtta.\r\n\r\nTeşekkürler,\r\nAyşe',
-      },
+      [`${KULLANICI}/Masaüstü/OKU-BENİ.txt`]: { tur: 'dosya', boyut: '2 KB', icerik: OKU_BENI },
     },
     surecler: [
       { id: 'explorer', ad: 'Windows Gezgini', cpu: 0.6, ram: 92, sistem: true },
@@ -154,6 +183,7 @@ export function yeniPc(k: WinSetupState, eski: WinPc | null): WinPc {
   ];
   // Temiz kurulumda kişisel klasörler boştur
   for (const key of Object.keys(pc.fs)) if (key.startsWith(KULLANICI + '/') && pc.fs[key].tur === 'dosya') delete pc.fs[key];
+  pc.fs[`${KULLANICI}/Masaüstü/OKU-BENİ.txt`] = { tur: 'dosya', boyut: '2 KB', icerik: OKU_BENI };
   // Bölüm biçimlendirilmeden kurulduysa eski Windows dosyaları Windows.old klasörüne taşınır
   if (eski && !k.ozet.temiz) {
     pc.fs['C:/Windows.old'] = { tur: 'klasor' };
