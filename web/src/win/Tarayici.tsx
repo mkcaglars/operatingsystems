@@ -66,9 +66,11 @@ function benzerlik(a: string, b: string): number {
 export function oneriler(girdi: string): typeof SITELER {
   const g = girdi.toLocaleLowerCase('tr').replace(/^https?:\/\//, '').replace(/^www\./, '');
   const kok = g.split(/[/.?#\s]/).filter(Boolean)[0] ?? g;
+  // "crome-indir.com" gibi girdilerde her sözcük ayrı karşılaştırılır
+  const sozcukler = g.split(/[/.?#\s\-_]+/).filter((w) => w.length >= 3 && !['com', 'net', 'org', 'www', 'indir', 'download', 'http', 'https'].includes(w));
   return SITELER.map((s) => {
     const alan = s.url.replace(/^www\./, '').split('/')[0];
-    const anahtarPuan = Math.min(...s.anahtar.map((a) => (g.includes(a) ? 0 : benzerlik(kok, a))));
+    const anahtarPuan = Math.min(...s.anahtar.map((a) => (g.includes(a) ? 0 : Math.min(benzerlik(kok, a), ...sozcukler.map((w) => (benzerlik(w, a) <= Math.max(1, Math.floor(a.length / 3)) ? benzerlik(w, a) : 99))))));
     return { s, p: Math.min(anahtarPuan, benzerlik(kok, alan.split('.')[0]), benzerlik(g, alan)) };
   })
     .filter((x) => x.p <= Math.max(2, Math.floor(kok.length / 3)))
