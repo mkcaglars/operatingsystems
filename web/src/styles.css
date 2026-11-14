@@ -5193,3 +5193,6 @@ select.mini {
 .ubu-alt button.ana { background: #e95420; color: #fff; border-color: #e95420; }
 .ubu-alt button:disabled { opacity: 0.5; cursor: default; }
 .ubf-dlg-btn button.ana.kirmizi { background: #c01c28; border-color: #c01c28; color: #fff; }
+.post-okul { height: 16cqi; width: auto; }
+.post-ad { display: flex; flex-direction: column; line-height: 1.05; }
+.post-ad small { font-size: 0.26em; letter-spacing: 0.04em; color: #9ca3af; margin-top: 0.4em; }
