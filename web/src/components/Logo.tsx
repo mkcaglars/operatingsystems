@@ -158,6 +158,18 @@ const L: Record<string, (u: string) => ReactElement> = {
       <path d="M26 38l12-12 4 4-12 12h-4z" fill="#e95420" />
     </svg>
   ),
+  'usb-creator': () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="14" y="4" width="20" height="12" rx="2" fill="#9a9996" />
+      <rect x="18" y="7" width="4" height="4" fill="#5e5c64" />
+      <rect x="26" y="7" width="4" height="4" fill="#5e5c64" />
+      <rect x="10" y="15" width="28" height="29" rx="5" fill="#e95420" />
+      <circle cx="24" cy="29.5" r="7" fill="none" stroke="#fff" strokeWidth="2.6" />
+      <circle cx="24" cy="22.5" r="2" fill="#fff" />
+      <circle cx="18" cy="33" r="2" fill="#fff" />
+      <circle cx="30" cy="33" r="2" fill="#fff" />
+    </svg>
+  ),
   'ub-ayarlar': () => (
     <svg viewBox="0 0 48 48">
       <circle cx="24" cy="24" r="20" fill="#5e5c64" />
