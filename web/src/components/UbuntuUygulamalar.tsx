@@ -8,8 +8,10 @@ import type { Sim } from '../core/sim';
 import type { Json } from '../core/rules';
 import { aramaDuzelt, KISA, oneriler, SITELER, sonuclar } from '../win/Tarayici';
 import { WIFI } from '../core/kumhavuzu';
+import { AGLAR, ayarHatalari, DHCP, maskeOnek, onekMaske, type AgTur, type IpAyar, type IpSonuc } from '../core/ag';
 
 export type UbApp = 'dosyalar' | 'firefox' | 'terminal' | 'gedit' | 'ayarlar' | 'usbyazici';
+export type UbAg = { ethernet: IpSonuc | null; wifi: IpSonuc | null; internet: boolean };
 /** Takılı USB bellek (Başlangıç Diski Oluşturucu için) */
 export interface UbUsb {
   id: string;
@@ -26,6 +28,10 @@ export interface UbCtx {
   usb?: UbUsb[];
   usbYaz?: (id: string, iso: string) => void;
   parola?: string;
+  kablo?: boolean;
+  ag?: UbAg;
+  ipAyar?: Partial<Record<AgTur, IpAyar>>;
+  ipKaydet?: (tur: AgTur, ayar: IpAyar) => void;
   ac: (app: UbApp, arg?: string) => void;
   kapat: () => void;
   log: (t: string, d?: Record<string, Json>) => void;
@@ -649,7 +655,8 @@ export function Firefox(ctx: UbCtx) {
   const [q, setQ] = useState('');
   const [indirilen, setIndirilen] = useState<string[]>([]);
   const [panel, setPanel] = useState(false);
-  const cevrimici = !!ctx.wifi;
+  const cevrimici = ctx.ag ? ctx.ag.internet : !!ctx.wifi;
+  const bagliAmaYok = !!ctx.ag && !ctx.ag.internet && (!!ctx.ag.ethernet || !!ctx.ag.wifi);
 
   const git = (u0: string) => {
     const u = KISA[u0.replace(/\/$/, '')] ?? u0;
@@ -686,11 +693,20 @@ export function Firefox(ctx: UbCtx) {
   if (!cevrimici && url !== 'yeni')
     sayfa = (
       <div className="ubff-hata">
-        <h2>Hmm. O siteye bağlanmakta sorun yaşıyoruz.</h2>
-        <p>Bilgisayar internete bağlı değil.</p>
+        <h2>{bagliAmaYok ? 'Hmm. O siteyi bulmakta sorun yaşıyoruz.' : 'Hmm. O siteye bağlanmakta sorun yaşıyoruz.'}</h2>
+        <p>{bagliAmaYok ? 'Bilgisayar ağa bağlı ama internete ya da DNS sunucusuna ulaşılamıyor.' : 'Bilgisayar internete bağlı değil.'}</p>
         <ul className="small">
-          <li>Sağ üstteki sistem menüsünden bir Wi-Fi ağına bağlanın.</li>
-          <li>Ağ kablosunun takılı olduğunu kontrol edin.</li>
+          {bagliAmaYok ? (
+            <>
+              <li>Ayarlar › Ağ bölümünde IPv4 ayarlarını (IP adresi, ağ geçidi, DNS) kontrol edin.</li>
+              {[ctx.ag?.ethernet, ctx.ag?.wifi].map((d, i) => d?.sorun && <li key={i}>{d.aciklama}</li>)}
+            </>
+          ) : (
+            <>
+              <li>Sağ üstteki sistem menüsünden bir Wi-Fi ağına bağlanın.</li>
+              <li>Ağ kablosunun takılı olduğunu kontrol edin.</li>
+            </>
+          )}
         </ul>
         <button className="ubff-btn" onClick={() => gez(gecmis.i)}>
           Yeniden dene
@@ -900,11 +916,16 @@ export function Firefox(ctx: UbCtx) {
 // ---------- Ayarlar ----------
 export function UbuntuAyarlar(ctx: UbCtx) {
   const sh = ctx.sim.state.sh;
-  const [bolum, setBolum] = useState<'wifi' | 'hakkinda'>('wifi');
+  const [bolum, setBolum] = useState<'ag' | 'wifi' | 'hakkinda'>(ctx.arg === 'ag' ? 'ag' : ctx.arg === 'hakkinda' ? 'hakkinda' : 'wifi');
   const [sifre, setSifre] = useState<{ ag: string; deger: string; hata?: string } | null>(null);
+  const [ipDlg, setIpDlg] = useState<AgTur | null>(null);
+  const eth = ctx.ag?.ethernet ?? null;
   return (
     <div className="uba">
       <nav>
+        <button className={bolum === 'ag' ? 'on' : ''} onClick={() => setBolum('ag')}>
+          🖧 Ağ
+        </button>
         <button className={bolum === 'wifi' ? 'on' : ''} onClick={() => setBolum('wifi')}>
           📶 Wi-Fi
         </button>
@@ -913,7 +934,27 @@ export function UbuntuAyarlar(ctx: UbCtx) {
         </button>
       </nav>
       <main>
-        {bolum === 'wifi' ? (
+        {bolum === 'ag' ? (
+          <>
+            <h3>Kablolu</h3>
+            <div className="uba-ag">
+              <span>
+                {ctx.kablo ? (eth?.internet ? 'Bağlandı — 1000 Mb/sn' : eth?.sorun === 'cakisma' ? 'Bağlantı başarısız (IP adresi çakışması)' : 'Bağlandı — internet yok') : 'Kablo çıkarıldı'}
+              </span>
+              <span className="uba-sag">
+                <span className={'uba-anahtar' + (ctx.kablo ? ' acik' : '')} aria-hidden />
+                <button onClick={() => setIpDlg('ethernet')} aria-label="Kablolu bağlantı ayarları" disabled={!ctx.ipKaydet}>
+                  ⚙
+                </button>
+              </span>
+            </div>
+            {eth?.sorun && <p className="ubf-hata small">⚠ {eth.aciklama}</p>}
+            <h3>VPN</h3>
+            <p className="small muted">Yapılandırılmamış</p>
+            <h3>Ağ Vekil Sunucusu</h3>
+            <p className="small muted">Kapalı</p>
+          </>
+        ) : bolum === 'wifi' ? (
           <>
             <h3>Wi-Fi</h3>
             <p className="small">{ctx.wifi ? `Bağlı: ${ctx.wifi}` : 'Bağlı değil'}</p>
@@ -923,7 +964,12 @@ export function UbuntuAyarlar(ctx: UbCtx) {
                   {'▂▄▆█'.slice(0, w.guc)} {w.ssid} {w.sifre ? '🔒' : ''}
                 </span>
                 {ctx.wifi === w.ssid ? (
-                  <b className="small">Bağlı ✓</b>
+                  <span className="uba-sag">
+                    <b className="small">{ctx.ag?.wifi && !ctx.ag.wifi.internet ? 'Bağlı, internet yok' : 'Bağlı ✓'}</b>
+                    <button onClick={() => setIpDlg('wifi')} aria-label="Wi-Fi bağlantı ayarları" disabled={!ctx.ipKaydet}>
+                      ⚙
+                    </button>
+                  </span>
                 ) : (
                   <button disabled={!ctx.wifiBaglan} onClick={() => (w.sifre ? setSifre({ ag: w.ssid, deger: '' }) : (ctx.wifiBaglan?.(w.ssid), ctx.bildir(`${w.ssid} ağına bağlanıldı.`)))}>
                     Bağlan
@@ -971,6 +1017,97 @@ export function UbuntuAyarlar(ctx: UbCtx) {
           </>
         )}
       </main>
+      {ipDlg && ctx.ipKaydet && <UbuntuIpPenceresi tur={ipDlg} ayar={ctx.ipAyar?.[ipDlg]} durum={ipDlg === 'ethernet' ? ctx.ag?.ethernet ?? null : ctx.ag?.wifi ?? null} baslik={ipDlg === 'ethernet' ? 'Kablolu' : ctx.wifi} kapat={() => setIpDlg(null)} kaydet={(a) => (ctx.ipKaydet!(ipDlg, a), setIpDlg(null))} />}
+    </div>
+  );
+}
+
+/** GNOME bağlantı ayarları penceresi: Ayrıntılar ve IPv4 sekmeleri */
+function UbuntuIpPenceresi({ tur, ayar, durum, baslik, kapat, kaydet }: { tur: AgTur; ayar?: IpAyar; durum: IpSonuc | null; baslik: string; kapat: () => void; kaydet: (a: IpAyar) => void }) {
+  const ilk = ayar ?? DHCP;
+  const [sekme, setSekme] = useState<'ayrinti' | 'ipv4'>('ayrinti');
+  const [mod, setMod] = useState<'dhcp' | 'elle'>(ilk.mod);
+  const [adres, setAdres] = useState(ilk.ip);
+  const [maske, setMaske] = useState(ilk.maske || '24');
+  const [gecit, setGecit] = useState(ilk.gecit);
+  const [dns, setDns] = useState([ilk.dns1, ilk.dns2].filter(Boolean).join(', '));
+  const [hatalar, setHatalar] = useState<string[]>([]);
+  const uygula = () => {
+    if (mod === 'dhcp') return kaydet({ ...DHCP });
+    const m = /^\d{1,2}$/.test(maske.trim()) ? onekMaske(maske.trim()) : maske.trim();
+    const [d1 = '', d2 = ''] = dns.split(/[,\s]+/).filter(Boolean);
+    const a: IpAyar = { mod: 'elle', ip: adres.trim(), maske: m, gecit: gecit.trim(), dns1: d1, dns2: d2 };
+    const h = ayarHatalari(a);
+    if (h.length) return setHatalar(h);
+    kaydet(a);
+  };
+  return (
+    <div className="ubf-modal">
+      <div className="ubf-dlg ubip" role="dialog" aria-label={`${baslik} ayarları`}>
+        <div className="ubip-bas">
+          <button onClick={kapat}>İptal</button>
+          <b>{baslik}</b>
+          <button className="ana" onClick={uygula}>
+            Uygula
+          </button>
+        </div>
+        <div className="ubip-sekme">
+          <button className={sekme === 'ayrinti' ? 'on' : ''} onClick={() => setSekme('ayrinti')}>
+            Ayrıntılar
+          </button>
+          <button className={sekme === 'ipv4' ? 'on' : ''} onClick={() => setSekme('ipv4')}>
+            IPv4
+          </button>
+        </div>
+        {sekme === 'ayrinti' ? (
+          <table>
+            <tbody>
+              <tr><td>Bağlantı Hızı</td><td>{tur === 'ethernet' ? '1000 Mb/sn' : '574 Mb/sn'}</td></tr>
+              <tr><td>IPv4 Adresi</td><td>{durum ? (durum.sorun === 'cakisma' ? 'Yok (adres çakışması)' : durum.ip) : '—'}</td></tr>
+              <tr><td>Donanım Adresi</td><td>{AGLAR[tur].mac.replace(/-/g, ':')}</td></tr>
+              <tr><td>Öntanımlı Rota</td><td>{durum?.gecit || '—'}</td></tr>
+              <tr><td>DNS</td><td>{durum?.dns.join(', ') || '—'}</td></tr>
+            </tbody>
+          </table>
+        ) : (
+          <>
+            <b className="small">IPv4 Yöntemi</b>
+            <label className="ubip-radyo">
+              <input type="radio" checked={mod === 'dhcp'} onChange={() => (setMod('dhcp'), setHatalar([]))} /> Otomatik (DHCP)
+            </label>
+            <label className="ubip-radyo">
+              <input type="radio" checked={mod === 'elle'} onChange={() => (setMod('elle'), setHatalar([]))} /> Elle
+            </label>
+            {mod === 'elle' && (
+              <>
+                <b className="small">Adresler</b>
+                <div className="ubip-adres">
+                  <label>
+                    Adres
+                    <input value={adres} onChange={(e) => (setAdres(e.target.value), setHatalar([]))} aria-label="Adres" placeholder="192.168.1.60" />
+                  </label>
+                  <label>
+                    Ağ Maskesi
+                    <input value={maske} onChange={(e) => (setMaske(e.target.value), setHatalar([]))} aria-label="Ağ Maskesi" placeholder="24 ya da 255.255.255.0" />
+                  </label>
+                  <label>
+                    Ağ Geçidi
+                    <input value={gecit} onChange={(e) => (setGecit(e.target.value), setHatalar([]))} aria-label="Ağ Geçidi" placeholder="192.168.1.1" />
+                  </label>
+                </div>
+                <b className="small">DNS</b>
+                <input value={dns} onChange={(e) => (setDns(e.target.value), setHatalar([]))} aria-label="DNS" placeholder="Virgülle ayrılmış IP adresleri (ör. 8.8.8.8, 1.1.1.1)" />
+              </>
+            )}
+            {mod === 'elle' && <small className="muted">Önek: /{maskeOnek(/^\d{1,2}$/.test(maske.trim()) ? onekMaske(maske.trim()) : maske.trim())}</small>}
+          </>
+        )}
+        {hatalar.map((h) => (
+          <small key={h} className="ubf-hata">
+            {h}
+          </small>
+        ))}
+      </div>
     </div>
   );
 }

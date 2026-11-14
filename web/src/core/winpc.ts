@@ -1,6 +1,8 @@
 // Sanal Windows 11 bilgisayarının durumu (İ6–İ8). Saf veri + yardımcı fonksiyonlar; arayüz win/ altında.
 // Kurallar bu durumun yolları üzerinden denetlenir (ör. "pc.guc.uyku", "pc.kurulu", "pc.dosyalar").
 
+import { ipDegerlendir, type AgTur, type IpAyar, type IpSonuc } from './ag';
+
 export type Profil = 'etki' | 'ozel' | 'ortak';
 
 export interface Surec {
@@ -103,7 +105,7 @@ export interface WinPc {
   /** "Bu bilgisayarı sıfırla" yapıldı mı ve nasıl */
   sifirlama: '' | 'koru' | 'hepsi';
   /** Ağ bağlantısı: Ethernet kablosu takılı mı, bağlı kablosuz ağ (SSID) */
-  ag: { kablo: boolean; wifi: string };
+  ag: { kablo: boolean; wifi: string; ip?: Partial<Record<AgTur, IpAyar>> };
   // ---- Kurallar için türetilmiş alanlar ----
   dosyalar: string[];
   kurulu: string[];
@@ -120,6 +122,10 @@ export interface WinPc {
   bilesenler: Record<string, string[]>;
   devreDisi: string[];
   internet: boolean;
+  /** Bağdaştırıcıların IP durumu (bağlı değilse null) */
+  agDurum?: { ethernet: IpSonuc | null; wifi: IpSonuc | null };
+  /** Ağ sorunları (kurallar için): cakisma, alt-ag, gecit, dns */
+  agSorunlari?: string[];
 }
 
 export const KULLANICI = 'C:/Kullanıcılar/Ogrenci';
@@ -334,7 +340,11 @@ export function derive(pc: WinPc): WinPc {
   pc.devreDisi = pc.aygitlar.filter((a) => a.durum === 'devre-disi').map((a) => a.id);
   const calisir = (id: string) => pc.aygitlar.find((a) => a.id === id)?.durum === 'ok';
   const ag = pc.ag ?? { kablo: true, wifi: '' };
-  pc.internet = (ag.kablo && calisir('lan')) || (!!ag.wifi && calisir('wifi'));
+  const eth = ag.kablo && calisir('lan') ? ipDegerlendir('ethernet', ag.ip?.ethernet) : null;
+  const wl = ag.wifi && calisir('wifi') ? ipDegerlendir('wifi', ag.ip?.wifi) : null;
+  pc.agDurum = { ethernet: eth, wifi: wl };
+  pc.agSorunlari = [eth?.sorun, wl?.sorun].filter((x): x is NonNullable<typeof x> => !!x);
+  pc.internet = !!eth?.internet || !!wl?.internet;
   pc.acikBaslangic = pc.baslangic.filter((b) => b.acik).map((b) => b.id);
   pc.surecAdlari = pc.surecler.map((s) => s.id);
   pc.yoneticiler = pc.hesaplar.filter((h) => h.tur === 'yonetici').map((h) => h.ad);

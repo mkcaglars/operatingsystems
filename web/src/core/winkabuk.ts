@@ -3,6 +3,7 @@
 import { adOf, children, parentOf, type WinPc } from './winpc';
 import { boyutKB } from './arsiv';
 import { kopyala, sil, tasi } from './dosyaIslem';
+import { AGLAR, type IpSonuc } from './ag';
 
 export type Kabuk = 'cmd' | 'ps';
 export interface Sonuc {
@@ -80,35 +81,48 @@ function dir(pc: WinPc, yol: string, k: Kabuk): string {
   return s.join('\n');
 }
 
+function ipBlok(d: IpSonuc | null | undefined, tum: boolean, mac: string, ad: string, dns: string): string[] {
+  const s: string[] = [];
+  if (!d) return ['   Medya Durumu . . . . . . . . . . : Medyanın bağlantısı kesildi', ''];
+  s.push(`   Bağlantıya özgü DNS Soneki . . . : ${dns}`);
+  if (tum) s.push(`   Açıklama. . . . . . . . . . . . . : ${ad}`, `   Fiziksel Adres. . . . . . . . . . : ${mac}`, `   DHCP Etkin. . . . . . . . . . . . : ${d.dhcp ? 'Evet' : 'Hayır'}`);
+  if (d.sorun === 'cakisma') s.push(`   Otomatik Yapılandırma IPv4 Adresi : ${d.ip}(Tercih edilen)`, `   IPv4 Adresi. . . . . . . . . . . : ${d.aciklama.match(/(\d+\.\d+\.\d+\.\d+)/)?.[1] ?? ''}(Çoğaltılmış)`);
+  else s.push(`   IPv4 Adresi. . . . . . . . . . . : ${d.ip}${tum ? '(Tercih edilen)' : ''}`);
+  s.push(`   Alt Ağ Maskesi . . . . . . . . . : ${d.maske}`, `   Varsayılan Ağ Geçidi . . . . . . : ${d.sorun === 'cakisma' ? '' : d.gecit}`);
+  if (tum) s.push(`   DNS Sunucuları . . . . . . . . . : ${d.dns.join('\n                                       ') || ''}`);
+  s.push('');
+  return s;
+}
 function ipconfig(pc: WinPc, tum: boolean): string {
   const wifi = pc.aygitlar.some((a) => a.id === 'wifi');
-  const bag = pc.internet;
   const s = ['', 'Windows IP Yapılandırması', ''];
   if (tum) s.splice(2, 0, `   Ana Bilgisayar Adı . . . . . . . : ${pc.cihaz.ad}`, '   Birincil Dns Soneki . . . . . . . :', '');
-  const ethBagli = pc.ag?.kablo && pc.aygitlar.find((a) => a.id === 'lan')?.durum === 'ok';
-  s.push('Ethernet bağdaştırıcısı Ethernet:', '');
-  if (ethBagli) s.push('   Bağlantıya özgü DNS Soneki . . . : okul.local', '   IPv4 Adresi. . . . . . . . . . . : 192.168.1.57', '   Alt Ağ Maskesi . . . . . . . . . : 255.255.255.0', '   Varsayılan Ağ Geçidi . . . . . . : 192.168.1.1', '');
-  else s.push('   Medya Durumu . . . . . . . . . . : Medyanın bağlantısı kesildi', '');
-  if (wifi) {
-    s.push('Kablosuz LAN bağdaştırıcısı Wi-Fi:', '');
-    if (pc.ag?.wifi) s.push(`   Bağlantıya özgü DNS Soneki . . . : ${pc.ag.wifi.toLowerCase()}`, '   IPv4 Adresi. . . . . . . . . . . : 192.168.10.23', '   Alt Ağ Maskesi . . . . . . . . . : 255.255.255.0', '   Varsayılan Ağ Geçidi . . . . . . : 192.168.10.1', '');
-    else s.push('   Medya Durumu . . . . . . . . . . : Medyanın bağlantısı kesildi', '');
-  }
-  if (!bag && !ethBagli && !pc.ag?.wifi) s.push('(Bu bilgisayar hiçbir ağa bağlı değil.)');
+  s.push('Ethernet bağdaştırıcısı Ethernet:', '', ...ipBlok(pc.agDurum?.ethernet, tum, AGLAR.ethernet.mac, pc.aygitlar.find((a) => a.id === 'lan')?.ad ?? 'Ethernet', 'okul.local'));
+  if (wifi) s.push('Kablosuz LAN bağdaştırıcısı Wi-Fi:', '', ...ipBlok(pc.agDurum?.wifi, tum, AGLAR.wifi.mac, pc.aygitlar.find((a) => a.id === 'wifi')?.ad ?? 'Wi-Fi', (pc.ag?.wifi ?? '').toLowerCase()));
   return s.join('\n');
 }
 
 function ping(pc: WinPc, hedef: string, ps: boolean): string {
   const h = hedef || 'google.com';
   const yerel = /^(127\.0\.0\.1|localhost)$/i.test(h);
-  const ag = /^192\.168\./.test(h);
-  if (!pc.internet && !yerel && !(ag && (pc.ag?.wifi || pc.ag?.kablo))) {
-    return ps ? `Test-Connection : '${h}' bilgisayarı ile bağlantı testi başarısız oldu: Kaynak yetersiz ya da ağ ulaşılamaz.` : `Ping isteği ${h} ana bilgisayarını bulamadı. Lütfen adı denetleyin ve yeniden deneyin.`;
+  const ipHedef = /^\d+\.\d+\.\d+\.\d+$/.test(h);
+  const durumlar = [pc.agDurum?.ethernet, pc.agDurum?.wifi].filter((x): x is IpSonuc => !!x);
+  const dnsVar = durumlar.some((d) => d.internet);
+  const disari = durumlar.some((d) => d.disari);
+  const yerelAg = (ip: string) => durumlar.some((d) => d.yerel && ip.startsWith(d.ip.split('.').slice(0, 3).join('.') + '.'));
+  if (!yerel && !ipHedef && !dnsVar)
+    return ps ? `Test-Connection : '${h}' bilgisayarı ile bağlantı testi başarısız oldu: Ad çözümlenemedi.` : `Ping isteği ${h} ana bilgisayarını bulamadı. Lütfen adı denetleyin ve yeniden deneyin.`;
+  const ulasir = yerel || (ipHedef ? (/^192\.168\./.test(h) ? yerelAg(h) && (Object.keys(AGLAR.ethernet.dolu).includes(h) || Object.keys(AGLAR.wifi.dolu).includes(h)) : disari) : dnsVar);
+  const ip = yerel ? '127.0.0.1' : ipHedef ? h : h.includes('google') ? '142.250.187.110' : h.includes('microsoft') ? '20.112.250.133' : '104.18.32.47';
+  if (!ulasir) {
+    if (ps) return `Test-Connection : '${h}' bilgisayarı ile bağlantı testi başarısız oldu: İstek zaman aşımına uğradı.`;
+    const kaynak = durumlar[0]?.ip;
+    const satir = durumlar.length && !durumlar.some((d) => d.yerel) && kaynak ? `${kaynak} yanıtı: Hedef ana bilgisayara ulaşılamıyor.` : 'İstek zaman aşımına uğradı.';
+    return ['', `${h} [${ip}] için 32 bayt veriyle Ping atılıyor:`, satir, satir, satir, satir, '', `${ip} için Ping istatistikleri:`, '    Paket: Giden = 4, Gelen = 0, Kaybolan = 4 (%100 kayıp),'].join('\n');
   }
-  const ip = yerel ? '127.0.0.1' : ag ? h : h.includes('google') ? '142.250.187.110' : h.includes('microsoft') ? '20.112.250.133' : '104.18.32.47';
-  const sure = [12, 11, 14, 12].map((x) => (yerel ? 0 : x));
+  const sure = [12, 11, 14, 12].map((x) => (yerel || /^192\.168\./.test(h) ? 0 : x));
   const s = ['', `${h} [${ip}] için 32 bayt veriyle Ping atılıyor:`];
-  for (const t of sure) s.push(`${ip} yanıtı: bayt=32 süre${yerel ? '<1' : '=' + t}ms TTL=${yerel ? 128 : 117}`);
+  for (const t of sure) s.push(`${ip} yanıtı: bayt=32 süre${t === 0 ? '<1' : '=' + t}ms TTL=${yerel ? 128 : /^192\.168\./.test(h) ? 64 : 117}`);
   s.push('', `${ip} için Ping istatistikleri:`, '    Paket: Giden = 4, Gelen = 4, Kaybolan = 0 (%0 kayıp),', 'Milisaniye türünden yaklaşık tur süreleri:', `    En Az = ${Math.min(...sure)}ms, En Çok = ${Math.max(...sure)}ms, Ortalama = ${Math.round(sure.reduce((a, b) => a + b, 0) / 4)}ms`);
   return s.join('\n');
 }

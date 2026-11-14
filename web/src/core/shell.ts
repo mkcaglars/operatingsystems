@@ -26,6 +26,8 @@ export interface ShellState {
   grub: { windows: boolean; osProber: boolean };
   /** Kurulu sistemde diskin gerçek bölümleri (lsblk için; yoksa canlı oturum düzeni) */
   bolumler?: { boyut: string; baglama: string }[];
+  /** Kum havuzu: gerçek ağ durumu (yoksa her şey çalışır) */
+  ag?: { arayuz: string; ip: string; onek: number; gecit: string; yerel: boolean; disari: boolean; internet: boolean; mac: string }[];
 }
 
 export interface ExecResult {
@@ -394,10 +396,31 @@ export function exec(prev: ShellState, line: string): ExecResult {
       return R(['Dosyasistemi    Boyut  Kull   Boş Kull% Bağlanılan yer', 'tmpfs            779M   2,1M  777M    1% /run', '/dev/sda2        233G    11G  211G    5% /', '/dev/sda1        1,1G   6,2M  1,1G    1% /boot/efi'].join('\n'));
     case 'ip':
       if (params[0] !== 'a' && params[0] !== 'addr' && params[0] !== 'address') return err('Kullanım: ip a');
+      if (s.ag)
+        return R(
+          [
+            '1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN',
+            '    inet 127.0.0.1/8 scope host lo',
+            ...(['enp3s0', 'wlp2s0'] as const).flatMap((ar, i) => {
+              const a = s.ag!.find((x) => x.arayuz === ar);
+              return a
+                ? [`${i + 2}: ${ar}: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 state UP`, `    link/ether ${a.mac.toLowerCase().replace(/-/g, ':')} brd ff:ff:ff:ff:ff:ff`, `    inet ${a.ip}/${a.onek} brd ${a.ip.split('.').slice(0, 3).join('.')}.255 scope global ${ar}`]
+                : [`${i + 2}: ${ar}: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 state DOWN`];
+            }),
+          ].join('\n'),
+        );
       return R(['1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536', '    inet 127.0.0.1/8 scope host lo', '2: enp3s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500', '    link/ether 3c:7c:3f:1a:22:5b brd ff:ff:ff:ff:ff:ff', `    inet ${s.sistem.ip}/24 brd 192.168.1.255 scope global dynamic enp3s0`].join('\n'));
     case 'ping': {
       const host = params.find((p) => !/^\d+$/.test(p));
       if (!host) return err('ping: usage error: Hedef adres gerekli');
+      if (s.ag && !/^(127\.|localhost$)/.test(host)) {
+        const ipHedef = /^\d+\.\d+\.\d+\.\d+$/.test(host);
+        if (!ipHedef && !s.ag.some((a) => a.internet)) return err(`ping: ${host}: Ad ya da hizmet bilinmiyor`);
+        const yerelHedef = ipHedef && /^192\.168\./.test(host);
+        const ulasir = ipHedef ? (yerelHedef ? s.ag.some((a) => a.yerel && host.startsWith(a.ip.split('.').slice(0, 3).join('.') + '.')) : s.ag.some((a) => a.disari)) : true;
+        if (!s.ag.length) return err('ping: connect: Ağa ulaşılamıyor');
+        if (!ulasir) return { ...R(`PING ${host} (${host}) 56(84) bytes of data.\nFrom ${s.ag[0].ip} icmp_seq=1 Destination Host Unreachable\nFrom ${s.ag[0].ip} icmp_seq=2 Destination Host Unreachable\n\n--- ${host} ping statistics ---\n4 packets transmitted, 0 received, +2 errors, 100% packet loss`), code: 1 };
+      }
       return R([`PING ${host} 56(84) bytes of data.`, ...[1, 2, 3, 4].map((i) => `64 bytes from ${host}: icmp_seq=${i} ttl=117 time=${(12 + i * 0.7).toFixed(1)} ms`), '', `--- ${host} ping statistics ---`, '4 packets transmitted, 4 received, 0% packet loss'].join('\n'));
     }
     case 'apt':
@@ -406,6 +429,8 @@ export function exec(prev: ShellState, line: string): ExecResult {
       if (!sub) return err('apt 2.7.14 (amd64)\nKullanım: apt [seçenekler] komut');
       if (!root && ['update', 'upgrade', 'install', 'remove', 'full-upgrade'].includes(sub))
         return err('E: Kilit dosyası /var/lib/dpkg/lock-frontend açılamadı - open (13: Erişim engellendi)\nE: Önyüz kilidi alınamıyor, root mu? (Komutu "sudo" ile çalıştırmayı deneyin.)');
+      if (s.ag && !s.ag.some((a) => a.internet) && ['update', 'upgrade', 'install', 'full-upgrade'].includes(sub) && !(sub === 'install' && (params[1] ?? '').endsWith('.deb')))
+        return err("Err:1 http://archive.ubuntu.com/ubuntu noble InRelease\n  Geçici hata: 'archive.ubuntu.com' çözümlenemedi\nW: Bazı dizin dosyaları indirilemedi. İnternet bağlantınızı denetleyin.");
       if (sub === 'update') {
         s.apt.guncel = true;
         s.apt.bekleyen = s.apt.yukseltildi ? 0 : 37;

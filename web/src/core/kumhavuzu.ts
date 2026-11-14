@@ -4,6 +4,7 @@ import type { BiosState, BiosVeri } from '../tasks/PcBios';
 import type { Bolum, Disk, WinSetupState, WinSetupVeri } from '../tasks/WinSetup';
 import type { Part, UbuntuKurState, UbuntuVeri } from '../tasks/UbuntuKur';
 import { defaultShell, type ShellState } from './shell';
+import { AGLAR, ipDegerlendir, maskeOnek, type AgTur, type IpAyar, type IpSonuc } from './ag';
 import type { Sim } from './sim';
 import { defaultPc, derive, KULLANICI, pcWith, type DosyaGirdi, type WinPc } from './winpc';
 
@@ -29,7 +30,7 @@ export interface KhState {
   /** Ubuntu kurulum sihirbazı (USB'den Ubuntu ile açılınca) */
   ukur: UbuntuKurState | null;
   /** Kurulu Ubuntu (kabuk durumu ve hesap) */
-  ubuntu: { hesap: { ad: string; kullanici: string; bilgisayar: string; parola: string }; sh: ShellState; wifi: string } | null;
+  ubuntu: { hesap: { ad: string; kullanici: string; bilgisayar: string; parola: string }; sh: ShellState; wifi: string; ip?: Partial<Record<AgTur, IpAyar>> } | null;
   /** Diskten açılışta hangi önyükleyici çalışır: son kurulan sistemin önyükleyicisi */
   onyukleyici: 'windows' | 'grub';
   /** Şu an çalışan sistem (GRUB'dan seçilen) */
@@ -290,6 +291,8 @@ export function bagla(pc: WinPc, st: KhState): WinPc {
     out.fs[h] = { tur: 'klasor', boyut: f.etiket };
     for (const [rel, g] of Object.entries(f.dosyalar)) out.fs[`${h}/${rel}`] = { ...g };
   }
+  // Kasanın ağ kablosu Windows'un Ethernet bağdaştırıcısına bağlıdır
+  out.ag = { ...(out.ag ?? { wifi: '' }), kablo: pxeDurum(st).kablo };
   return derive(out);
 }
 
@@ -495,4 +498,20 @@ export function altSim<P, S>(ust: Sim<P>, al: (p: P) => S, koy: (p: P, s: S) => 
     restore: () => undefined,
     elapsedMs: ust.elapsedMs,
   };
+}
+
+/** Ubuntu'nun ağ durumu: kasadaki kablo ve bağlı Wi-Fi ile IP ayarları */
+export function ubuntuAg(st: KhState): { ethernet: IpSonuc | null; wifi: IpSonuc | null; internet: boolean } {
+  const u = st.ubuntu;
+  const eth = pxeDurum(st).kablo ? ipDegerlendir('ethernet', u?.ip?.ethernet) : null;
+  const wl = u?.wifi ? ipDegerlendir('wifi', u?.ip?.wifi) : null;
+  return { ethernet: eth, wifi: wl, internet: !!eth?.internet || !!wl?.internet };
+}
+/** Kabuğa (ip a, ping, apt) verilecek ağ bilgisi */
+export function kabukAgi(st: KhState): NonNullable<ShellState['ag']> {
+  const a = ubuntuAg(st);
+  return (['ethernet', 'wifi'] as AgTur[]).flatMap((t) => {
+    const d = a[t];
+    return d ? [{ arayuz: AGLAR[t].arayuz, ip: d.sorun === 'cakisma' ? d.aciklama.match(/(\d+\.\d+\.\d+\.\d+)/)?.[1] ?? d.ip : d.ip, onek: maskeOnek(d.maske), gecit: d.gecit, yerel: d.yerel, disari: d.disari, internet: d.internet, mac: AGLAR[t].mac }] : [];
+  });
 }

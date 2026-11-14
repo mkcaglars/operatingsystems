@@ -121,6 +121,11 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
   const [masaSec, setMasaSec] = useState<string | null>(null);
   const kok = useRef<HTMLDivElement>(null);
   const [agMenu, setAgMenu] = useState(false);
+  const [cakismaBildirim, setCakismaBildirim] = useState<string | null>(null);
+  const cakisma = pc.agDurum?.ethernet?.sorun === 'cakisma' ? pc.agDurum.ethernet.aciklama : pc.agDurum?.wifi?.sorun === 'cakisma' ? pc.agDurum.wifi.aciklama : null;
+  useEffect(() => {
+    setCakismaBildirim(cakisma);
+  }, [cakisma]);
   const [wifiSec, setWifiSec] = useState<string | null>(null);
   const [wifiPw, setWifiPw] = useState('');
   const [wifiHata, setWifiHata] = useState('');
@@ -517,8 +522,18 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         <div className="w11-agmenu" role="dialog" aria-label="Ağ ve İnternet">
           <b>Ağ ve İnternet</b>
           <div className="ag-satir">
-            🖧 Ethernet — {pc.ag?.kablo ? (pc.aygitlar.find((a) => a.id === 'lan')?.durum === 'ok' ? 'Bağlı' : 'Bağdaştırıcı çalışmıyor') : 'Ağ kablosu takılı değil'}
+            🖧 Ethernet —{' '}
+            {pc.ag?.kablo ? (pc.aygitlar.find((a) => a.id === 'lan')?.durum === 'ok' ? <span className={pc.agDurum?.ethernet?.internet ? 'ok-text' : 'err-text'}>{pc.agDurum?.ethernet?.internet ? 'Bağlı' : (pc.agDurum?.ethernet?.durum ?? 'Bağlı')}</span> : 'Bağdaştırıcı çalışmıyor') : 'Ağ kablosu takılı değil'}
+            {pc.ag?.kablo && (
+              <button className="ws-link small" onClick={() => (setAgMenu(false), open('ayarlar', 'ag-ethernet'))}>
+                Özellikler
+              </button>
+            )}
           </div>
+          {pc.ag?.wifi && pc.agDurum?.wifi && !pc.agDurum.wifi.internet && <div className="ag-satir err-text small">📶 {pc.ag.wifi}: {pc.agDurum.wifi.durum}</div>}
+          <button className="ws-link small" onClick={() => (setAgMenu(false), open('ayarlar', 'ag'))}>
+            Ağ ve İnternet ayarları
+          </button>
           {pc.aygitlar.some((a) => a.id === 'wifi') ? (
             <>
               <div className="ag-h">Wi-Fi</div>
@@ -559,6 +574,21 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
           ) : (
             <small className="muted">Bu bilgisayarda kablosuz ağ bağdaştırıcısı yok.</small>
           )}
+        </div>
+      )}
+      {cakismaBildirim && (
+        <div className="w11-bildirim" role="alert">
+          <b>Windows - Sistem Hatası</b>
+          <p>Windows bir IP adresi çakışması algıladı. Bu ağdaki başka bir sistem bu bilgisayarla aynı IP adresine sahip. Bu sorunu çözmek için ağ yöneticinize başvurun.</p>
+          <small className="muted">{cakismaBildirim}</small>
+          <div className="row">
+            <button className="ws-btn primary" onClick={() => (setCakismaBildirim(null), open('ayarlar', pc.agDurum?.ethernet?.sorun === 'cakisma' ? 'ag-ethernet' : 'ag-wifi'))}>
+              Ağ ayarları
+            </button>
+            <button className="ws-btn" onClick={() => setCakismaBildirim(null)}>
+              Tamam
+            </button>
+          </div>
         </div>
       )}
       {menuDurum && <BaglamMenu x={menuDurum.x} y={menuDurum.y} ogeler={menuDurum.ogeler} kapat={() => setMenuDurum(null)} />}
