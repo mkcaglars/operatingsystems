@@ -21,11 +21,13 @@ export interface Cmos {
   secureBoot: boolean;
   tpm: boolean;
 }
-export type Ekran = 'kapali' | 'post' | 'posthata' | 'setup' | 'bootmenu' | 'os' | 'kurulum' | 'bootfail' | 'bsod';
+export type Ekran = 'kapali' | 'post' | 'posthata' | 'setup' | 'bootmenu' | 'os' | 'kurulum' | 'bootfail' | 'bsod' | 'pxe';
 export interface BiosVeri {
   cmos: Cmos;
   aygitlar: { id: string; ad: string }[];
   usbTakili?: boolean;
+  /** Ağdan önyükleme (PXE) desteklenir: "pxe" aygıtı seçilince ekran "pxe" olur (gömülü kullanım) */
+  pxe?: boolean;
   diskSata?: string;
   bilgi: { anakart: string; bios: string; islemci: string; bellek: string };
   postHata?: { mesaj: string; tus: string; kosul: Rule };
@@ -171,6 +173,12 @@ export default function PcBios({ task, mode, sim, gomulu }: TaskUIProps & { gomu
           aygit = id;
           break;
         }
+      } else if (id === 'pxe') {
+        if (veri.pxe && st.cmos.lan) {
+          sonuc = 'pxe';
+          aygit = id;
+          break;
+        }
       } else if (id === 'ssd') {
         if (veri.diskYok && !st.donanim[veri.diskYok]) continue;
         aygit = id;
@@ -184,7 +192,7 @@ export default function PcBios({ task, mode, sim, gomulu }: TaskUIProps & { gomu
   const bootAygitlari = veri.aygitlar.filter((a) => a.id !== 'ssd' || diskVar);
   const bootSec = (id: string) => {
     const st = ref.current;
-    const sonuc: Ekran = id === 'usb' ? (veri.usbTakili && st.cmos.usbBoot ? 'kurulum' : 'bootfail') : id === 'ssd' ? (!diskVar ? 'bootfail' : veri.diskSata && st.cmos.sata !== veri.diskSata ? 'bsod' : 'os') : 'bootfail';
+    const sonuc: Ekran = id === 'pxe' && veri.pxe ? 'pxe' : id === 'usb' ? (veri.usbTakili && st.cmos.usbBoot ? 'kurulum' : 'bootfail') : id === 'ssd' ? (!diskVar ? 'bootfail' : veri.diskSata && st.cmos.sata !== veri.diskSata ? 'bsod' : 'os') : 'bootfail';
     sim.act('bootmenu.sec', { aygit: id, sonuc }, (x: State) => ({ ...x, ekran: sonuc, sonAcilis: sonuc }));
   };
 

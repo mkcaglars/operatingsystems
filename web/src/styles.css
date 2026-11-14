@@ -5196,3 +5196,37 @@ select.mini {
 .post-okul { height: 16cqi; width: auto; }
 .post-ad { display: flex; flex-direction: column; line-height: 1.05; }
 .post-ad small { font-size: 0.26em; letter-spacing: 0.04em; color: #9ca3af; margin-top: 0.4em; }
+
+/* PXE: istemci ekranı ve sunucu paneli */
+.kh-ekran > .pxe-text { white-space: pre-wrap; }
+.pxe-menu { position: absolute; inset: 0; background: #000; color: #ccc; font: max(11px, 1.55cqi) / 1.5 Consolas, 'Courier New', monospace; padding: 3cqi 4cqi; display: flex; flex-direction: column; gap: 1.2em; }
+.pxe-baslik { color: #fff; }
+.pxe-kutu { border: 2px solid #4a90d9; padding: 0.6em 0; max-width: 46em; }
+.pxe-kutu-h { color: #4a90d9; padding: 0 1em 0.4em; border-bottom: 1px solid #4a90d955; margin-bottom: 0.3em; }
+.pxe-satir { padding: 0.1em 1em; white-space: pre; }
+.pxe-satir.on { background: #4a90d9; color: #fff; }
+.pxe-satir.pasif { color: #777; }
+.pxe-yardim { color: #888; font-size: 0.9em; }
+.kh-lan { position: relative; display: flex; align-items: center; gap: 0.4em; background: #1d1d1d; border: 1px solid #444; border-radius: 6px; padding: 0.3em 0.5em; cursor: pointer; color: #ccc; margin: 0.3em auto; }
+.kh-lan small { font-size: 0.7em; letter-spacing: 0.05em; }
+.kh-rj45 { width: 1.6em; height: 1.2em; background: #0b0b0b; border: 2px solid #777; border-radius: 2px; position: relative; }
+.kh-rj45::after { content: ''; position: absolute; left: 30%; right: 30%; bottom: -2px; height: 30%; background: #0b0b0b; border: 2px solid #777; border-top: 0; }
+.kh-lan.takili .kh-rj45 { border-color: #f5c400; background: #3b82f6; }
+.kh-kablo { position: absolute; left: 0.55em; top: 100%; width: 0.6em; height: 2.2em; background: #3b82f6; border-radius: 0 0 3px 3px; }
+.kh-lan.takili { border-color: #22c55e; }
+.pxs-modal { position: fixed; inset: 0; background: #0007; z-index: 1000; display: grid; place-items: center; padding: 1em; }
+.pxs { background: #fff; color: #1e293b; border-radius: 10px; width: min(46em, 100%); max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px #0008; overflow: hidden; }
+.pxs-bas { display: flex; justify-content: space-between; align-items: center; background: #1e3a5f; color: #fff; padding: 0.6em 1em; }
+.pxs-bas button { background: none; border: 0; color: #fff; font-size: 1.1em; cursor: pointer; }
+.pxs-govde { padding: 0.6em 1.1em 1em; overflow: auto; }
+.pxs-govde h4 { margin: 0.9em 0 0.4em; }
+.pxs-acik { background: #f1f5f9; border-radius: 6px; padding: 0.5em 0.7em; }
+.pxs-hizmet { display: flex; justify-content: space-between; align-items: center; gap: 1em; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5em 0.7em; margin-bottom: 0.4em; }
+.pxs-hizmet > div { display: flex; flex-direction: column; gap: 0.15em; min-width: 0; }
+.pxs-hizmet small { color: #64748b; }
+.pxs-hizmet button { flex: none; font: inherit; font-size: 0.9em; padding: 0.35em 0.8em; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; color: #b91c1c; }
+.pxs-hizmet button.acik { color: #15803d; border-color: #86efac; background: #f0fdf4; }
+.pxs-hizmet button:disabled { opacity: 0.5; cursor: default; }
+.pxs-bar { display: block; height: 0.4em; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-top: 0.2em; }
+.pxs-bar i { display: block; height: 100%; background: #2563eb; transition: width 0.18s; }
+.pxs-gunluk { background: #0f172a; color: #a5f3fc; font: 0.8em/1.45 Consolas, monospace; padding: 0.6em; border-radius: 6px; max-height: 12em; overflow: auto; margin: 0; white-space: pre-wrap; }

@@ -39,7 +39,49 @@ export interface KhState {
   /** Kurulumdan sonraki ilk açılış ("Merhaba" ekranları) */
   winIlk: boolean;
   pc: WinPc;
-  iz: { usbAcilis: boolean; temiz: boolean; kurulumSayisi: number; turuncuSilindi: boolean; grubAcilan: string[]; yazilan?: string[] };
+  /** Okul ağındaki PXE sunucusu ve kasanın ağ kablosu (eski kayıtlarda yok → pxeDurum) */
+  pxe?: PxeState;
+  iz: { usbAcilis: boolean; temiz: boolean; kurulumSayisi: number; turuncuSilindi: boolean; grubAcilan: string[]; yazilan?: string[]; pxeKurulum?: boolean };
+}
+
+export type PxeImaj = 'windows' | 'ubuntu';
+export interface PxeState {
+  /** Kasanın arkasındaki ağ (RJ45) kablosu takılı mı */
+  kablo: boolean;
+  dhcp: boolean;
+  tftp: boolean;
+  imajlar: PxeImaj[];
+  /** Bu açılışta PXE menüsünden seçilen kurulum (yeniden başlatınca sıfırlanır) */
+  kaynak: PxeImaj | null;
+  gunluk: string[];
+}
+export const PXE_SUNUCU = { ad: 'SSEML-SRV01', ip: '192.168.1.10', istemciIp: '192.168.1.57', mac: '3C-7C-3F-1A-22-5E', dosya: 'ipxe.efi' };
+export const PXE_IMAJ: Record<PxeImaj, { ad: string; dosyalar: string; boyut: string }> = {
+  windows: { ad: 'Windows 11 Pro 24H2 (WDS)', dosyalar: 'boot.wim + install.wim', boyut: '5,4 GB' },
+  ubuntu: { ad: 'Ubuntu 24.04.1 LTS Desktop', dosyalar: 'casper/vmlinuz + initrd + ISO (HTTP)', boyut: '5,8 GB' },
+};
+export function pxeDurum(st: KhState): PxeState {
+  return st.pxe ?? { kablo: false, dhcp: true, tftp: false, imajlar: [], kaynak: null, gunluk: [] };
+}
+const saatDamga = () => new Date().toLocaleTimeString('tr-TR');
+export function pxeGunluk(st: KhState, satir: string): KhState {
+  const p = pxeDurum(st);
+  return { ...st, pxe: { ...p, gunluk: [...p.gunluk, `${saatDamga()}  ${satir}`].slice(-40) } };
+}
+export function pxeGuncelle(st: KhState, fn: (p: PxeState) => PxeState): KhState {
+  return { ...st, pxe: fn(pxeDurum(st)) };
+}
+/** PXE açılışının sonucu: hata kodu ya da menü */
+export function pxeSonuc(st: KhState): { hata: string | null; satirlar: string[] } {
+  const p = pxeDurum(st);
+  const s = ['>>Checking Media Presence......'];
+  if (!p.kablo) return { hata: 'kablo', satirlar: [...s, '>>Media Not Present', 'PXE-E61: Media test failure, check cable.'] };
+  s.push('>>Media Present......', '>>Start PXE over IPv4.');
+  if (!p.dhcp) return { hata: 'dhcp', satirlar: [...s, '  PXE-E51: No DHCP or proxyDHCP offers were received.'] };
+  s.push(`  Station IP address is ${PXE_SUNUCU.istemciIp}`, '', `  Server IP address is ${PXE_SUNUCU.ip}`, `  NBP filename is ${PXE_SUNUCU.dosya}`, '  NBP filesize is 1048576 Bytes');
+  if (!p.tftp) return { hata: 'tftp', satirlar: [...s, '>>Checking Media Presence......', '>>Media Present......', '  Downloading NBP file...', '', '  PXE-E32: TFTP open timeout.'] };
+  s.push('>>Checking Media Presence......', '>>Media Present......', '  Downloading NBP file...', '', '  Succeed to download NBP file.');
+  return { hata: null, satirlar: s };
 }
 
 /** Masaüstündeki kısa kılavuz (Not Defteri'nde açılır) */
@@ -302,9 +344,10 @@ export function biosVeri(st: KhState): BiosVeri {
     aygitlar: [
       { id: 'ssd', ad: st.onyukleyici === 'grub' && st.ubuntu ? 'ubuntu (Samsung SSD 870 EVO 500GB)' : windowsVar(st) ? 'Windows Boot Manager (Samsung SSD 870 EVO 500GB)' : 'Samsung SSD 870 EVO 500GB' },
       { id: 'usb', ad: usbAd },
-      { id: 'pxe', ad: 'UEFI: PXE IPv4 Realtek PCIe GbE Family Controller' },
+      ...(c.lan ? [{ id: 'pxe', ad: 'UEFI: PXE IPv4 Realtek PCIe GbE Family Controller' }] : []),
     ],
     usbTakili: uyumlu,
+    pxe: true,
     bilgi: BILGI,
   };
 }
@@ -439,6 +482,7 @@ export function yapilacaklar(st: KhState): { id: string; metin: string; tamam: b
     { id: 'excel', metin: "Excel'de formüllü bir tablo kaydedildi", tamam: yeni && Object.values(pc.fs).some((f) => f.tablo && Object.values(f.tablo).some((v) => /^=/.test(v))) },
     { id: 'ubuntu', metin: "Ubuntu, Windows'un yanına kuruldu (çift önyükleme)", tamam: !!st.ubuntu && windowsVar(st) && st.ubuntu.sh.grub.windows },
     { id: 'grub', metin: 'GRUB menüsünden hem Ubuntu hem Windows açıldı', tamam: st.iz.grubAcilan.includes('ubuntu') && st.iz.grubAcilan.includes('windows') },
+    { id: 'pxe', metin: 'PXE sunucusu hazırlandı ve bilgisayar ağdan (PXE) kuruluma açıldı', tamam: !!st.iz.pxeKurulum },
   ];
 }
 
