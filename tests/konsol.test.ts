@@ -55,5 +55,14 @@ describe('tarayıcı önerileri', () => {
     expect(oneriler('crome-indir.com')[0].url).toBe('www.google.com/chrome');
     expect(oneriler('winrr.com')[0].url).toBe('www.win-rar.com/turkce');
     expect(oneriler('asdfqwer.xyz')).toHaveLength(0);
+    for (const [g, u] of [['krom.com', 'www.google.com/chrome'], ['ofis-indir.net', 'www.microsoft.com/tr-tr/microsoft-365/office-2024'], ['vinrar.com', 'www.win-rar.com/turkce'], ['vindovs11.com', 'www.microsoft.com/tr-tr/software-download/windows11'], ['googlechrome.com', 'www.google.com/chrome'], ['ubunto.org', 'ubuntu.com/download/desktop']] as const)
+      expect(oneriler(g)[0]?.url, g).toBe(u);
+  });
+  it('aramada yazım hatası düzeltilir', async () => {
+    const { aramaDuzelt } = await import('../web/src/win/Tarayici');
+    expect(aramaDuzelt('krom indir')).toBe('chrome indir');
+    expect(aramaDuzelt('ofis 2024')).toBe('office 2024');
+    expect(aramaDuzelt('wndows 11 indir')).toBe('windows 11 indir');
+    expect(aramaDuzelt('winrar indir')).toBeNull();
   });
 });

@@ -62,16 +62,59 @@ function benzerlik(a: string, b: string): number {
   for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
   return d[a.length][b.length];
 }
+/** Türkçe yazılışlar ve sık yapılan yazım hataları → doğru anahtar sözcük */
+const ESANLAM: Record<string, string> = {
+  krom: 'chrome', kirom: 'chrome', crom: 'chrome', krome: 'chrome', gugıl: 'google', gugil: 'google', gogıl: 'google',
+  ofis: 'office', ofice: 'office', offis: 'office', vord: 'word', eksel: 'excel', ekzel: 'excel', powerpoynt: 'powerpoint',
+  vinrar: 'winrar', winrer: 'winrar', vinrer: 'winrar', rar: 'winrar',
+  vindovs: 'windows', windovs: 'windows', vindows: 'windows', windos: 'windows', windovz: 'windows',
+  akrobat: 'acrobat', adope: 'adobe', fotoşop: 'photoshop', fotosop: 'photoshop', rufüs: 'rufus', rufas: 'rufus', ubuntı: 'ubuntu', linuks: 'linux',
+};
+const TUM_ANAHTAR = [...new Set(['chrome', 'google', 'office', 'word', 'excel', 'powerpoint', 'microsoft', 'winrar', 'windows', 'rufus', 'ubuntu', 'linux', 'acrobat', 'reader', 'adobe', 'photoshop', 'mkcaglar', 'portal'])];
+const sade = (w: string) => w.toLocaleLowerCase('tr').replace(/ı/g, 'i').replace(/ş/g, 's').replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ü/g, 'u');
+/** Tek bir sözcüğü bilinen bir anahtar sözcüğe düzeltir (yoksa null) */
+function sozcukDuzelt(w0: string): string | null {
+  const w = w0.toLocaleLowerCase('tr');
+  if (w.length < 3) return null;
+  if (TUM_ANAHTAR.includes(w)) return w;
+  if (ESANLAM[w]) return ESANLAM[w];
+  const sw = sade(w);
+  if (ESANLAM[sw]) return ESANLAM[sw];
+  let en: [string, number] | null = null;
+  for (const a of TUM_ANAHTAR) {
+    const d = Math.min(benzerlik(sw, a), benzerlik(sw.replace(/k/g, 'c').replace(/v/g, 'w'), a));
+    const tol = a.length >= 7 ? 3 : a.length >= 5 ? 2 : 1;
+    if (d <= tol && (!en || d < en[1])) en = [a, d];
+  }
+  return en?.[0] ?? null;
+}
+/** Arama ifadesindeki yazım hatalarını düzeltir: "krom indir" → "chrome indir" (değişiklik yoksa null) */
+export function aramaDuzelt(q: string): string | null {
+  let degisti = false;
+  const out = q.split(/\s+/).map((w) => {
+    const d = sozcukDuzelt(w);
+    if (d && d !== w.toLocaleLowerCase('tr')) {
+      degisti = true;
+      return d;
+    }
+    return w;
+  });
+  return degisti ? out.join(' ') : null;
+}
 /** Yanlış yazılmış adres ya da arama için en yakın siteler */
 export function oneriler(girdi: string): typeof SITELER {
   const g = girdi.toLocaleLowerCase('tr').replace(/^https?:\/\//, '').replace(/^www\./, '');
   const kok = g.split(/[/.?#\s]/).filter(Boolean)[0] ?? g;
-  // "crome-indir.com" gibi girdilerde her sözcük ayrı karşılaştırılır
-  const sozcukler = g.split(/[/.?#\s\-_]+/).filter((w) => w.length >= 3 && !['com', 'net', 'org', 'www', 'indir', 'download', 'http', 'https'].includes(w));
+  const sozcukler = g.split(/[/.?#\s\-_]+/).filter((w) => w.length >= 3 && !['com', 'net', 'org', 'www', 'indir', 'download', 'http', 'https', 'html'].includes(w));
+  const duzeltilmis = new Set(sozcukler.map(sozcukDuzelt).filter((x): x is string => !!x));
+  // Bitişik yazılmış adlar: "googlechrome", "winrarindir"
+  for (const a of TUM_ANAHTAR) if (sade(g).includes(a)) duzeltilmis.add(a);
   return SITELER.map((s) => {
     const alan = s.url.replace(/^www\./, '').split('/')[0];
-    const anahtarPuan = Math.min(...s.anahtar.map((a) => (g.includes(a) ? 0 : Math.min(benzerlik(kok, a), ...sozcukler.map((w) => (benzerlik(w, a) <= Math.max(1, Math.floor(a.length / 3)) ? benzerlik(w, a) : 99))))));
-    return { s, p: Math.min(anahtarPuan, benzerlik(kok, alan.split('.')[0]), benzerlik(g, alan)) };
+    const anahtarPuan = s.anahtar.some((a) => duzeltilmis.has(a)) ? 0 : Math.min(...s.anahtar.map((a) => benzerlik(kok, a)));
+    // Ana anahtar (ilk) eşleşmesi öne geçsin
+    const oncelik = duzeltilmis.has(s.anahtar[0]) ? -1 : 0;
+    return { s, p: Math.min(anahtarPuan, benzerlik(kok, alan.split('.')[0]), benzerlik(g, alan)) + oncelik };
   })
     .filter((x) => x.p <= Math.max(2, Math.floor(kok.length / 3)))
     .sort((a, b) => a.p - b.p)
@@ -248,7 +291,30 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
             {ctx.chrome ? <Logo id="google" size="1.6em" oranli title="Google" /> : <Logo id="bing" size="1.6em" oranli title="Bing" />}
             <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Arama" />
           </form>
-          {sonuclar(url.slice(4)).map((r) => (
+          {aramaDuzelt(url.slice(4)) && (
+            <p className="br-dym">
+              Şunu mu demek istediniz:{' '}
+              <button className="br-link" onClick={() => git('ara:' + aramaDuzelt(url.slice(4)))}>
+                <b>
+                  <i>{aramaDuzelt(url.slice(4))}</i>
+                </b>
+              </button>
+            </p>
+          )}
+          {sonuclar(aramaDuzelt(url.slice(4)) ?? url.slice(4)).length === 0 && (
+            <div className="br-oneri">
+              <p className="small">
+                <b>{url.slice(4)}</b> ile ilgili sonuç bulunamadı.
+              </p>
+              <b>Bu simülasyonda indirilebilenler</b>
+              {SITELER.filter((x) => !x.url.includes('mkcaglar')).map((x) => (
+                <button key={x.url} className="br-link small" onClick={() => git(x.url)}>
+                  {x.ad}
+                </button>
+              ))}
+            </div>
+          )}
+          {sonuclar(aramaDuzelt(url.slice(4)) ?? url.slice(4)).map((r) => (
             <div key={r.url} className="br-res">
               <small>
                 {r.reklam && <b className="br-ad">Reklam · </b>}
