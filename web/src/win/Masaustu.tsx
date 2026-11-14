@@ -24,9 +24,10 @@ import Guvenlik from './Guvenlik';
 import Tarayici from './Tarayici';
 import Kurulum from './Kurulum';
 import Word from './Word';
+import Konsol from './Konsol';
 import SistemKoruma from './SistemKoruma';
 
-export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma' | 'rufus' | 'program' | 'notdefteri' | 'fotograflar';
+export type AppId = 'ayarlar' | 'gorev' | 'dosya' | 'aygit' | 'guvenlik' | 'edge' | 'chrome' | 'word' | 'kurulum' | 'sistemkoruma' | 'rufus' | 'program' | 'notdefteri' | 'fotograflar' | 'cmd' | 'powershell';
 
 export interface WinVeri {
   uygulamalar?: AppId[];
@@ -84,6 +85,8 @@ const APP_INFO: Record<AppId, { ad: string; ikon: string; renk: string }> = {
   program: { ad: 'Program', ikon: '▦', renk: '#64748b' },
   notdefteri: { ad: 'Not Defteri', ikon: '📝', renk: '#2c7be5' },
   fotograflar: { ad: 'Fotoğraflar', ikon: '🖼', renk: '#0ea5e9' },
+  cmd: { ad: 'Komut İstemi', ikon: '>_', renk: '#0c0c0c' },
+  powershell: { ad: 'Windows PowerShell', ikon: '>_', renk: '#012456' },
 };
 
 /** Pencere başlığı ve simgesi ("program" penceresinde kurulu programın kendisi) */
@@ -268,6 +271,8 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         },
       },
       { ayrac: true },
+      { ad: 'Terminalde aç', ikon: 'logo:powershell', onClick: () => open('powershell', MASA) },
+      { ayrac: true },
       { ad: 'Ekran ayarları', ikon: '🖥', onClick: () => open('ayarlar', 'ekran') },
       { ad: 'Kişiselleştir', ikon: '🖌', onClick: () => open('ayarlar', 'arkaplan') },
     ]);
@@ -295,6 +300,10 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         return <Fotograflar {...ctx} />;
       case 'word':
         return <Word {...ctx} />;
+      case 'cmd':
+        return <Konsol ctx={ctx} kabuk="cmd" />;
+      case 'powershell':
+        return <Konsol ctx={ctx} kabuk="ps" />;
       case 'kurulum':
         return <Kurulum key={w.arg} {...ctx} />;
       case 'sistemkoruma':
@@ -426,7 +435,16 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
       ))}
       {start && (
         <div className="w11-start">
-          <input placeholder="Uygulama, ayar ve belge arayın" aria-label="Başlat araması" />
+          <input
+            placeholder="Uygulama, ayar ve belge arayın"
+            aria-label="Başlat araması"
+            onKeyDown={(e) => {
+              if (e.key !== 'Enter') return;
+              const q = e.currentTarget.value.trim().toLocaleLowerCase('tr');
+              const hedef: AppId | null = /^(cmd|komut)/.test(q) ? 'cmd' : /^(powershell|terminal|ps)/.test(q) ? 'powershell' : /^(not|notepad)/.test(q) ? 'notdefteri' : /^(dosya|explorer|gezgin)/.test(q) ? 'dosya' : /^(ayar)/.test(q) ? 'ayarlar' : /^(görev|gorev|taskmgr)/.test(q) ? 'gorev' : null;
+              if (hedef) open(hedef);
+            }}
+          />
           <div className="w11-start-h">Sabitlenmiş</div>
           <div className="w11-start-grid">
             {izinli
@@ -439,11 +457,11 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
                 </button>
               ))}
           </div>
-          {kisayollar.length > 0 && (
+          {(
             <>
               <div className="w11-start-h">Tüm uygulamalar</div>
               <div className="w11-start-tum">
-                {kisayollar.map((k) => (
+                {[...kisayollar, { anahtar: 'cmd', ad: 'Komut İstemi', logo: 'cmd', ac: () => open('cmd'), masaustu: false }, { anahtar: 'powershell', ad: 'Windows PowerShell', logo: 'powershell', ac: () => open('powershell'), masaustu: false }].map((k) => (
                   <button key={k.anahtar} onClick={k.ac}>
                     <Logo id={k.logo} size="1.5em" />
                     {k.ad}

@@ -295,6 +295,8 @@ export default function DosyaGezgini(ctx: AppCtx) {
       { ad: 'Yeni klasör', ikon: '📁', devreDisi: !!zipArsiv, onClick: yeniKlasor },
       { ad: 'Yeni metin belgesi', ikon: '📝', devreDisi: !!zipArsiv, onClick: yeniMetin },
       { ayrac: true },
+      { ad: 'Terminalde aç', ikon: 'logo:powershell', devreDisi: !!zipArsiv, onClick: () => ctx.open('powershell', yol) },
+      { ayrac: true },
       { ad: 'Dosya adı uzantılarını göster', ikon: '', isaretli: pc.explorer.uzanti, onClick: () => act('gezgin.uzanti', { deger: !pc.explorer.uzanti }, (p) => ((p.explorer.uzanti = !p.explorer.uzanti), p)) },
       { ad: 'Gizli öğeleri göster', ikon: '', isaretli: pc.explorer.gizli, onClick: () => act('gezgin.gizli', { deger: !pc.explorer.gizli }, (p) => ((p.explorer.gizli = !p.explorer.gizli), p)) },
       { ayrac: true },

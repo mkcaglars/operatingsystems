@@ -5006,3 +5006,29 @@ select.mini {
 .ft-alan { flex: 1; display: grid; place-items: center; overflow: hidden; padding: 0.6em; }
 .ft-alan img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; }
 .ft-yer { font-size: 5em; opacity: 0.4; }
+/* ---- Tarayıcı: geçmiş, gerçek logolar, öneriler, gerçek site ekran görüntüsü ---- */
+.br-top button:disabled { opacity: 0.35; }
+.br-bing { display: inline-flex; align-items: center; gap: 0.25em; }
+.br-bing b { font: 600 2.4em 'Segoe UI', system-ui, sans-serif; color: #444; letter-spacing: -0.02em; }
+.br-sbar { display: flex; align-items: center; gap: 0.8em; }
+.br-hata { max-width: 40em; }
+.br-hata-ikon { font-size: 3em; opacity: 0.6; }
+.br-oneri { display: flex; flex-direction: column; align-items: flex-start; gap: 0.25em; margin: 0.9em 0; }
+.br-gercek { padding: 1em; display: flex; flex-direction: column; align-items: center; gap: 0.6em; }
+.br-gercek-resim { border: 1px solid #ddd; border-radius: 8px; padding: 0; background: #fff; cursor: pointer; overflow: hidden; max-width: 100%; box-shadow: 0 4px 14px #0002; }
+.br-gercek-resim img { display: block; max-width: 100%; max-height: 60vh; }
+.br-gercek-yer { display: flex; flex-direction: column; gap: 0.4em; padding: 3em 4em; background: linear-gradient(135deg, #0f4c75, #1d6a8f); color: #fff; min-width: 22em; }
+.br-gercek-yer b { font-size: 1.8em; }
+.pg-office aside button { background: none; border: 0; color: #fff; font: inherit; text-align: left; padding: 0.3em 0.4em; border-radius: 4px; cursor: pointer; }
+.pg-office aside button.on, .pg-office aside button:hover { background: #ffffff33; }
+.pg-office aside button.alt { margin-top: auto; }
+
+/* Komut İstemi / PowerShell */
+.konsol { height: 100%; min-height: 18em; overflow: auto; background: #0c0c0c; color: #cccccc; font: 0.82em/1.35 Consolas, 'Cascadia Mono', 'Courier New', monospace; padding: 0.5em 0.7em; cursor: text; }
+.konsol.ps { background: #012456; color: #eeedf0; }
+.konsol pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: inherit; }
+.konsol pre.hata { color: #f48771; }
+.konsol.ps pre.hata { color: #ff6b6b; background: #00000033; }
+.konsol-satir { display: flex; align-items: baseline; }
+.konsol-satir pre { flex: none; }
+.konsol-satir input { flex: 1; min-width: 2em; background: transparent; border: 0; outline: 0; color: inherit; font: inherit; padding: 0; caret-color: currentColor; }

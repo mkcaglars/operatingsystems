@@ -5,6 +5,7 @@ import Logo from '../components/Logo';
 import { goster, hesapla, SATIR_SAYISI, SUTUNLAR, type Hucreler } from '../core/tablo';
 import { adOf, KULLANICI } from '../core/winpc';
 import type { AppCtx } from './Masaustu';
+import { EtkinlestirPenceresi } from './OfficeEtkinlestir';
 
 const sutunNo = (ad: string) => SUTUNLAR.indexOf(ad[0]);
 const satirNo = (ad: string) => Number(ad.slice(1));
@@ -20,6 +21,7 @@ export default function Excel({ ctx, dosya: dosya0 }: { ctx: AppCtx; dosya?: str
   const [degisti, setDegisti] = useState(false);
   const [kaydet, setKaydet] = useState<{ ad: string; hata?: string } | null>(null);
   const [uyari, setUyari] = useState('');
+  const [etkDlg, setEtkDlg] = useState(false);
   const kok = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function Excel({ ctx, dosya: dosya0 }: { ctx: AppCtx; dosya?: str
 
   const yaz = (ad: string, deger: string) => {
     if (!etkin) {
-      setUyari('Ürün etkinleştirilmediği için düzenleme kapalı. Word › Dosya › Hesap › Ürünü Etkinleştir.');
+      setUyari('Ürün etkinleştirilmediği için düzenleme kapalı. Üstteki Etkinleştir düğmesini kullanın.');
       return;
     }
     if ((h[ad] ?? '') === deger) return;
@@ -124,7 +126,10 @@ export default function Excel({ ctx, dosya: dosya0 }: { ctx: AppCtx; dosya?: str
       </div>
       {!etkin && (
         <div className="pg-uyari">
-          <b>ÜRÜN ETKİNLEŞTİRİLMEDİ</b> Düzenleme devre dışı. Word'ü açıp Dosya › Hesap › Ürünü Etkinleştir ile ürün anahtarını girin.
+          <b>ÜRÜN ETKİNLEŞTİRİLMEDİ</b> Düzenleme devre dışı. Kullanmaya devam etmek için etkinleştirin.{' '}
+          <button className="ws-btn" onClick={() => setEtkDlg(true)}>
+            Etkinleştir
+          </button>
         </div>
       )}
       <div className="xl-fbar">
@@ -202,6 +207,7 @@ export default function Excel({ ctx, dosya: dosya0 }: { ctx: AppCtx; dosya?: str
         <span>{uyari || 'Hazır'}</span>
         <span>Sayfa1</span>
       </div>
+      {etkDlg && <EtkinlestirPenceresi ctx={ctx} kapat={() => setEtkDlg(false)} tamam={() => setUyari('Ürün etkinleştirildi.')} />}
       {kaydet && (
         <div className="ws-modal">
           <div className="ws-dlg">

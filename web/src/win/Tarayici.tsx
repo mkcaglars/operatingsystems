@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { INDIRILEN, KATALOG } from '../core/katalog';
 import Logo from '../components/Logo';
+import { photoUrl } from '../components/Photo';
 import type { AppCtx } from './Masaustu';
 
 interface Indirme {
@@ -30,6 +31,50 @@ const SAHTE: Record<string, { baslik: string; dosya: string; kurulum: string; sl
   'office-2024-crack-kms-indir.net': { baslik: 'Office 2024 KMS Etkinleştirici', dosya: 'KMSPico_Office2024.exe', kurulum: 'kms', slogan: 'Office 2024 Full + KMS — Ürün anahtarı gerekmez!' },
   'pdf-reader-hizli-indir.com': { baslik: 'PDF Reader Hızlı İndir', dosya: 'PDFReader_Setup(2).exe', kurulum: 'chrome-sahte', slogan: 'En iyi PDF okuyucu — tek tık kurulum!' },
 };
+
+/** Simülasyonda var olan siteler: yanlış adres ya da sonuçsuz aramada öneri olarak gösterilir */
+const SITELER: { url: string; ad: string; anahtar: string[] }[] = [
+  { url: 'www.google.com/chrome', ad: 'Google Chrome indir', anahtar: ['chrome', 'google', 'tarayici'] },
+  { url: 'www.microsoft.com/tr-tr/microsoft-365/office-2024', ad: 'Microsoft Office 2024 indir', anahtar: ['office', 'word', 'excel', 'powerpoint', 'microsoft'] },
+  { url: 'www.win-rar.com/turkce', ad: 'WinRAR Türkçe indir', anahtar: ['winrar', 'rar', 'zip', 'arsiv'] },
+  { url: 'www.microsoft.com/tr-tr/software-download/windows11', ad: 'Windows 11 indir (ISO)', anahtar: ['windows', 'win11', 'iso', 'microsoft'] },
+  { url: 'rufus.ie/tr', ad: 'Rufus — önyüklenebilir USB', anahtar: ['rufus', 'usb', 'bootable'] },
+  { url: 'ubuntu.com/download/desktop', ad: 'Ubuntu Desktop indir', anahtar: ['ubuntu', 'linux'] },
+  { url: 'get.adobe.com/tr/reader', ad: 'Adobe Acrobat Reader indir', anahtar: ['acrobat', 'reader', 'pdf', 'adobe'] },
+  { url: 'www.adobe.com/tr/products/photoshop', ad: 'Adobe Photoshop', anahtar: ['photoshop', 'adobe'] },
+  { url: 'mkcaglar.com', ad: 'mkcaglar.com', anahtar: ['mkcaglar', 'caglar'] },
+  { url: 'portal.mkcaglar.com', ad: 'Okul portalı (portal.mkcaglar.com)', anahtar: ['portal', 'mkcaglar'] },
+];
+/** Gerçek dünyadaki kısa adresler simülasyondaki sayfalara yönlenir */
+const KISA: Record<string, string> = {
+  'google.com': 'yeni', 'www.google.com': 'yeni', 'bing.com': 'yeni', 'www.bing.com': 'yeni',
+  'chrome.com': 'www.google.com/chrome', 'google.com/chrome': 'www.google.com/chrome',
+  'win-rar.com': 'www.win-rar.com/turkce', 'www.win-rar.com': 'www.win-rar.com/turkce', 'rarlab.com': 'www.win-rar.com/turkce',
+  'rufus.ie': 'rufus.ie/tr', 'www.rufus.ie': 'rufus.ie/tr', 'ubuntu.com': 'ubuntu.com/download/desktop', 'www.ubuntu.com': 'ubuntu.com/download/desktop',
+  'office.com': 'www.microsoft.com/tr-tr/microsoft-365/office-2024', 'www.office.com': 'www.microsoft.com/tr-tr/microsoft-365/office-2024',
+  'microsoft.com': 'www.microsoft.com/tr-tr/software-download/windows11', 'www.microsoft.com': 'www.microsoft.com/tr-tr/software-download/windows11',
+  'www.mkcaglar.com': 'mkcaglar.com', 'adobe.com': 'get.adobe.com/tr/reader',
+};
+function benzerlik(a: string, b: string): number {
+  // Levenshtein uzaklığı
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+/** Yanlış yazılmış adres ya da arama için en yakın siteler */
+export function oneriler(girdi: string): typeof SITELER {
+  const g = girdi.toLocaleLowerCase('tr').replace(/^https?:\/\//, '').replace(/^www\./, '');
+  const kok = g.split(/[/.?#\s]/).filter(Boolean)[0] ?? g;
+  return SITELER.map((s) => {
+    const alan = s.url.replace(/^www\./, '').split('/')[0];
+    const anahtarPuan = Math.min(...s.anahtar.map((a) => (g.includes(a) ? 0 : benzerlik(kok, a))));
+    return { s, p: Math.min(anahtarPuan, benzerlik(kok, alan.split('.')[0]), benzerlik(g, alan)) };
+  })
+    .filter((x) => x.p <= Math.max(2, Math.floor(kok.length / 3)))
+    .sort((a, b) => a.p - b.p)
+    .map((x) => x.s);
+}
 
 function sonuclar(q: string): Sonuc[] {
   const s = q.toLocaleLowerCase('tr');
@@ -73,7 +118,12 @@ function sonuclar(q: string): Sonuc[] {
       { url: 'www.adobe.com/tr/products/photoshop', baslik: 'Adobe Photoshop | Fotoğraf düzenleme yazılımı', ozet: 'Photoshop\'u Creative Cloud ile indirin. Sistem gereksinimleri ve okul lisansları.' },
       { url: 'photoshop-crack-2025.net', baslik: 'Photoshop 2025 Crack Full İndir', ozet: 'Lisanssız tam sürüm Photoshop.' },
     ];
-  return [{ url: 'www.bing.com', baslik: `"${q}" için sonuç bulunamadı`, ozet: 'Farklı anahtar kelimeler deneyin (ör. "chrome indir").' }];
+  if (/mkcaglar|portal/.test(s))
+    return [
+      { url: 'mkcaglar.com', baslik: 'mkcaglar.com', ozet: 'Bilişim teknolojileri ders kaynakları ve uygulamalar.' },
+      { url: 'portal.mkcaglar.com', baslik: 'Okul Portalı — portal.mkcaglar.com', ozet: 'Öğrenci ve öğretmen girişi, dersler ve uygulamalar.' },
+    ];
+  return oneriler(q).map((o) => ({ url: o.url, baslik: o.ad, ozet: 'Bunu mu arıyordunuz?' }));
 }
 
 export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
@@ -86,12 +136,32 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
   const [panel, setPanel] = useState(false);
   const [modal, setModal] = useState(false);
   const [ekT, setEkT] = useState({ scan: true, safe: true });
+  const [gecmis, setGecmis] = useState<{ liste: string[]; i: number }>({ liste: [ctx.arg || 'yeni'], i: 0 });
 
-  const git = (u: string) => {
+  const goster = (u: string) => {
     setUrl(u);
-    setAdres(u.startsWith('ara:') ? '' : u);
+    setAdres(u.startsWith('ara:') || u === 'yeni' ? '' : u);
+    setQ(u.startsWith('ara:') ? u.slice(4) : '');
     setModal(false);
+  };
+  const git = (u0: string) => {
+    const u = KISA[u0.replace(/\/$/, '')] ?? u0;
+    goster(u);
+    setGecmis((g) => ({ liste: [...g.liste.slice(0, g.i + 1), u], i: g.i + 1 }));
     ctx.log('tarayici.git', { url: u, cevrimici: pc.internet });
+  };
+  const geri = () => {
+    if (gecmis.i <= 0) return;
+    const i = gecmis.i - 1;
+    setGecmis({ ...gecmis, i });
+    goster(gecmis.liste[i]);
+    ctx.log('tarayici.geri', { url: gecmis.liste[i] });
+  };
+  const ileri = () => {
+    if (gecmis.i >= gecmis.liste.length - 1) return;
+    const i = gecmis.i + 1;
+    setGecmis({ ...gecmis, i });
+    goster(gecmis.liste[i]);
   };
   const ara = (e: FormEvent) => {
     e.preventDefault();
@@ -154,7 +224,16 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
     if (url === 'yeni')
       return (
         <div className="br-new">
-          <div className="br-logo">{ctx.chrome ? 'Google' : 'Bing'}</div>
+          <div className="br-logo">
+            {ctx.chrome ? (
+              <Logo id="google" size="3.2em" oranli title="Google" />
+            ) : (
+              <span className="br-bing">
+                <Logo id="bing" size="2.6em" oranli title="Bing" />
+                <b>Bing</b>
+              </span>
+            )}
+          </div>
           <form onSubmit={ara}>
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Web'de arayın" aria-label="Arama" autoFocus />
           </form>
@@ -164,6 +243,7 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
       return (
         <div className="br-results">
           <form onSubmit={ara} className="br-sbar">
+            {ctx.chrome ? <Logo id="google" size="1.6em" oranli title="Google" /> : <Logo id="bing" size="1.6em" oranli title="Bing" />}
             <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Arama" />
           </form>
           {sonuclar(url.slice(4)).map((r) => (
@@ -393,12 +473,68 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
           </button>
         </div>
       );
-    return <div className="br-page"><h2>Bu sayfaya ulaşılamıyor</h2><p className="small">{url} adresinin sunucu IP adresi bulunamadı.</p></div>;
+    if (url === 'mkcaglar.com' || url === 'portal.mkcaglar.com') {
+      const gercek = `https://${url}`;
+      const resim = photoUrl(url === 'mkcaglar.com' ? 'site-mkcaglar' : 'site-portal');
+      return (
+        <div className="br-gercek">
+          <button className="br-gercek-resim" onClick={() => (ctx.log('tarayici.gercek-site', { url }), window.open(gercek, '_blank', 'noopener'))} title={`${gercek} adresini yeni sekmede aç`}>
+            {resim ? (
+              <img src={resim} alt={`${url} ekran görüntüsü`} />
+            ) : (
+              <span className="br-gercek-yer">
+                <b>{url}</b>
+                <span>{url === 'mkcaglar.com' ? 'Bilişim teknolojileri ders kaynakları' : 'Okul portalı: öğrenci ve öğretmen girişi'}</span>
+              </span>
+            )}
+          </button>
+          <p className="small muted">Bu, sitenin ekran görüntüsüdür. Gerçek siteye gitmek için görüntüye tıklayın: bilgisayarınızın tarayıcısında yeni sekmede açılır.</p>
+        </div>
+      );
+    }
+    const oneri = oneriler(url);
+    return (
+      <div className="br-page br-hata">
+        <div className="br-hata-ikon">{ctx.chrome ? '📄' : '🌐'}</div>
+        <h2>Bu siteye ulaşılamıyor</h2>
+        <p className="small">
+          <b>{url}</b> adresinin sunucu IP adresi bulunamadı.
+        </p>
+        {oneri.length > 0 && (
+          <div className="br-oneri">
+            <b>Şunu mu demek istediniz?</b>
+            {oneri.slice(0, 3).map((o) => (
+              <button key={o.url} className="br-link" onClick={() => git(o.url)}>
+                {o.url} — {o.ad}
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="br-oneri">
+          <b>Bu simülasyonda indirilebilenler</b>
+          {SITELER.filter((s) => !oneri.slice(0, 3).includes(s) && !s.url.includes('mkcaglar')).map((s) => (
+            <button key={s.url} className="br-link small" onClick={() => git(s.url)}>
+              {s.ad}
+            </button>
+          ))}
+        </div>
+        <p className="small muted">{ctx.chrome ? 'ERR_NAME_NOT_RESOLVED' : 'DNS_PROBE_FINISHED_NXDOMAIN'}</p>
+      </div>
+    );
   }
 
   return (
-    <div className={'br' + (ctx.chrome ? ' chrome' : '')}>
+    <div className={'br' + (ctx.chrome ? ' chrome' : '')} onKeyDown={(e) => e.altKey && e.key === 'ArrowLeft' && (e.preventDefault(), geri())}>
       <div className="br-top">
+        <button onClick={geri} disabled={gecmis.i <= 0} aria-label="Geri" title="Geri (Alt+Sol ok)">
+          ←
+        </button>
+        <button onClick={ileri} disabled={gecmis.i >= gecmis.liste.length - 1} aria-label="İleri" title="İleri">
+          →
+        </button>
+        <button onClick={() => goster(url)} aria-label="Yenile" title="Yenile">
+          ⟳
+        </button>
         <button onClick={() => git('yeni')} aria-label="Ana sayfa">
           ⌂
         </button>

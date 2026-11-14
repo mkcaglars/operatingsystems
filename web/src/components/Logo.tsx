@@ -217,6 +217,14 @@ const L: Record<string, (u: string) => ReactElement> = {
       <rect x="12" y="29" width="16" height="3" fill="#e2e8f0" />
     </svg>
   ),
+  cmd: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="4" y="8" width="40" height="32" rx="3" fill="#1f1f1f" />
+      <rect x="4" y="8" width="40" height="6" rx="3" fill="#3c3c3c" />
+      <path d="M11 21l7 5-7 5" stroke="#e5e5e5" strokeWidth="2.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M21 32h10" stroke="#e5e5e5" strokeWidth="2.6" strokeLinecap="round" />
+    </svg>
+  ),
   notdefteri: () => (
     <svg viewBox="0 0 48 48">
       <rect x="9" y="5" width="30" height="38" rx="3" fill="#2c7be5" />
@@ -250,7 +258,7 @@ export function uygulamaLogo(id: string): string {
   return id in L || id in MARKA_LOGOLARI ? id : 'program';
 }
 
-export default function Logo({ id, size = '1.6em', title }: { id: string; size?: string; title?: string }) {
+export default function Logo({ id, size = '1.6em', title, oranli }: { id: string; size?: string; title?: string; /** true: yükseklik size, genişlik logonun kendi oranında (ör. yazı logoları) */ oranli?: boolean }) {
   const u = useId().replace(/:/g, '');
   // assets/gorseller/ikon-<id> yüklenmişse gerçek simge kullanılır
   const foto = photoUrl('ikon-' + id);
@@ -266,7 +274,7 @@ export default function Logo({ id, size = '1.6em', title }: { id: string; size?:
     let body = m.body;
     for (const [, kimlik] of body.matchAll(/id="([^"]+)"/g)) body = body.split(`"${kimlik}"`).join(`"${u}${kimlik}"`).split(`#${kimlik})`).join(`#${u}${kimlik})`).split(`"#${kimlik}"`).join(`"#${u}${kimlik}"`);
     return (
-      <span className="logo-svg" style={{ width: size, height: size }} role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+      <span className="logo-svg" style={{ width: oranli ? `calc(${size} * ${m.w / m.h})` : size, height: size }} role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
         <svg viewBox={`0 0 ${m.w} ${m.h}`} dangerouslySetInnerHTML={{ __html: body }} />
       </span>
     );
