@@ -47,3 +47,13 @@ describe('cmd / PowerShell', () => {
     expect(tamamla(pc, KULLANICI, 'cd bel')).toBe('cd Belgeler');
   });
 });
+
+describe('tarayıcı önerileri', () => {
+  it('yanlış yazılmış adres için siteler önerilir', async () => {
+    const { oneriler } = await import('../web/src/win/Tarayici');
+    for (const g of ['crome-indir.com', 'gogle.com', 'winrr.com', 'rufis.ie', 'ofice.com', 'asdfqwer.xyz']) console.log(g, oneriler(g).slice(0, 3).map((s) => s.url));
+    expect(oneriler('crome-indir.com')[0].url).toBe('www.google.com/chrome');
+    expect(oneriler('winrr.com')[0].url).toBe('www.win-rar.com/turkce');
+    expect(oneriler('asdfqwer.xyz')).toHaveLength(0);
+  });
+});
