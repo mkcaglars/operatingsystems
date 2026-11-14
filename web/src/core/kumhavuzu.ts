@@ -512,6 +512,7 @@ export function kabukAgi(st: KhState): NonNullable<ShellState['ag']> {
   const a = ubuntuAg(st);
   return (['ethernet', 'wifi'] as AgTur[]).flatMap((t) => {
     const d = a[t];
-    return d ? [{ arayuz: AGLAR[t].arayuz, ip: d.sorun === 'cakisma' ? d.aciklama.match(/(\d+\.\d+\.\d+\.\d+)/)?.[1] ?? d.ip : d.ip, onek: maskeOnek(d.maske), gecit: d.gecit, yerel: d.yerel, disari: d.disari, internet: d.internet, mac: AGLAR[t].mac }] : [];
+    // Çakışmada NetworkManager bağlantıyı etkinleştirmez: arayüzün adresi olmaz
+    return d && d.sorun !== 'cakisma' ? [{ arayuz: AGLAR[t].arayuz, ip: d.ip, onek: maskeOnek(d.maske), gecit: d.gecit, yerel: d.yerel, disari: d.disari, internet: d.internet, mac: AGLAR[t].mac }] : [];
   });
 }
