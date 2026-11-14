@@ -25,6 +25,8 @@ import {
   type FlashId,
   type KhState,
   pxeDurum,
+  ubuntuAg,
+  kabukAgi,
   pxeGuncelle,
   pxeGunluk,
   pxeSonuc,
@@ -319,7 +321,7 @@ export default function KumHavuzu() {
   const ukurSim = altSim(sim, (s) => s.ukur!, (s, k) => ({ ...s, ukur: k }));
   const shSim = st.ubuntu && altSim<KhState, { sh: ShellState }>(
     sim,
-    (s) => ({ sh: s.ubuntu!.sh }),
+    (s) => ({ sh: { ...s.ubuntu!.sh, ag: kabukAgi(s) } }),
     (s, v) => ({ ...s, ubuntu: { ...s.ubuntu!, sh: v.sh } }),
   );
   const grubSec = (hedef: 'ubuntu' | 'windows' | 'uefi') => {
@@ -413,6 +415,10 @@ export default function KumHavuzu() {
             log={(t, d) => sim.act(t, d ?? {}, (x) => x)}
             usb={st.portlar.filter((x): x is FlashId => !!x).map((id) => ({ id, ad: st.flash[id].ad, kapasite: st.flash[id].kapasite, etiket: st.flash[id].etiket, icerik: st.flash[id].icerik, dosyaSayisi: Object.keys(st.flash[id].dosyalar).length }))}
             usbYaz={(id, iso) => sim.act('ubuntu.usb-yaz', { aygit: id, iso }, (x) => rufusYaz(x, id as FlashId, 'GPT', iso))}
+            kablo={pxe.kablo}
+            ag={ubuntuAg(st)}
+            ipAyar={st.ubuntu!.ip ?? {}}
+            ipKaydet={(tur, ayar) => sim.act('ubuntu.ip-ayarla', { tur, mod: ayar.mod, ip: ayar.ip, maske: ayar.maske, gecit: ayar.gecit, dns: [ayar.dns1, ayar.dns2].filter(Boolean).join(',') }, (x) => (x.ubuntu ? { ...x, ubuntu: { ...x.ubuntu, ip: { ...(x.ubuntu.ip ?? {}), [tur]: ayar } } } : x))}
             wifiBaglan={(ag) => sim.act('ubuntu.wifi', { ag }, (x) => (x.ubuntu ? { ...x, ubuntu: { ...x.ubuntu, wifi: ag } } : x))}
           />
         </div>

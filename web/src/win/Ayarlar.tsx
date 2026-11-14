@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { programDosyalari, sifirla } from '../core/winpc';
 import { Toggle, type AppCtx } from './Masaustu';
 import Logo, { uygulamaLogo } from '../components/Logo';
+import { AgSayfasi } from './AgAyarlari';
 import { duvarArkaPlan } from '../components/Photo';
 
 type Sayfa =
@@ -12,11 +13,13 @@ type Sayfa =
   | 'uygulamalar' | 'yuklu' | 'varsayilan' | 'varsayilan-app' | 'baslangic'
   | 'hesaplar' | 'digerleri'
   | 'erisim' | 'metin' | 'isaretci' | 'kontrast'
-  | 'gizlilik' | 'update';
+  | 'gizlilik' | 'update'
+  | 'ag' | 'ag-ethernet' | 'ag-wifi';
 
 const NAV: [Sayfa, string, string][] = [
   ['sistem', 'Sistem', '🖥'],
   ['cihazlar', 'Bluetooth ve cihazlar', '🖱'],
+  ['ag', 'Ağ ve İnternet', '🌐'],
   ['kisisel', 'Kişiselleştirme', '🖌'],
   ['uygulamalar', 'Uygulamalar', '▦'],
   ['hesaplar', 'Hesaplar', '👤'],
@@ -33,6 +36,7 @@ const KOK: Record<Sayfa, Sayfa> = {
   hesaplar: 'hesaplar', digerleri: 'hesaplar',
   erisim: 'erisim', metin: 'erisim', isaretci: 'erisim', kontrast: 'erisim',
   gizlilik: 'gizlilik', update: 'update',
+  ag: 'ag', 'ag-ethernet': 'ag', 'ag-wifi': 'ag',
 };
 
 const SURE = [
@@ -74,6 +78,7 @@ export default function Ayarlar(ctx: AppCtx) {
     hesaplar: 'Hesaplar', digerleri: 'Hesaplar  ›  Diğer kullanıcılar',
     erisim: 'Erişilebilirlik', metin: 'Erişilebilirlik  ›  Metin boyutu', isaretci: 'Erişilebilirlik  ›  Fare işaretçisi ve dokunma', kontrast: 'Erişilebilirlik  ›  Kontrast temaları',
     gizlilik: 'Gizlilik ve güvenlik', update: 'Windows Update',
+    ag: 'Ağ ve İnternet', 'ag-ethernet': 'Ağ ve İnternet  ›  Ethernet', 'ag-wifi': `Ağ ve İnternet  ›  Wi-Fi${pc.ag?.wifi ? '  ›  ' + pc.ag.wifi : ''}`,
   };
 
   function icerik() {
@@ -381,6 +386,10 @@ export default function Ayarlar(ctx: AppCtx) {
             </Row>
           </>
         );
+      case 'ag':
+      case 'ag-ethernet':
+      case 'ag-wifi':
+        return <AgSayfasi ctx={ctx} sayfa={sayfa} git={(x) => git(x as Sayfa)} />;
       case 'gizlilik':
         return <Row t="Windows Güvenliği" d="Virüsten koruma, tarayıcı, güvenlik duvarı ve ağ koruması" onClick={() => ctx.open('guvenlik')} />;
       case 'update':

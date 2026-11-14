@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { calistir, coz, goster, tamamla } from '../web/src/core/winkabuk';
-import { defaultPc, KULLANICI, type WinPc } from '../web/src/core/winpc';
+import { defaultPc, derive, KULLANICI, type WinPc } from '../web/src/core/winpc';
+import { ayarHatalari, ipDegerlendir } from '../web/src/core/ag';
 
 const uygula = (pc: WinPc, cwd: string, s: string, k: 'cmd' | 'ps' = 'cmd') => {
   const r = calistir(pc, cwd, s, k);
@@ -34,9 +35,11 @@ describe('cmd / PowerShell', () => {
     const pc = defaultPc();
     expect(uygula(pc, 'C:', 'foo').cikti).toContain('tanınmıyor');
     expect(uygula(pc, 'C:', 'foo', 'ps').cikti).toContain('cmdlet');
-    pc.internet = false;
+    pc.ag.kablo = false;
+    derive(pc);
     expect(uygula(pc, 'C:', 'ping google.com').cikti).toContain('bulamadı');
-    pc.internet = true;
+    pc.ag.kablo = true;
+    derive(pc);
     expect(uygula(pc, 'C:', 'ping google.com').cikti).toContain('Kaybolan = 0');
     expect(uygula(pc, 'C:', 'ipconfig').cikti).toContain('Windows IP');
     expect(uygula(pc, 'C:', 'whoami').cikti).toContain('\\');
@@ -64,5 +67,48 @@ describe('tarayıcı önerileri', () => {
     expect(aramaDuzelt('ofis 2024')).toBe('office 2024');
     expect(aramaDuzelt('wndows 11 indir')).toBe('windows 11 indir');
     expect(aramaDuzelt('winrar indir')).toBeNull();
+  });
+});
+
+describe('IP ayarları', () => {
+  const elle = (ip: string, gecit = '192.168.1.1', dns1 = '8.8.8.8', maske = '255.255.255.0') => ({ mod: 'elle' as const, ip, maske, gecit, dns1, dns2: '' });
+  it('DHCP ve doğru statik IP ile internet var', () => {
+    expect(ipDegerlendir('ethernet', undefined).internet).toBe(true);
+    expect(ipDegerlendir('ethernet', elle('192.168.1.60')).internet).toBe(true);
+  });
+  it('çakışma, yanlış alt ağ, ağ geçidi ve DNS', () => {
+    expect(ipDegerlendir('ethernet', elle('192.168.1.10')).sorun).toBe('cakisma');
+    expect(ipDegerlendir('ethernet', elle('192.168.2.60')).sorun).toBe('alt-ag');
+    const g = ipDegerlendir('ethernet', elle('192.168.1.60', '192.168.1.254'));
+    expect([g.sorun, g.yerel, g.internet]).toEqual(['gecit', true, false]);
+    const d = ipDegerlendir('ethernet', elle('192.168.1.60', '192.168.1.1', '10.0.0.53'));
+    expect([d.sorun, d.disari, d.internet]).toEqual(['dns', true, false]);
+  });
+  it('biçim hataları kaydedilmez', () => {
+    expect(ayarHatalari(elle('192.168.1.300'))).not.toHaveLength(0);
+    expect(ayarHatalari(elle('192.168.1.60', '192.168.1.1', '8.8.8.8', '255.0.255.0'))).not.toHaveLength(0);
+    expect(ayarHatalari(elle('192.168.1.255'))).not.toHaveLength(0);
+  });
+  it('Windows: çakışmada internet kopar, ipconfig ve ping bunu gösterir', () => {
+    const pc = defaultPc();
+    pc.ag.ip = { ethernet: elle('192.168.1.10') };
+    derive(pc);
+    expect(pc.internet).toBe(false);
+    expect(pc.agSorunlari).toContain('cakisma');
+    expect(uygula(pc, 'C:', 'ipconfig').cikti).toContain('Çoğaltılmış');
+    pc.ag.ip = { ethernet: elle('192.168.1.60', '192.168.1.1', '10.0.0.53') };
+    derive(pc);
+    expect(uygula(pc, 'C:', 'ping 8.8.8.8').cikti).toContain('Kaybolan = 0');
+    expect(uygula(pc, 'C:', 'ping google.com').cikti).toContain('bulamadı');
+  });
+});
+
+describe('APIPA adresi', () => {
+  it('çakışmada geçerli 169.254.x.x verilir', async () => {
+    const { ipDegerlendir, ipGecerli } = await import('../web/src/core/ag');
+    for (const ip of ['192.168.1.10', '192.168.1.1', '192.168.1.124', '192.168.10.50']) {
+      const d = ipDegerlendir(ip.startsWith('192.168.10') ? 'wifi' : 'ethernet', { mod: 'elle', ip, maske: '255.255.255.0', gecit: '192.168.1.1', dns1: '8.8.8.8', dns2: '' });
+      expect(d.ip.startsWith('169.254.') && ipGecerli(d.ip), d.ip).toBe(true);
+    }
   });
 });

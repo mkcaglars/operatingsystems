@@ -9,7 +9,8 @@ import Terminal from './Terminal';
 import type { Sim } from '../core/sim';
 import { dugum, evKlasoru, type FsNode, type ShellState } from '../core/shell';
 import type { Json } from '../core/rules';
-import { BaslangicDiski, Dosyalar, Firefox, MetinDuzenleyici, UbuntuAyarlar, type UbApp, type UbCtx, type UbUsb } from './UbuntuUygulamalar';
+import { BaslangicDiski, Dosyalar, Firefox, MetinDuzenleyici, UbuntuAyarlar, type UbAg, type UbApp, type UbCtx, type UbUsb } from './UbuntuUygulamalar';
+import type { AgTur, IpAyar } from '../core/ag';
 
 interface Props {
   hesap: { ad: string; kullanici: string; bilgisayar: string; parola: string };
@@ -20,9 +21,14 @@ interface Props {
   wifiBaglan?: (ag: string) => void;
   usb?: UbUsb[];
   usbYaz?: (id: string, iso: string) => void;
+  kablo?: boolean;
+  ag?: UbAg;
+  ipAyar?: Partial<Record<AgTur, IpAyar>>;
+  ipKaydet?: (tur: AgTur, ayar: IpAyar) => void;
 }
 
-export function UbuntuMasaustu({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz }: Props) {
+export function UbuntuMasaustu(props: Props) {
+  const { hesap, log, wifi, kablo } = props;
   const [girdi, setGirdi] = useState(false);
   const [pw, setPw] = useState('');
   const [hata, setHata] = useState('');
@@ -45,7 +51,7 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log, wifiBaglan, usb, us
         <div className="ubx-top">
           <span />
           <UbuntuSaat />
-          <span>{wifi ? '📶' : '🌐'} 🔊 ⏻</span>
+          <span>{kablo ? '🖧' : wifi ? '📶' : '🌐'} 🔊 ⏻</span>
         </div>
         <form className="ubx-login-box" onSubmit={giris}>
           <div className="ubx-avatar">{(hesap.ad || hesap.kullanici).slice(0, 1).toUpperCase()}</div>
@@ -59,7 +65,7 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log, wifiBaglan, usb, us
       </div>
     );
 
-  return <UbuntuOturum hesap={hesap} wifi={wifi} sim={sim} guc={guc} log={log} wifiBaglan={wifiBaglan} usb={usb} usbYaz={usbYaz} />;
+  return <UbuntuOturum {...props} />;
 }
 
 type Pencere = { id: number; app: UbApp; arg?: string; x: number; y: number; buyuk: boolean; kucuk: boolean };
@@ -74,7 +80,7 @@ const UYG: Record<UbApp, { ad: string; logo: string; w: number; h: number }> = {
 const TUM: UbApp[] = ['firefox', 'dosyalar', 'terminal', 'gedit', 'ayarlar', 'usbyazici'];
 const DOCK: UbApp[] = ['firefox', 'dosyalar', 'terminal', 'gedit', 'ayarlar'];
 
-function UbuntuOturum({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz }: Props) {
+function UbuntuOturum({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz, kablo, ag, ipAyar, ipKaydet }: Props) {
   const sh = sim.state.sh;
   const ev = evKlasoru(sh);
   const [wins, setWins] = useState<Pencere[]>([]);
@@ -87,6 +93,10 @@ function UbuntuOturum({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz }: P
   const surukle = useRef<{ id: number; dx: number; dy: number } | null>(null);
   const [masaSec, setMasaSec] = useState<string | null>(null);
 
+  const cakisma = ag?.ethernet?.sorun === 'cakisma' ? ag.ethernet.aciklama : ag?.wifi?.sorun === 'cakisma' ? ag.wifi.aciklama : null;
+  useEffect(() => {
+    if (cakisma) setNot(`Bağlantı başarısız — ${cakisma} Ağ bağlantısı etkinleştirilemedi.`);
+  }, [cakisma]);
   useEffect(() => {
     if (!not) return;
     const t = setTimeout(() => setNot(''), 6000);
@@ -162,12 +172,14 @@ function UbuntuOturum({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz }: P
         <UbuntuSaat />
         <span className="rel">
           <button className="ubx-tray" onClick={() => setMenu((m) => !m)} aria-label="Sistem menüsü">
-            {wifi ? '📶' : '🌐'} 🔊 ⏻ ▾
+            {kablo ? '🖧' : wifi ? '📶' : '🌐'}{ag && !ag.internet && (kablo || wifi) ? '?' : ''} 🔊 ⏻ ▾
           </button>
           {menu && (
             <span className="ubx-menu">
-              <span className="small">{wifi ? `Wi-Fi: ${wifi}` : 'Ağ bağlantısı yok'}</span>
-              <button onClick={() => (setMenu(false), ac('ayarlar'))}>⚙ Ayarlar{wifi ? '' : ' › Wi-Fi'}</button>
+              {kablo && <span className="small">🖧 Kablolu: {ag?.ethernet?.internet ? 'Bağlı' : ag?.ethernet?.sorun === 'cakisma' ? 'Bağlantı başarısız (IP çakışması)' : 'Bağlı, internet yok'}</span>}
+              <span className="small">{wifi ? `📶 Wi-Fi: ${wifi}${ag?.wifi && !ag.wifi.internet ? ' (internet yok)' : ''}` : kablo ? '📶 Wi-Fi: bağlı değil' : 'Ağ bağlantısı yok'}</span>
+              <button onClick={() => (setMenu(false), ac('ayarlar', 'ag'))}>🖧 Ağ Ayarları</button>
+              <button onClick={() => (setMenu(false), ac('ayarlar'))}>⚙ Ayarlar</button>
               <button onClick={() => (log('ubuntu.yeniden'), guc('yeniden'))}>Yeniden Başlat…</button>
               <button onClick={() => (log('ubuntu.kapat'), guc('kapat'))}>Kapat…</button>
             </span>
@@ -207,7 +219,7 @@ function UbuntuOturum({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz }: P
         </div>
         {wins.map((w) => {
           const u = UYG[w.app];
-          const ctx: UbCtx = { sim, wifi, wifiBaglan, usb, usbYaz, parola: hesap.parola || undefined, ac, kapat: () => kapat(w.id), log, bildir: setNot, arg: w.arg };
+          const ctx: UbCtx = { sim, wifi, wifiBaglan, usb, usbYaz, kablo, ag, ipAyar, ipKaydet, parola: hesap.parola || undefined, ac, kapat: () => kapat(w.id), log, bildir: setNot, arg: w.arg };
           const baslik = w.app === 'gedit' || w.app === 'dosyalar' ? (w.arg ? `${w.arg.slice(w.arg.lastIndexOf('/') + 1)} — ${u.ad}` : u.ad) : w.app === 'terminal' ? `${sh.user}@${sh.host}: ${sh.cwd.replace(ev, '~')}` : u.ad;
           return (
             <div
