@@ -562,7 +562,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
                             setWifiSec(null);
                           }}
                         >
-                          {w.sifre && <input type="password" autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
+                          {w.sifre && <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
                           <button className="ws-btn primary">Bağlan</button>
                           {wifiHata && <small className="err-text">{wifiHata}</small>}
                         </form>
@@ -632,7 +632,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
               <>
                 <p className="small">Devam etmek için bir yönetici kullanıcı adı ve parolası girin.</p>
                 <div className="uac-user">👤 {veri.yonetici?.ad ?? 'Yönetici'}</div>
-                <input type="password" placeholder="Parola" value={uacPw} onChange={(e) => setUacPw(e.target.value)} aria-label="Yönetici parolası" />
+                <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parola" value={uacPw} onChange={(e) => setUacPw(e.target.value)} aria-label="Yönetici parolası" />
                 {uacErr && <small className="err-text">{uacErr}</small>}
               </>
             ) : null}

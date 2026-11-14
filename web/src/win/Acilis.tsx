@@ -134,7 +134,7 @@ export default function WindowsAcilis({ kullanici, parola, ilk, onIlkBitti, log,
             </>
           ) : parola ? (
             <div className="win-parola">
-              <input type="password" autoFocus value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Parola" aria-label="Windows parolası" />
+              <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Parola" aria-label="Windows parolası" />
               <button aria-label="Oturum aç">→</button>
             </div>
           ) : (

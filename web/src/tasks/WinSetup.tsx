@@ -485,7 +485,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
                           setO({ ag: 'wifi:' + w.ssid }, 'oobe.ag', 'ad');
                         }}
                       >
-                        {w.sifre && <input type="password" autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
+                        {w.sifre && <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
                         <button className="ws-btn primary">Bağlan</button>
                       </form>
                     )}
@@ -533,8 +533,8 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
             <h2>Bu cihazı kim kullanacak?</h2>
             <p className="small">Yerel (çevrimdışı) hesap oluşturuluyor.</p>
             <input placeholder="Ad" value={form.kullanici} onChange={(e) => setForm({ ...form, kullanici: e.target.value })} aria-label="Kullanıcı adı" />
-            <input type="password" placeholder="Parola" value={form.p1} onChange={(e) => setForm({ ...form, p1: e.target.value })} aria-label="Parola" />
-            <input type="password" placeholder="Parolanızı onaylayın" value={form.p2} onChange={(e) => setForm({ ...form, p2: e.target.value })} aria-label="Parola onay" />
+            <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parola" value={form.p1} onChange={(e) => setForm({ ...form, p1: e.target.value })} aria-label="Parola" />
+            <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parolanızı onaylayın" value={form.p2} onChange={(e) => setForm({ ...form, p2: e.target.value })} aria-label="Parola onay" />
             <p className="small">Parolanızı unutursanız diye üç güvenlik sorusu yanıtlayın:</p>
             {['İlk evcil hayvanınızın adı neydi?', 'Doğduğunuz şehrin adı nedir?', 'Çocukluk takma adınız neydi?'].map((q, i) => (
               <input key={q} placeholder={q} value={guv[i]} onChange={(e) => setGuv(guv.map((g, j) => (j === i ? e.target.value : g)))} aria-label={`Güvenlik sorusu ${i + 1}`} />
