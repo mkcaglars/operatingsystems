@@ -549,3 +549,35 @@ export function complete(s: ShellState, line: string): string {
   parts[parts.length - 1] = base + (k.includes(' ') ? `"${k}"` : k) + (n.c[k].t === 'd' ? '/' : ' ');
   return parts.join(' ');
 }
+
+// ---------- Grafik uygulamalar (Ubuntu Dosyalar, Firefox) için dosya sistemi işlemleri ----------
+
+/** Mutlak yoldaki düğüm (yoksa null) */
+export function dugum(s: ShellState, abs: string): FsNode | null {
+  return getNode(s.fs, abs);
+}
+/** Ev klasörü */
+export function evKlasoru(s: ShellState): string {
+  return homeOf(s);
+}
+/** Dosya sistemini kopya üzerinde değiştirir; dizin yeniden oluşturulur */
+export function fsDegistir(prev: ShellState, fn: (k: { yaz: (abs: string, n: FsNode) => boolean; sil: (abs: string) => FsNode | null; oku: (abs: string) => FsNode | null }) => void): ShellState {
+  const s = clone(prev);
+  const yaz = (abs: string, n: FsNode) => {
+    const [ust, ad] = parentAndName(abs);
+    const p = getNode(s.fs, ust);
+    if (!p || p.t !== 'd' || !ad) return false;
+    p.c[ad] = clone(n);
+    return true;
+  };
+  const sil = (abs: string) => {
+    const [ust, ad] = parentAndName(abs);
+    const p = getNode(s.fs, ust);
+    if (!p || p.t !== 'd' || !(ad in p.c)) return null;
+    const n = p.c[ad];
+    delete p.c[ad];
+    return n;
+  };
+  fn({ yaz, sil, oku: (abs) => getNode(s.fs, abs) });
+  return withIndex(s);
+}

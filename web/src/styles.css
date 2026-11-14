@@ -5033,3 +5033,142 @@ select.mini {
 .konsol-satir pre { flex: none; }
 .konsol-satir input { flex: 1; min-width: 2em; background: transparent; border: 0; outline: 0; color: inherit; font: inherit; padding: 0; caret-color: currentColor; }
 .br-dym { margin: 0.2em 0 0.8em; color: #c5221f; font-size: 0.95em; } .br-dym .br-link { display: inline; font-size: inherit; }
+
+/* ---------- Ubuntu masaüstü: pencereler ve uygulamalar ---------- */
+.ubx-alan { position: absolute; left: 3.6em; top: 1.9em; right: 0; bottom: 0; overflow: hidden; }
+.ubx-alan .ubx-wall { z-index: 0; }
+.ubx-masa { position: absolute; right: 0.8em; top: 0.8em; display: flex; flex-direction: column; flex-wrap: wrap-reverse; gap: 0.4em; max-height: calc(100% - 1.6em); z-index: 1; }
+.ubx-masa-oge { width: 5.6em; background: none; border: 1px solid transparent; border-radius: 8px; color: #fff; font: inherit; font-size: 0.85em; display: flex; flex-direction: column; align-items: center; gap: 0.2em; padding: 0.3em; cursor: default; text-shadow: 0 1px 3px #000; word-break: break-word; }
+.ubx-masa-oge.on { background: #e9542066; border-color: #e95420; }
+.ubx-masa-ik { font-size: 2.2em; line-height: 1; }
+.ubx-izgara { position: absolute; inset: 0; background: #1d1d1dcc; backdrop-filter: blur(6px); display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 1.5em; z-index: 500; }
+.ubx-izgara button { background: none; border: 0; color: #fff; font: inherit; display: flex; flex-direction: column; align-items: center; gap: 0.4em; padding: 0.8em; border-radius: 12px; cursor: pointer; width: 7em; }
+.ubx-izgara button:hover { background: #ffffff22; }
+.ubx-toast { z-index: 600; max-width: 70%; text-align: center; box-shadow: 0 6px 18px #0008; }
+.ubx-grid { background: none; border: 0; color: #fff; cursor: pointer; font: inherit; }
+
+.ubw { position: absolute; display: flex; flex-direction: column; background: #fafafa; color: #1e1e1e; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px #0009, 0 0 0 1px #0003; min-width: 16em; min-height: 10em; }
+.ubw.buyuk { inset: 0; border-radius: 0; }
+.ubw:not(.on) { box-shadow: 0 4px 14px #0006, 0 0 0 1px #0003; }
+.ubw-bas { flex: none; height: 2.3em; display: flex; align-items: center; justify-content: space-between; padding: 0 0.4em 0 0.8em; background: #ebebeb; border-bottom: 1px solid #d6d6d6; cursor: default; user-select: none; touch-action: none; }
+.ubw:not(.on) .ubw-bas { background: #f4f4f4; color: #777; }
+.ubw-ad { display: flex; align-items: center; gap: 0.4em; font-size: 0.88em; font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ubw-dugme { display: flex; gap: 0.35em; }
+.ubw-dugme button { width: 1.5em; height: 1.5em; border-radius: 50%; border: 0; background: #dadada; color: #333; font-size: 0.8em; cursor: pointer; display: grid; place-items: center; padding: 0; }
+.ubw-dugme button:hover { background: #c8c8c8; }
+.ubw-dugme button.x:hover { background: #e95420; color: #fff; }
+.ubw-icerik { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
+.ubw-icerik > * { flex: 1; min-height: 0; }
+.ubw-terminal .ubw-bas { background: #2c2c2c; color: #fff; border-color: #111; }
+.ubw-terminal .ubw-dugme button { background: #444; color: #fff; }
+.ubw-terminal .term { height: 100%; display: flex; flex-direction: column; border-radius: 0; margin: 0; }
+.ubw-terminal .term-title { display: none; }
+.ubw-terminal .term-body { flex: 1; height: auto !important; }
+
+/* Dosyalar (Nautilus) */
+.ubf { display: flex; flex-direction: column; outline: none; position: relative; font-size: 0.92em; background: #fff; }
+.ubf-bar { display: flex; align-items: center; gap: 0.3em; padding: 0.35em 0.5em; background: #f6f5f4; border-bottom: 1px solid #ddd; }
+.ubf-bar > button { background: #fff; border: 1px solid #d0d0d0; border-radius: 6px; min-width: 2em; height: 1.9em; font: inherit; cursor: pointer; }
+.ubf-bar > button:disabled { opacity: 0.4; cursor: default; }
+.ubf-yol { flex: 1; display: flex; gap: 0.1em; background: #fff; border: 1px solid #d0d0d0; border-radius: 6px; padding: 0.15em; overflow: hidden; }
+.ubf-yol button { background: none; border: 0; border-radius: 4px; padding: 0.15em 0.5em; font: inherit; cursor: pointer; color: #555; white-space: nowrap; }
+.ubf-yol button.on { color: #000; font-weight: 600; }
+.ubf-yol button:hover { background: #eee; }
+.ubf-yol button:not(:last-child)::after { content: ' ›'; color: #999; }
+.ubf-govde { flex: 1; min-height: 0; display: flex; }
+.ubf-yan { flex: none; width: 10em; background: #f6f5f4; border-right: 1px solid #e0e0e0; padding: 0.4em; overflow: auto; display: flex; flex-direction: column; gap: 0.1em; }
+.ubf-yan button { display: flex; align-items: center; gap: 0.5em; background: none; border: 0; border-radius: 6px; padding: 0.35em 0.5em; font: inherit; text-align: left; cursor: pointer; color: #333; }
+.ubf-yan button:hover { background: #e8e8e7; }
+.ubf-yan button.on { background: #e0dedc; font-weight: 600; }
+.ubf-yan i { font-style: normal; width: 1.2em; text-align: center; }
+.ubf-yan hr { border: 0; border-top: 1px solid #ddd; margin: 0.3em 0; }
+.ubf-ana { flex: 1; overflow: auto; padding: 0.6em; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0.3em; position: relative; }
+.ubf-ana.liste { flex-direction: column; flex-wrap: nowrap; gap: 0; padding: 0; }
+.ubf-oge { width: 6.6em; background: none; border: 1px solid transparent; border-radius: 8px; padding: 0.4em 0.2em; display: flex; flex-direction: column; align-items: center; gap: 0.2em; font: inherit; cursor: default; color: #222; }
+.ubf-oge:hover { background: #f0f0f0; }
+.ubf-oge.on, .ubf-satir.on { background: #e9542026; border-color: #e9542066; }
+.ubf-oge.gizli, .ubf-satir.gizli { opacity: 0.6; }
+.ubf-ad { font-size: 0.88em; word-break: break-word; text-align: center; line-height: 1.2; max-height: 3.6em; overflow: hidden; }
+.ubf-satir { display: grid; grid-template-columns: 1fr 7em 11em; align-items: center; background: none; border: 0; border-bottom: 1px solid #f0f0f0; border: 1px solid transparent; padding: 0.25em 0.6em; font: inherit; text-align: left; cursor: default; color: #222; }
+.ubf-satir span:first-child { display: flex; align-items: center; gap: 0.5em; overflow: hidden; white-space: nowrap; }
+.ubf-satir span:not(:first-child) { color: #666; font-size: 0.9em; }
+.ubf-baslik { font-weight: 600; color: #555; border-bottom: 1px solid #ddd; position: sticky; top: 0; background: #fff; }
+.ubf-klasor, .ubf-dosya { position: relative; display: inline-block; width: 1em; height: 1em; line-height: 0; }
+.ubf-klasor svg, .ubf-dosya svg { width: 100%; height: 100%; }
+.ubf-klasor i { position: absolute; left: 50%; top: 58%; transform: translate(-50%, -50%); font-style: normal; font-size: 0.32em; line-height: 1; filter: grayscale(1) brightness(3); }
+.ubf-dosya b { position: absolute; left: 0; right: 0; bottom: 18%; font-size: 0.2em; color: #fff; text-align: center; text-transform: uppercase; line-height: 1; }
+.ubf-bos { margin: auto; color: #999; padding: 2em; }
+.ubf-cop-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; background: #f6f5f4; border-radius: 8px; padding: 0.3em 0.6em; margin-bottom: 0.3em; }
+.ubf-cop-bar button { background: #c01c28; color: #fff; border: 0; border-radius: 6px; padding: 0.25em 0.8em; font: inherit; cursor: pointer; }
+.ubf-cop-bar button:disabled { opacity: 0.4; }
+.ubf-durum { flex: none; font-size: 0.82em; color: #666; padding: 0.25em 0.8em; border-top: 1px solid #eee; background: #fafafa; }
+.ubf-kilit { color: #b45309; }
+.ubf-menu { position: absolute; z-index: 50; background: #fff; border-radius: 10px; box-shadow: 0 6px 22px #0004, 0 0 0 1px #0002; padding: 0.3em; min-width: 13em; display: flex; flex-direction: column; }
+.ubf-menu button { background: none; border: 0; border-radius: 6px; padding: 0.4em 0.7em; text-align: left; font: inherit; cursor: pointer; color: #222; }
+.ubf-menu button:hover:not(:disabled) { background: #f0f0f0; }
+.ubf-menu button:disabled { color: #aaa; cursor: default; }
+.ubf-menu hr { border: 0; border-top: 1px solid #e5e5e5; margin: 0.2em 0; }
+.ubf-modal { position: absolute; inset: 0; background: #0004; display: grid; place-items: center; z-index: 60; }
+.ubf-dlg { background: #fff; border-radius: 12px; padding: 1em 1.2em; min-width: 18em; display: flex; flex-direction: column; gap: 0.45em; box-shadow: 0 10px 30px #0005; color: #222; }
+.ubf-dlg input { font: inherit; padding: 0.4em 0.6em; border: 2px solid #e95420; border-radius: 6px; outline: none; }
+.ubf-dlg table td { padding: 0.15em 0.6em 0.15em 0; font-size: 0.9em; }
+.ubf-dlg table td:first-child { color: #666; }
+.ubf-dlg-btn { display: flex; justify-content: flex-end; gap: 0.4em; margin-top: 0.3em; }
+.ubf-dlg-btn button { font: inherit; padding: 0.35em 1em; border-radius: 6px; border: 1px solid #ccc; background: #f6f5f4; cursor: pointer; }
+.ubf-dlg-btn button.ana { background: #e95420; color: #fff; border-color: #e95420; }
+.ubf-hata { color: #c01c28; }
+
+/* Metin Düzenleyici */
+.ubg { display: flex; flex-direction: column; background: #fff; }
+.ubg-bar { display: flex; align-items: center; gap: 0.6em; padding: 0.35em 0.6em; background: #f6f5f4; border-bottom: 1px solid #ddd; }
+.ubg-bar .small { color: #777; flex: 1; }
+.ubg-kaydet { font: inherit; padding: 0.3em 1em; border-radius: 6px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+.ubg textarea { flex: 1; border: 0; outline: none; resize: none; padding: 0.6em 0.8em; font: 0.95em/1.45 'Ubuntu Mono', Consolas, monospace; color: #1e1e1e; }
+.ubg-durum { flex: none; font-size: 0.8em; color: #666; padding: 0.2em 0.8em; border-top: 1px solid #eee; }
+
+/* Firefox */
+.ubff { display: flex; flex-direction: column; background: #fff; position: relative; }
+.ubff-bar { display: flex; align-items: center; gap: 0.25em; padding: 0.35em 0.5em; background: #f0f0f4; border-bottom: 1px solid #ddd; }
+.ubff-bar > button { background: none; border: 0; border-radius: 6px; width: 2em; height: 2em; font: inherit; cursor: pointer; color: #333; }
+.ubff-bar > button:hover:not(:disabled) { background: #e0e0e6; }
+.ubff-bar > button:disabled { opacity: 0.35; }
+.ubff-bar > button.var { color: #0060df; }
+.ubff-bar form { flex: 1; display: flex; align-items: center; gap: 0.4em; background: #fff; border-radius: 6px; padding: 0.25em 0.6em; border: 1px solid #ccc; }
+.ubff-bar input { flex: 1; border: 0; outline: none; font: inherit; }
+.ubff-sayfa { flex: 1; overflow: auto; }
+.ubff-yeni { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2em; background: #f9f9fb; padding: 1em; }
+.ubff-yeni form { display: flex; align-items: center; gap: 0.5em; width: min(30em, 90%); background: #fff; border-radius: 8px; padding: 0.55em 0.9em; box-shadow: 0 2px 8px #0002; }
+.ubff-yeni input { flex: 1; border: 0; outline: none; font: inherit; }
+.ubff-kisayol { display: flex; gap: 1em; }
+.ubff-kisayol button { background: none; border: 0; display: flex; flex-direction: column; align-items: center; gap: 0.3em; font: inherit; font-size: 0.85em; cursor: pointer; color: #333; }
+.ubff-kisayol button span { width: 3em; height: 3em; border-radius: 10px; background: #fff; box-shadow: 0 2px 6px #0002; display: grid; place-items: center; font-size: 1.1em; font-weight: 700; color: #e95420; }
+.ubff-sonuc { padding: 0.8em 1.4em; }
+.ubff-ara { display: flex; align-items: center; gap: 0.8em; margin-bottom: 0.8em; }
+.ubff-ara input { flex: 1; max-width: 32em; font: inherit; padding: 0.45em 0.9em; border-radius: 20px; border: 1px solid #ccc; }
+.ubff-site { padding: 1.4em 2em; display: flex; flex-direction: column; align-items: flex-start; gap: 0.7em; }
+.ubff-site h1 { display: flex; align-items: center; gap: 0.4em; font-size: 1.6em; margin: 0; }
+.ubff-site.sahte { background: #fffbe6; min-height: 100%; }
+.ubff-site.sahte h1 { color: #c01c28; }
+.ubff-btn { font: inherit; background: #0060df; color: #fff; border: 0; border-radius: 6px; padding: 0.55em 1.1em; cursor: pointer; }
+.ubff-btn small { opacity: 0.85; }
+.ubff-btn.kirmizi { background: #c01c28; font-weight: 700; }
+.ubff-hata { padding: 2em 3em; max-width: 44em; }
+.ubff-hata h2 { font-weight: 400; }
+.ubff-panel { position: absolute; right: 0.5em; top: 2.8em; background: #fff; border-radius: 10px; box-shadow: 0 6px 22px #0004; padding: 0.6em; min-width: 18em; display: flex; flex-direction: column; gap: 0.4em; z-index: 20; }
+.ubff-panel div { display: flex; justify-content: space-between; gap: 0.6em; font-size: 0.9em; }
+.ubff-panel button { font: inherit; background: #f0f0f4; border: 0; border-radius: 6px; padding: 0.4em; cursor: pointer; }
+
+/* Ubuntu Ayarlar */
+.uba { display: flex; background: #fafafa; }
+.uba nav { width: 13em; flex: none; background: #f0f0f0; border-right: 1px solid #ddd; padding: 0.5em; display: flex; flex-direction: column; gap: 0.15em; }
+.uba nav button { background: none; border: 0; border-radius: 6px; padding: 0.45em 0.6em; text-align: left; font: inherit; cursor: pointer; }
+.uba nav button.on { background: #ddd; font-weight: 600; }
+.uba main { flex: 1; overflow: auto; padding: 1em 1.4em; }
+.uba-ag { display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #e3e3e3; padding: 0.5em 0.8em; margin-bottom: -1px; }
+.uba-ag button, .uba-sifre button { font: inherit; padding: 0.25em 0.9em; border-radius: 6px; border: 1px solid #ccc; background: #f6f5f4; cursor: pointer; }
+.uba-sifre { display: flex; flex-direction: column; gap: 0.4em; margin-top: 0.8em; max-width: 18em; }
+.uba-sifre input { font: inherit; padding: 0.35em 0.6em; border: 2px solid #e95420; border-radius: 6px; }
+.uba-logo { display: flex; flex-direction: column; align-items: center; gap: 0.4em; margin: 0.6em 0 1em; }
+.uba-tablo { width: 100%; border-collapse: collapse; background: #fff; }
+.uba-tablo td { border: 1px solid #e5e5e5; padding: 0.4em 0.7em; font-size: 0.92em; }
+.uba-tablo td:first-child { color: #555; width: 35%; }

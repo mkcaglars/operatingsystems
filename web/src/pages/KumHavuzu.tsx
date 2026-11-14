@@ -357,7 +357,10 @@ export default function KumHavuzu() {
     if (e === 'os' && grubVar && st.calisan === 'ubuntu')
       return (
         <div className="screen-fill on">
-          <UbuntuMasaustu hesap={st.ubuntu!.hesap} wifi={st.ubuntu!.wifi} sim={shSim!} guc={(t) => (t === 'kapat' ? kapat() : reset())} log={(t) => sim.act(t, {}, (x) => x)} />
+          <UbuntuMasaustu hesap={st.ubuntu!.hesap} wifi={st.ubuntu!.wifi} sim={shSim!} guc={(t) => (t === 'kapat' ? kapat() : reset())}
+            log={(t, d) => sim.act(t, d ?? {}, (x) => x)}
+            wifiBaglan={(ag) => sim.act('ubuntu.wifi', { ag }, (x) => (x.ubuntu ? { ...x, ubuntu: { ...x.ubuntu, wifi: ag } } : x))}
+          />
         </div>
       );
     if (e === 'os' && grubVar && st.calisan === 'windows' && !windowsVar(st))

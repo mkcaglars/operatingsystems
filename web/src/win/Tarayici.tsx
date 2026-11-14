@@ -16,7 +16,7 @@ interface Indirme {
   ekTeklifler?: string[];
 }
 
-interface Sonuc {
+export interface Sonuc {
   url: string;
   baslik: string;
   ozet: string;
@@ -33,7 +33,7 @@ const SAHTE: Record<string, { baslik: string; dosya: string; kurulum: string; sl
 };
 
 /** Simülasyonda var olan siteler: yanlış adres ya da sonuçsuz aramada öneri olarak gösterilir */
-const SITELER: { url: string; ad: string; anahtar: string[] }[] = [
+export const SITELER: { url: string; ad: string; anahtar: string[] }[] = [
   { url: 'www.google.com/chrome', ad: 'Google Chrome indir', anahtar: ['chrome', 'google', 'tarayici'] },
   { url: 'www.microsoft.com/tr-tr/microsoft-365/office-2024', ad: 'Microsoft Office 2024 indir', anahtar: ['office', 'word', 'excel', 'powerpoint', 'microsoft'] },
   { url: 'www.win-rar.com/turkce', ad: 'WinRAR Türkçe indir', anahtar: ['winrar', 'rar', 'zip', 'arsiv'] },
@@ -46,7 +46,7 @@ const SITELER: { url: string; ad: string; anahtar: string[] }[] = [
   { url: 'portal.mkcaglar.com', ad: 'Okul portalı (portal.mkcaglar.com)', anahtar: ['portal', 'mkcaglar'] },
 ];
 /** Gerçek dünyadaki kısa adresler simülasyondaki sayfalara yönlenir */
-const KISA: Record<string, string> = {
+export const KISA: Record<string, string> = {
   'google.com': 'yeni', 'www.google.com': 'yeni', 'bing.com': 'yeni', 'www.bing.com': 'yeni',
   'chrome.com': 'www.google.com/chrome', 'google.com/chrome': 'www.google.com/chrome',
   'win-rar.com': 'www.win-rar.com/turkce', 'www.win-rar.com': 'www.win-rar.com/turkce', 'rarlab.com': 'www.win-rar.com/turkce',
@@ -121,7 +121,7 @@ export function oneriler(girdi: string): typeof SITELER {
     .map((x) => x.s);
 }
 
-function sonuclar(q: string): Sonuc[] {
+export function sonuclar(q: string): Sonuc[] {
   const s = q.toLocaleLowerCase('tr');
   if (/chrome/.test(s))
     return [

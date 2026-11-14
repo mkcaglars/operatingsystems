@@ -1,28 +1,29 @@
-// Kum havuzunda kurulu Ubuntu: giriş ekranı (parola gerçek klavyeden), üst çubuk, dock ve terminal.
+// Kum havuzunda kurulu Ubuntu: giriş ekranı (parola gerçek klavyeden), üst çubuk, dock, masaüstü ve pencereler
+// (Firefox, Dosyalar, Terminal, Metin Düzenleyici, Ayarlar).
 // Ayrıca GRUB önyükleme menüsü: ↑ ↓ ile seçim, Enter ile başlatma, 10 sn sonra varsayılan.
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import Logo from './Logo';
 import { photoUrl } from './Photo';
 import { UbuntuSaat } from './Saat';
 import Terminal from './Terminal';
 import type { Sim } from '../core/sim';
-import type { ShellState } from '../core/shell';
+import { dugum, evKlasoru, type FsNode, type ShellState } from '../core/shell';
+import type { Json } from '../core/rules';
+import { Dosyalar, Firefox, MetinDuzenleyici, UbuntuAyarlar, type UbApp, type UbCtx } from './UbuntuUygulamalar';
 
 interface Props {
   hesap: { ad: string; kullanici: string; bilgisayar: string; parola: string };
   wifi: string;
   sim: Sim<{ sh: ShellState }>;
   guc: (t: 'kapat' | 'yeniden') => void;
-  log: (type: string) => void;
+  log: (type: string, data?: Record<string, Json>) => void;
+  wifiBaglan?: (ag: string) => void;
 }
 
-export function UbuntuMasaustu({ hesap, wifi, sim, guc, log }: Props) {
+export function UbuntuMasaustu({ hesap, wifi, sim, guc, log, wifiBaglan }: Props) {
   const [girdi, setGirdi] = useState(false);
   const [pw, setPw] = useState('');
   const [hata, setHata] = useState('');
-  const [terminal, setTerminal] = useState(true);
-  const [menu, setMenu] = useState(false);
-  const [not, setNot] = useState('');
 
   const giris = (e: FormEvent) => {
     e.preventDefault();
@@ -56,16 +57,104 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log }: Props) {
       </div>
     );
 
-  const dock: { id: string; ad: string; logo: string }[] = [
-    { id: 'firefox', ad: 'Firefox', logo: 'firefox' },
-    { id: 'dosyalar', ad: 'Dosyalar', logo: 'dosya' },
-    { id: 'terminal', ad: 'Terminal', logo: 'terminal' },
-    { id: 'ayarlar', ad: 'Ayarlar', logo: 'ayarlar' },
-  ];
+  return <UbuntuOturum hesap={hesap} wifi={wifi} sim={sim} guc={guc} log={log} wifiBaglan={wifiBaglan} />;
+}
+
+type Pencere = { id: number; app: UbApp; arg?: string; x: number; y: number; buyuk: boolean; kucuk: boolean };
+const UYG: Record<UbApp, { ad: string; logo: string; w: number; h: number }> = {
+  firefox: { ad: 'Firefox', logo: 'firefox', w: 78, h: 80 },
+  dosyalar: { ad: 'Dosyalar', logo: 'nautilus', w: 66, h: 70 },
+  terminal: { ad: 'Terminal', logo: 'terminal', w: 62, h: 62 },
+  gedit: { ad: 'Metin Düzenleyici', logo: 'gedit', w: 56, h: 64 },
+  ayarlar: { ad: 'Ayarlar', logo: 'ub-ayarlar', w: 60, h: 66 },
+};
+const DOCK: UbApp[] = ['firefox', 'dosyalar', 'terminal', 'gedit', 'ayarlar'];
+
+function UbuntuOturum({ wifi, sim, guc, log, wifiBaglan }: Props) {
+  const sh = sim.state.sh;
+  const ev = evKlasoru(sh);
+  const [wins, setWins] = useState<Pencere[]>([]);
+  const [sira, setSira] = useState<number[]>([]);
+  const [menu, setMenu] = useState(false);
+  const [izgara, setIzgara] = useState(false);
+  const [not, setNot] = useState('');
+  const sayac = useRef(1);
+  const alan = useRef<HTMLDivElement>(null);
+  const surukle = useRef<{ id: number; dx: number; dy: number } | null>(null);
+  const [masaSec, setMasaSec] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!not) return;
+    const t = setTimeout(() => setNot(''), 6000);
+    return () => clearTimeout(t);
+  }, [not]);
+
+  const one = (id: number) => setSira((s) => [...s.filter((x) => x !== id), id]);
+  const ac = (app: UbApp, arg?: string) => {
+    setIzgara(false);
+    // Terminal, Ayarlar ve Firefox tek pencere; Dosyalar ve Metin Düzenleyici çoklu
+    const var_ = wins.find((w) => w.app === app && (app === 'terminal' || app === 'ayarlar' || app === 'firefox' || (arg !== undefined && w.arg === arg)));
+    if (var_) {
+      setWins((l) => l.map((w) => (w.id === var_.id ? { ...w, kucuk: false } : w)));
+      one(var_.id);
+      return;
+    }
+    const id = sayac.current++;
+    const n = wins.length;
+    setWins((l) => [...l, { id, app, arg, x: 7 + ((n * 3) % 15), y: 5 + ((n * 4) % 16), buyuk: false, kucuk: false }]);
+    one(id);
+    log('ubuntu.uygulama-ac', { uygulama: app });
+  };
+  const kapat = (id: number) => {
+    setWins((l) => l.filter((w) => w.id !== id));
+    setSira((s) => s.filter((x) => x !== id));
+  };
+  const dockTik = (app: UbApp) => {
+    const acik = wins.filter((w) => w.app === app);
+    if (!acik.length) return ac(app);
+    const ust = sira[sira.length - 1];
+    const hedef = acik[acik.length - 1];
+    if (hedef.id === ust && !hedef.kucuk) setWins((l) => l.map((w) => (w.id === hedef.id ? { ...w, kucuk: true } : w)));
+    else {
+      setWins((l) => l.map((w) => (w.app === app ? { ...w, kucuk: false } : w)));
+      one(hedef.id);
+    }
+  };
+  const tasi = (e: PointerEvent) => {
+    const d = surukle.current;
+    const r = alan.current?.getBoundingClientRect();
+    if (!d || !r) return;
+    const x = Math.max(-20, Math.min(90, ((e.clientX - r.left - d.dx) / r.width) * 100));
+    const y = Math.max(0, Math.min(85, ((e.clientY - r.top - d.dy) / r.height) * 100));
+    setWins((l) => l.map((w) => (w.id === d.id ? { ...w, x, y } : w)));
+  };
+  useEffect(() => {
+    const bitir = () => (surukle.current = null);
+    window.addEventListener('pointermove', tasi);
+    window.addEventListener('pointerup', bitir);
+    return () => {
+      window.removeEventListener('pointermove', tasi);
+      window.removeEventListener('pointerup', bitir);
+    };
+  });
+
+  const masaYol = `${ev}/Masaüstü`;
+  const masa = dugum(sh, masaYol);
+  const masaOgeleri = masa?.t === 'd' ? Object.entries(masa.c).filter(([a]) => !a.startsWith('.')) : [];
+  const masaAc = (a: string, n: FsNode) => {
+    const p = `${masaYol}/${a}`;
+    if (n.t === 'd') ac('dosyalar', p);
+    else if (n.v.startsWith('\u0000')) setNot(`"${a}" dosyasını açacak uygulama yok.`);
+    else ac('gedit', p);
+  };
+  const ust = sira[sira.length - 1];
+
   return (
     <div className="ubx" style={photoUrl('os-ubuntu-duvar') ? { background: `center / cover url(${photoUrl('os-ubuntu-duvar')})` } : undefined}>
       <div className="ubx-top">
-        <span>Etkinlikler</span>
+        <button className="ubx-tray" onClick={() => setIzgara((g) => !g)}>
+          Etkinlikler
+        </button>
         <UbuntuSaat />
         <span className="rel">
           <button className="ubx-tray" onClick={() => setMenu((m) => !m)} aria-label="Sistem menüsü">
@@ -74,6 +163,7 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log }: Props) {
           {menu && (
             <span className="ubx-menu">
               <span className="small">{wifi ? `Wi-Fi: ${wifi}` : 'Ağ bağlantısı yok'}</span>
+              <button onClick={() => (setMenu(false), ac('ayarlar'))}>⚙ Ayarlar{wifi ? '' : ' › Wi-Fi'}</button>
               <button onClick={() => (log('ubuntu.yeniden'), guc('yeniden'))}>Yeniden Başlat…</button>
               <button onClick={() => (log('ubuntu.kapat'), guc('kapat'))}>Kapat…</button>
             </span>
@@ -81,28 +171,102 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log }: Props) {
         </span>
       </div>
       <div className="ubx-dock">
-        {dock.map((d) => (
-          <button
-            key={d.id}
-            className={'ubx-app' + (d.id === 'terminal' && terminal ? ' on' : '')}
-            title={d.ad}
-            onClick={() => (d.id === 'terminal' ? setTerminal((t) => !t) : setNot(`${d.ad}: bu simülasyonda Ubuntu'da Terminal kullanılır.`))}
-          >
-            <Logo id={d.logo} size="2em" />
+        {DOCK.map((a) => (
+          <button key={a} className={'ubx-app' + (wins.some((w) => w.app === a) ? ' on' : '')} title={UYG[a].ad} aria-label={UYG[a].ad} onClick={() => dockTik(a)}>
+            <Logo id={UYG[a].logo} size="2em" />
           </button>
         ))}
-        <span className="ubx-grid">⋮⋮⋮</span>
+        <button className="ubx-grid" onClick={() => setIzgara((g) => !g)} aria-label="Uygulamaları göster">
+          ⋮⋮⋮
+        </button>
       </div>
-      <div className="ubx-wall">
-        <Logo id="ubuntu" size="5em" />
-      </div>
-      {terminal && (
-        <div className="ubx-win">
-          <Terminal sim={sim} />
+      <div className="ubx-alan" ref={alan} onClick={() => setMasaSec(null)}>
+        <div className="ubx-masa">
+          {[['Ev', '__ev'] as const, ...masaOgeleri.map(([a]) => [a, a] as const)].map(([a, k]) => {
+            const n = k === '__ev' ? null : masa?.t === 'd' ? masa.c[k] : null;
+            return (
+              <button
+                key={k}
+                className={'ubx-masa-oge' + (masaSec === k ? ' on' : '')}
+                aria-label={`Masaüstü: ${a}`}
+                onClick={(e) => (e.stopPropagation(), setMasaSec(k))}
+                onDoubleClick={() => (k === '__ev' ? ac('dosyalar', ev) : n && masaAc(k, n))}
+              >
+                <span className="ubx-masa-ik">{k === '__ev' ? '🏠' : n?.t === 'd' ? '📁' : '📄'}</span>
+                <span>{a}</span>
+              </button>
+            );
+          })}
         </div>
-      )}
+        <div className="ubx-wall">
+          <Logo id="ubuntu" size="5em" />
+        </div>
+        {wins.map((w) => {
+          const u = UYG[w.app];
+          const ctx: UbCtx = { sim, wifi, wifiBaglan, ac, kapat: () => kapat(w.id), log, bildir: setNot, arg: w.arg };
+          const baslik = w.app === 'gedit' || w.app === 'dosyalar' ? (w.arg ? `${w.arg.slice(w.arg.lastIndexOf('/') + 1)} — ${u.ad}` : u.ad) : w.app === 'terminal' ? `${sh.user}@${sh.host}: ${sh.cwd.replace(ev, '~')}` : u.ad;
+          return (
+            <div
+              key={w.id}
+              className={'ubw ubw-' + w.app + (w.id === ust ? ' on' : '') + (w.buyuk ? ' buyuk' : '')}
+              style={{ display: w.kucuk ? 'none' : undefined, zIndex: 10 + sira.indexOf(w.id), ...(w.buyuk ? {} : { left: `${w.x}%`, top: `${w.y}%`, width: `${u.w}%`, height: `${u.h}%` }) }}
+              onPointerDown={() => one(w.id)}
+              role="dialog"
+              aria-label={u.ad}
+            >
+              <div
+                className="ubw-bas"
+                onDoubleClick={() => setWins((l) => l.map((x) => (x.id === w.id ? { ...x, buyuk: !x.buyuk } : x)))}
+                onPointerDown={(e) => {
+                  if ((e.target as HTMLElement).closest('button') || w.buyuk) return;
+                  const r = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+                  surukle.current = { id: w.id, dx: e.clientX - r.left, dy: e.clientY - r.top };
+                }}
+              >
+                <span className="ubw-ad">
+                  <Logo id={u.logo} size="1.1em" /> {baslik}
+                </span>
+                <span className="ubw-dugme">
+                  <button onClick={() => setWins((l) => l.map((x) => (x.id === w.id ? { ...x, kucuk: true } : x)))} aria-label="Simge durumuna küçült">
+                    –
+                  </button>
+                  <button onClick={() => setWins((l) => l.map((x) => (x.id === w.id ? { ...x, buyuk: !x.buyuk } : x)))} aria-label="Büyüt">
+                    □
+                  </button>
+                  <button className="x" onClick={() => kapat(w.id)} aria-label="Kapat">
+                    ✕
+                  </button>
+                </span>
+              </div>
+              <div className="ubw-icerik">
+                {w.app === 'terminal' ? (
+                  <Terminal sim={sim} />
+                ) : w.app === 'dosyalar' ? (
+                  <Dosyalar {...ctx} />
+                ) : w.app === 'firefox' ? (
+                  <Firefox {...ctx} />
+                ) : w.app === 'gedit' ? (
+                  <MetinDuzenleyici {...ctx} />
+                ) : (
+                  <UbuntuAyarlar {...ctx} />
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {izgara && (
+          <div className="ubx-izgara" onClick={() => setIzgara(false)}>
+            {DOCK.map((a) => (
+              <button key={a} onClick={(e) => (e.stopPropagation(), ac(a))}>
+                <Logo id={UYG[a].logo} size="3em" />
+                {UYG[a].ad}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
       {not && (
-        <div className="ubx-toast" onClick={() => setNot('')}>
+        <div className="ubx-toast" role="status" onClick={() => setNot('')}>
           {not}
         </div>
       )}

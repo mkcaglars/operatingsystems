@@ -82,3 +82,18 @@ describe('kabuk simülasyonu', () => {
     expect(run(s0, 'lsblk').out).toContain('sda');
   });
 });
+
+describe('Ubuntu Dosyalar için fsDegistir', () => {
+  it('klasör oluşturur, taşır ve dizini günceller', async () => {
+    const { defaultShell, fsDegistir, dugum } = await import('../web/src/core/shell');
+    const s0 = defaultShell('ayse', 'pc');
+    const s1 = fsDegistir(s0, (k) => {
+      k.yaz('/home/ayse/Belgeler/Odev', { t: 'd', c: {} });
+      const n = k.sil('/home/ayse/Belgeler/notlar.txt');
+      if (n) k.yaz('/home/ayse/Belgeler/Odev/notlar.txt', n);
+    });
+    expect(dugum(s1, '/home/ayse/Belgeler/Odev/notlar.txt')).not.toBeNull();
+    expect(dugum(s0, '/home/ayse/Belgeler/notlar.txt')).not.toBeNull();
+    expect(s1.dosyalar).toContain('/home/ayse/Belgeler/Odev/');
+  });
+});
