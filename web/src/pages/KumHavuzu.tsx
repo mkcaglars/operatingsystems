@@ -589,6 +589,20 @@ export default function KumHavuzu() {
               Wi-Fi: <b>OKUL-LAB</b>
               <br />
               Şifre: <b>Kibris2026</b>
+              <span className="kh-not-ip">
+                <u>Bu PC kablolu (sabit IP):</u>
+                <br />
+                IP: <b>192.168.1.60</b>
+                <br />
+                Maske: <b>255.255.255.0</b>
+                <br />
+                Ağ geçidi: <b>192.168.1.1</b>
+                <br />
+                DNS: <b>192.168.1.1</b> / <b>8.8.8.8</b>
+              </span>
+              <span className="kh-not-reklam" aria-hidden>
+                MKCaglarOS
+              </span>
             </div>
           </aside>
         </div>
