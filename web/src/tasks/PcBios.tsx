@@ -1,7 +1,7 @@
 // Sanal bilgisayar: güç düğmesi → POST (zamanlı tuş penceresi) → BIOS Setup (Aptio benzeri) → önyükleme.
 // İ2'nin Setup'a giriş, önyükleme sırası, sanallaştırma, BIOS güvenliği ve CMOS pili görevleri bu bileşeni kullanır.
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import Photo from '../components/Photo';
+import Photo, { photoUrl } from '../components/Photo';
 import Sorular, { type Soru } from '../components/Sorular';
 import { evaluate, type Rule } from '../core/rules';
 import type { TaskUIProps } from './registry';
@@ -381,13 +381,20 @@ export default function PcBios({ task, mode, sim, gomulu }: TaskUIProps & { gomu
         return (
           <div className="post">
             <div className="post-logo">
-              <span className="brand-logo big" aria-hidden>
-                <i />
-                <i />
-                <i />
-                <i />
+              {photoUrl('okul-logo') ? (
+                <img className="post-okul" src={photoUrl('okul-logo')!} alt="Sedat Simavi Endüstri Meslek Lisesi logosu" />
+              ) : (
+                <span className="brand-logo big" aria-hidden>
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              )}
+              <span className="post-ad">
+                <b>SSEML</b>
+                <small>Sedat Simavi Endüstri Meslek Lisesi</small>
               </span>
-              <b>{veri.bilgi.anakart.split(' ')[0]}</b>
             </div>
             <div className="post-msg">
               Press <b>DEL</b> or <b>F2</b> to enter UEFI BIOS setup. Press <b>F8</b> for BBS Popup (boot menu).
