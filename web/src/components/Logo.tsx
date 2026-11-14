@@ -143,6 +143,28 @@ const L: Record<string, (u: string) => ReactElement> = {
       <path d="M21 31h14" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
     </svg>
   ),
+  nautilus: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="5" y="9" width="38" height="32" rx="5" fill="#d9d9d9" />
+      <path d="M5 16a5 5 0 0 1 5-5h9l3 3h16a5 5 0 0 1 5 5v2H5z" fill="#9e9e9e" />
+      <rect x="5" y="19" width="38" height="22" rx="5" fill="#f2f2f2" />
+      <rect x="18" y="27" width="12" height="3" rx="1.5" fill="#777" />
+    </svg>
+  ),
+  gedit: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="9" y="5" width="30" height="38" rx="4" fill="#f6f5f4" stroke="#c0bfbc" />
+      <path d="M15 14h18M15 20h18M15 26h12" stroke="#5e5c64" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M26 38l12-12 4 4-12 12h-4z" fill="#e95420" />
+    </svg>
+  ),
+  'ub-ayarlar': () => (
+    <svg viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="20" fill="#5e5c64" />
+      <circle cx="24" cy="24" r="9" fill="none" stroke="#fff" strokeWidth="4" />
+      <path d="M24 6v8M24 34v8M6 24h8M34 24h8M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  ),
   firefox: () => (
     <svg viewBox="0 0 48 48">
       <circle cx="24" cy="24" r="20" fill="#7542e5" />
