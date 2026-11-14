@@ -359,6 +359,8 @@ export default function KumHavuzu() {
         <div className="screen-fill on">
           <UbuntuMasaustu hesap={st.ubuntu!.hesap} wifi={st.ubuntu!.wifi} sim={shSim!} guc={(t) => (t === 'kapat' ? kapat() : reset())}
             log={(t, d) => sim.act(t, d ?? {}, (x) => x)}
+            usb={st.portlar.filter((x): x is FlashId => !!x).map((id) => ({ id, ad: st.flash[id].ad, kapasite: st.flash[id].kapasite, etiket: st.flash[id].etiket, icerik: st.flash[id].icerik, dosyaSayisi: Object.keys(st.flash[id].dosyalar).length }))}
+            usbYaz={(id, iso) => sim.act('ubuntu.usb-yaz', { aygit: id, iso }, (x) => rufusYaz(x, id as FlashId, 'GPT', iso))}
             wifiBaglan={(ag) => sim.act('ubuntu.wifi', { ag }, (x) => (x.ubuntu ? { ...x, ubuntu: { ...x.ubuntu, wifi: ag } } : x))}
           />
         </div>

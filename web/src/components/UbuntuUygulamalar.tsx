@@ -9,11 +9,23 @@ import type { Json } from '../core/rules';
 import { aramaDuzelt, KISA, oneriler, SITELER, sonuclar } from '../win/Tarayici';
 import { WIFI } from '../core/kumhavuzu';
 
-export type UbApp = 'dosyalar' | 'firefox' | 'terminal' | 'gedit' | 'ayarlar';
+export type UbApp = 'dosyalar' | 'firefox' | 'terminal' | 'gedit' | 'ayarlar' | 'usbyazici';
+/** Takılı USB bellek (Başlangıç Diski Oluşturucu için) */
+export interface UbUsb {
+  id: string;
+  ad: string;
+  kapasite: string;
+  etiket: string;
+  icerik: string;
+  dosyaSayisi: number;
+}
 export interface UbCtx {
   sim: Sim<{ sh: ShellState }>;
   wifi: string;
   wifiBaglan?: (ag: string) => void;
+  usb?: UbUsb[];
+  usbYaz?: (id: string, iso: string) => void;
+  parola?: string;
   ac: (app: UbApp, arg?: string) => void;
   kapat: () => void;
   log: (t: string, d?: Record<string, Json>) => void;
@@ -132,7 +144,7 @@ export function Dosyalar(ctx: UbCtx) {
     ctx.log('ubuntu.dosyalar.ac', { dosya: p });
     if (u === 'deb') return ctx.bildir(`Debian paketi. Kurmak için Terminal'de: sudo apt install ./${ad(p)}  (önce cd ${p.startsWith(ev) ? '~' + ust(p).slice(ev.length) : ust(p)})`);
     if (u === 'exe' || u === 'msi') return ctx.bildir(`"${ad(p)}" bir Windows programıdır. Ubuntu'da doğrudan çalışmaz.`);
-    if (u === 'iso') return ctx.bildir('Disk görüntüsü (ISO). Ubuntu\'da "Başlangıç Diski Oluşturucu" ile USB belleğe yazılır.');
+    if (u === 'iso') return ctx.ac('usbyazici', p);
     if (n.v.startsWith(IKILI)) return ctx.bildir(`"${ad(p)}" dosyasını açacak uygulama yüklü değil.`);
     ctx.ac('gedit', p);
   };
@@ -959,6 +971,170 @@ export function UbuntuAyarlar(ctx: UbCtx) {
           </>
         )}
       </main>
+    </div>
+  );
+}
+
+// ---------- Başlangıç Diski Oluşturucu (usb-creator-gtk) ----------
+export function BaslangicDiski(ctx: UbCtx) {
+  const sh = ctx.sim.state.sh;
+  const usb = ctx.usb ?? [];
+  const isolar = sh.dosyalar.filter((p) => /\.iso$/i.test(p));
+  const [iso, setIso] = useState<string | null>(ctx.arg && isolar.includes(ctx.arg) ? ctx.arg : (isolar[0] ?? null));
+  const [disk, setDisk] = useState<string | null>(usb[0]?.id ?? null);
+  const [adim, setAdim] = useState<'sec' | 'onay' | 'parola' | 'yaziyor' | 'bitti'>('sec');
+  const [pw, setPw] = useState('');
+  const [hata, setHata] = useState('');
+  const [yuzde, setYuzde] = useState(0);
+
+  useEffect(() => {
+    if (disk && !usb.some((u) => u.id === disk)) setDisk(usb[0]?.id ?? null);
+    else if (!disk && usb.length) setDisk(usb[0].id);
+  }, [usb, disk]);
+  useEffect(() => {
+    if (adim !== 'yaziyor') return;
+    if (!usb.some((u) => u.id === disk)) {
+      setAdim('sec');
+      setHata('Yazma sırasında USB bellek çıkarıldı! Bellek bozulmuş olabilir; yeniden deneyin.');
+      ctx.log('ubuntu.usb-yazici.cikarildi', {});
+      return;
+    }
+    if (yuzde >= 100) {
+      ctx.usbYaz?.(disk!, ad(iso!));
+      ctx.log('ubuntu.usb-yazici.bitti', { iso: ad(iso!), disk: disk! });
+      setAdim('bitti');
+      return;
+    }
+    const t = setTimeout(() => setYuzde((y) => Math.min(100, y + 7)), 250);
+    return () => clearTimeout(t);
+  }, [adim, yuzde, usb, disk]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const secDisk = usb.find((u) => u.id === disk);
+  const windowsIso = !!iso && /win/i.test(ad(iso)) && !/ubuntu/i.test(ad(iso));
+  const olustur = () => {
+    setHata('');
+    if (!iso || !secDisk) return;
+    if (windowsIso) return setHata('Bu araç Windows kurulum kalıplarını önyüklenebilir USB\'ye çeviremez. Windows ISO için Windows\'ta Rufus kullanın.');
+    setAdim('onay');
+  };
+  const dogrula = (e: FormEvent) => {
+    e.preventDefault();
+    if (ctx.parola !== undefined && pw !== ctx.parola) {
+      setPw('');
+      setHata('Üzgünüz, bu işe yaramadı. Lütfen yeniden deneyin.');
+      ctx.log('ubuntu.usb-yazici.parola-hata', {});
+      return;
+    }
+    setHata('');
+    setYuzde(0);
+    setAdim('yaziyor');
+    ctx.log('ubuntu.usb-yazici.basla', { iso: ad(iso!), disk: secDisk!.id });
+  };
+
+  return (
+    <div className="ubu">
+      <p className="ubu-acik">Bir Ubuntu kurulum diski (önyüklenebilir USB) oluşturmak için bir kaynak disk kalıbı (.iso) ve hedef USB bellek seçin. Hedef bellekteki <b>tüm veriler silinir</b>.</p>
+      <b className="ubu-h">Kaynak disk kalıbı (.iso):</b>
+      <div className="ubu-tablo" role="listbox" aria-label="Kaynak disk kalıbı">
+        <div className="ubu-satir bas">
+          <span>CD-Disk Kalıbı</span>
+          <span>İşletim Sistemi</span>
+          <span>Boyut</span>
+        </div>
+        {isolar.length === 0 && <div className="ubu-bos">Ev klasöründe .iso dosyası yok. Firefox ile ubuntu.com'dan Ubuntu ISO'sunu indirin.</div>}
+        {isolar.map((p) => {
+          const n = dugum(sh, p);
+          return (
+            <button key={p} role="option" aria-selected={iso === p} className={'ubu-satir' + (iso === p ? ' on' : '')} onClick={() => (setIso(p), setHata(''))} disabled={adim === 'yaziyor'}>
+              <span>{p.replace(evKlasoru(sh), '~')}</span>
+              <span>{/ubuntu/i.test(p) ? 'Ubuntu 24.04.1 LTS' : /win/i.test(p) ? 'Windows 11 (desteklenmiyor)' : 'Bilinmiyor'}</span>
+              <span>{n ? boyut(n) : ''}</span>
+            </button>
+          );
+        })}
+      </div>
+      <b className="ubu-h">Kullanılacak disk:</b>
+      <div className="ubu-tablo" role="listbox" aria-label="Kullanılacak disk">
+        <div className="ubu-satir bas">
+          <span>Aygıt</span>
+          <span>Etiket</span>
+          <span>Kapasite</span>
+        </div>
+        {usb.length === 0 && <div className="ubu-bos">USB bellek takılı değil. Kasadaki bir USB girişine flash bellek takın.</div>}
+        {usb.map((u, i) => (
+          <button key={u.id} role="option" aria-selected={disk === u.id} className={'ubu-satir' + (disk === u.id ? ' on' : '')} onClick={() => setDisk(u.id)} disabled={adim === 'yaziyor'}>
+            <span>/dev/sd{'bc'[i] ?? 'd'} — {u.ad}</span>
+            <span>{u.etiket}</span>
+            <span>{u.kapasite}</span>
+          </button>
+        ))}
+      </div>
+      {hata && <p className="ubf-hata small">{hata}</p>}
+      {adim === 'yaziyor' && (
+        <div className="ubu-ilerleme">
+          <span>Dosyalar yazılıyor… %{yuzde}</span>
+          <div>
+            <i style={{ width: `${yuzde}%` }} />
+          </div>
+          <small>Bitene kadar USB belleği çıkarmayın.</small>
+        </div>
+      )}
+      {adim === 'bitti' && (
+        <p className="ubu-tamam">
+          ✔ Kurulum tamamlandı. {secDisk?.ad ?? 'USB bellek'} artık önyüklenebilir Ubuntu kurulum diski. Bilgisayarı yeniden başlatıp önyükleme menüsünden (F8/F11/F12) USB'yi seçebilirsiniz.
+        </p>
+      )}
+      <div className="ubu-alt">
+        {adim === 'bitti' ? (
+          <button className="ana" onClick={ctx.kapat}>
+            Çık
+          </button>
+        ) : (
+          <>
+            <button onClick={ctx.kapat} disabled={adim === 'yaziyor'}>
+              Çık
+            </button>
+            <button className="ana" onClick={olustur} disabled={!iso || !secDisk || adim === 'yaziyor'}>
+              Başlangıç Diski Oluştur
+            </button>
+          </>
+        )}
+      </div>
+      {adim === 'onay' && secDisk && (
+        <div className="ubf-modal">
+          <div className="ubf-dlg">
+            <b>{secDisk.ad} üzerine yazılsın mı?</b>
+            <p className="small">
+              Diskteki her şey silinecek{secDisk.dosyaSayisi ? ` (${secDisk.dosyaSayisi} öğe)` : ''}. Silinen veriler geri getirilemez.
+            </p>
+            <div className="ubf-dlg-btn">
+              <button onClick={() => setAdim('sec')}>İptal</button>
+              <button className="ana kirmizi" onClick={() => (setPw(''), setAdim('parola'))}>
+                Diski Sil ve Yaz
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {adim === 'parola' && (
+        <div className="ubf-modal">
+          <form className="ubf-dlg" onSubmit={dogrula}>
+            <b>🔒 Kimlik Doğrulaması Gerekli</b>
+            <p className="small">Bir aygıtı biçimlendirmek için kimlik doğrulaması gerekir.</p>
+            <label className="small">{sh.user} için parola</label>
+            <input type="password" autoFocus value={pw} onChange={(e) => (setPw(e.target.value), setHata(''))} aria-label="Kimlik doğrulama parolası" />
+            {hata && <small className="ubf-hata">{hata}</small>}
+            <div className="ubf-dlg-btn">
+              <button type="button" onClick={() => (setAdim('sec'), setHata(''))}>
+                İptal
+              </button>
+              <button className="ana" type="submit">
+                Kimlik Doğrula
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

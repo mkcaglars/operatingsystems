@@ -9,7 +9,7 @@ import Terminal from './Terminal';
 import type { Sim } from '../core/sim';
 import { dugum, evKlasoru, type FsNode, type ShellState } from '../core/shell';
 import type { Json } from '../core/rules';
-import { Dosyalar, Firefox, MetinDuzenleyici, UbuntuAyarlar, type UbApp, type UbCtx } from './UbuntuUygulamalar';
+import { BaslangicDiski, Dosyalar, Firefox, MetinDuzenleyici, UbuntuAyarlar, type UbApp, type UbCtx, type UbUsb } from './UbuntuUygulamalar';
 
 interface Props {
   hesap: { ad: string; kullanici: string; bilgisayar: string; parola: string };
@@ -18,9 +18,11 @@ interface Props {
   guc: (t: 'kapat' | 'yeniden') => void;
   log: (type: string, data?: Record<string, Json>) => void;
   wifiBaglan?: (ag: string) => void;
+  usb?: UbUsb[];
+  usbYaz?: (id: string, iso: string) => void;
 }
 
-export function UbuntuMasaustu({ hesap, wifi, sim, guc, log, wifiBaglan }: Props) {
+export function UbuntuMasaustu({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz }: Props) {
   const [girdi, setGirdi] = useState(false);
   const [pw, setPw] = useState('');
   const [hata, setHata] = useState('');
@@ -57,7 +59,7 @@ export function UbuntuMasaustu({ hesap, wifi, sim, guc, log, wifiBaglan }: Props
       </div>
     );
 
-  return <UbuntuOturum hesap={hesap} wifi={wifi} sim={sim} guc={guc} log={log} wifiBaglan={wifiBaglan} />;
+  return <UbuntuOturum hesap={hesap} wifi={wifi} sim={sim} guc={guc} log={log} wifiBaglan={wifiBaglan} usb={usb} usbYaz={usbYaz} />;
 }
 
 type Pencere = { id: number; app: UbApp; arg?: string; x: number; y: number; buyuk: boolean; kucuk: boolean };
@@ -67,10 +69,12 @@ const UYG: Record<UbApp, { ad: string; logo: string; w: number; h: number }> = {
   terminal: { ad: 'Terminal', logo: 'terminal', w: 62, h: 62 },
   gedit: { ad: 'Metin Düzenleyici', logo: 'gedit', w: 56, h: 64 },
   ayarlar: { ad: 'Ayarlar', logo: 'ub-ayarlar', w: 60, h: 66 },
+  usbyazici: { ad: 'Başlangıç Diski Oluşturucu', logo: 'usb-creator', w: 58, h: 78 },
 };
+const TUM: UbApp[] = ['firefox', 'dosyalar', 'terminal', 'gedit', 'ayarlar', 'usbyazici'];
 const DOCK: UbApp[] = ['firefox', 'dosyalar', 'terminal', 'gedit', 'ayarlar'];
 
-function UbuntuOturum({ wifi, sim, guc, log, wifiBaglan }: Props) {
+function UbuntuOturum({ hesap, wifi, sim, guc, log, wifiBaglan, usb, usbYaz }: Props) {
   const sh = sim.state.sh;
   const ev = evKlasoru(sh);
   const [wins, setWins] = useState<Pencere[]>([]);
@@ -93,7 +97,7 @@ function UbuntuOturum({ wifi, sim, guc, log, wifiBaglan }: Props) {
   const ac = (app: UbApp, arg?: string) => {
     setIzgara(false);
     // Terminal, Ayarlar ve Firefox tek pencere; Dosyalar ve Metin Düzenleyici çoklu
-    const var_ = wins.find((w) => w.app === app && (app === 'terminal' || app === 'ayarlar' || app === 'firefox' || (arg !== undefined && w.arg === arg)));
+    const var_ = wins.find((w) => w.app === app && (app === 'terminal' || app === 'ayarlar' || app === 'firefox' || app === 'usbyazici' || (arg !== undefined && w.arg === arg)));
     if (var_) {
       setWins((l) => l.map((w) => (w.id === var_.id ? { ...w, kucuk: false } : w)));
       one(var_.id);
@@ -203,7 +207,7 @@ function UbuntuOturum({ wifi, sim, guc, log, wifiBaglan }: Props) {
         </div>
         {wins.map((w) => {
           const u = UYG[w.app];
-          const ctx: UbCtx = { sim, wifi, wifiBaglan, ac, kapat: () => kapat(w.id), log, bildir: setNot, arg: w.arg };
+          const ctx: UbCtx = { sim, wifi, wifiBaglan, usb, usbYaz, parola: hesap.parola || undefined, ac, kapat: () => kapat(w.id), log, bildir: setNot, arg: w.arg };
           const baslik = w.app === 'gedit' || w.app === 'dosyalar' ? (w.arg ? `${w.arg.slice(w.arg.lastIndexOf('/') + 1)} — ${u.ad}` : u.ad) : w.app === 'terminal' ? `${sh.user}@${sh.host}: ${sh.cwd.replace(ev, '~')}` : u.ad;
           return (
             <div
@@ -247,6 +251,8 @@ function UbuntuOturum({ wifi, sim, guc, log, wifiBaglan }: Props) {
                   <Firefox {...ctx} />
                 ) : w.app === 'gedit' ? (
                   <MetinDuzenleyici {...ctx} />
+                ) : w.app === 'usbyazici' ? (
+                  <BaslangicDiski {...ctx} />
                 ) : (
                   <UbuntuAyarlar {...ctx} />
                 )}
@@ -256,7 +262,7 @@ function UbuntuOturum({ wifi, sim, guc, log, wifiBaglan }: Props) {
         })}
         {izgara && (
           <div className="ubx-izgara" onClick={() => setIzgara(false)}>
-            {DOCK.map((a) => (
+            {TUM.map((a) => (
               <button key={a} onClick={(e) => (e.stopPropagation(), ac(a))}>
                 <Logo id={UYG[a].logo} size="3em" />
                 {UYG[a].ad}
