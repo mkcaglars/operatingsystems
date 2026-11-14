@@ -710,8 +710,8 @@ function FormPopup({ kind, pwMode, initial, onDone, onCancel }: { kind: 'date' |
       <div className="bp-title">{title}</div>
       {kind === 'date' && <input type="date" value={a} onChange={(e) => setA(e.target.value)} autoFocus aria-label="Tarih" />}
       {kind === 'time' && <input type="time" step={1} value={a} onChange={(e) => setA(e.target.value)} autoFocus aria-label="Saat" />}
-      {kind === 'password' && <input type="password" value={a} onChange={(e) => setA(e.target.value)} autoFocus placeholder="Password" aria-label="Parola" />}
-      {kind === 'password' && pwMode === 'set' && <input type="password" value={b} onChange={(e) => setB(e.target.value)} placeholder="Confirm New Password" aria-label="Parola tekrar" />}
+      {kind === 'password' && <input type="text" data-sim-parola autoComplete="off" spellCheck={false} value={a} onChange={(e) => setA(e.target.value)} autoFocus placeholder="Password" aria-label="Parola" />}
+      {kind === 'password' && pwMode === 'set' && <input type="text" data-sim-parola autoComplete="off" spellCheck={false} value={b} onChange={(e) => setB(e.target.value)} placeholder="Confirm New Password" aria-label="Parola tekrar" />}
       {err && <div className="bp-err">{err}</div>}
       <div className="bp-yn">
         <button type="submit" className="cur">

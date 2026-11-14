@@ -990,7 +990,7 @@ export function UbuntuAyarlar(ctx: UbCtx) {
                 }}
               >
                 <label className="small">"{sifre.ag}" için parola</label>
-                <input type="password" autoFocus value={sifre.deger} onChange={(e) => setSifre({ ...sifre, deger: e.target.value, hata: undefined })} aria-label="Wi-Fi parolası" />
+                <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={sifre.deger} onChange={(e) => setSifre({ ...sifre, deger: e.target.value, hata: undefined })} aria-label="Wi-Fi parolası" />
                 {sifre.hata && <small className="ubf-hata">{sifre.hata}</small>}
                 <button type="submit">Bağlan</button>
               </form>
@@ -1259,7 +1259,7 @@ export function BaslangicDiski(ctx: UbCtx) {
             <b>🔒 Kimlik Doğrulaması Gerekli</b>
             <p className="small">Bir aygıtı biçimlendirmek için kimlik doğrulaması gerekir.</p>
             <label className="small">{sh.user} için parola</label>
-            <input type="password" autoFocus value={pw} onChange={(e) => (setPw(e.target.value), setHata(''))} aria-label="Kimlik doğrulama parolası" />
+            <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={pw} onChange={(e) => (setPw(e.target.value), setHata(''))} aria-label="Kimlik doğrulama parolası" />
             {hata && <small className="ubf-hata">{hata}</small>}
             <div className="ubf-dlg-btn">
               <button type="button" onClick={() => (setAdim('sec'), setHata(''))}>

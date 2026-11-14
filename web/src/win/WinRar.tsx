@@ -191,12 +191,12 @@ export default function WinRar({ ctx, baslangic }: { ctx: AppCtx; baslangic?: st
                 </label>
                 <label>
                   Parola (isteğe bağlı)
-                  <input type="password" value={dlg.parola} onChange={(e) => setDlg({ ...dlg, parola: e.target.value })} aria-label="Arşiv parolası" />
+                  <input type="text" data-sim-parola autoComplete="off" spellCheck={false} value={dlg.parola} onChange={(e) => setDlg({ ...dlg, parola: e.target.value })} aria-label="Arşiv parolası" />
                 </label>
                 {dlg.parola && (
                   <label>
                     Parolayı doğrulamak için yeniden girin
-                    <input type="password" value={dlg.parola2} onChange={(e) => setDlg({ ...dlg, parola2: e.target.value })} aria-label="Arşiv parolası tekrar" />
+                    <input type="text" data-sim-parola autoComplete="off" spellCheck={false} value={dlg.parola2} onChange={(e) => setDlg({ ...dlg, parola2: e.target.value })} aria-label="Arşiv parolası tekrar" />
                   </label>
                 )}
                 <p className="small muted">Eklenecek: {sec.map((s) => adOf(s)).join(', ')}</p>
@@ -221,7 +221,7 @@ export default function WinRar({ ctx, baslangic }: { ctx: AppCtx; baslangic?: st
                 {pc.fs[dlg.arsiv]?.parola && (
                   <label>
                     🔒 Parolayı girin: {adOf(dlg.arsiv)}
-                    <input type="password" value={dlg.parola} onChange={(e) => setDlg({ ...dlg, parola: e.target.value })} aria-label="Çıkartma parolası" autoFocus />
+                    <input type="text" data-sim-parola autoComplete="off" spellCheck={false} value={dlg.parola} onChange={(e) => setDlg({ ...dlg, parola: e.target.value })} aria-label="Çıkartma parolası" autoFocus />
                   </label>
                 )}
                 {dlg.hata && <p className="err-text small">{dlg.hata}</p>}
