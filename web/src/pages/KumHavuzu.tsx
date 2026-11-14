@@ -24,6 +24,14 @@ import {
   yapilacaklar,
   type FlashId,
   type KhState,
+  pxeDurum,
+  pxeGuncelle,
+  pxeGunluk,
+  pxeSonuc,
+  PXE_IMAJ,
+  PXE_SUNUCU,
+  type PxeImaj,
+  type PxeState,
 } from '../core/kumhavuzu';
 import { useSim, type Sim } from '../core/sim';
 import { olayMetni } from '../core/gunluk';
@@ -35,6 +43,7 @@ import Photo, { photoUrl } from '../components/Photo';
 import WinSetup, { initialWinSetup } from '../tasks/WinSetup';
 import UbuntuKur, { initialUbuntuKur } from '../tasks/UbuntuKur';
 import { GrubMenu, UbuntuMasaustu } from '../components/UbuntuMasaustu';
+import { PxeEkrani, PxeSunucu } from '../components/Pxe';
 import type { ShellState } from '../core/shell';
 import Masaustu, { type Kopru, type WinVeri } from '../win/Masaustu';
 import WindowsAcilis, { DurumEkrani, WindowsLogoEkrani } from '../win/Acilis';
@@ -43,7 +52,10 @@ const SCOPE = 'kum-havuzu';
 const GRUB_HATA = 'error: no such device: 4A1C-22F0.\nerror: disk `hd0,gpt2\' not found.\n\nPress any key to continue...';
 const WIN_VERI: WinVeri = { uygulamalar: ['ayarlar', 'gorev', 'dosya', 'aygit', 'guvenlik', 'edge'], wifiAglari: WIFI, officeAnahtar: OFFICE_ANAHTARI };
 /** Kurulumlardan çıkış (kapatma, reset): yarım kalan kurulumların disk etkisi işlenir, çalışan sistem kapanır */
-const cik = (s: KhState): KhState => ({ ...ubuntuKurulumuIsle(kurulumuIsle(s)), calisan: null });
+const cik = (s: KhState): KhState => {
+  const n = { ...ubuntuKurulumuIsle(kurulumuIsle(s)), calisan: null };
+  return n.pxe?.kaynak ? { ...n, pxe: { ...n.pxe, kaynak: null } } : n;
+};
 const blur = (e: MouseEvent<HTMLElement>) => e.currentTarget.blur();
 /** Görsel varsa CSS arka planı olarak (assets/gorseller/<ad>) */
 const arkaPlan = (ad: string) => {
@@ -57,6 +69,7 @@ export default function KumHavuzu() {
   const [nonce, setNonce] = useState(0);
   const [bilgi, setBilgi] = useState('');
   const [liste, setListe] = useState(true);
+  const [pxePanel, setPxePanel] = useState(false);
   /** Windows'tan kapatma/yeniden başlatma ekranı */
   const [kapanis, setKapanis] = useState<null | 'kapat' | 'yeniden'>(null);
   /** USB'den açılışta kurulum medyası yükleniyor (logo + dönen noktalar) */
@@ -205,16 +218,19 @@ export default function KumHavuzu() {
   // ---------- Kurulum: USB'den açılınca başlar, bitince bilgisayar yeniden başlar ----------
   const gereksinimOk = st.bios.cmos.tpm && st.bios.cmos.secureBoot;
   const bb = bootBellegi(st);
-  const ubuntuUsb = bb?.icerik === 'ubuntu';
+  const pxe = pxeDurum(st);
+  // Kurulum kaynağı: PXE menüsünden seçilen imaj ya da takılı kurulum belleği
+  const ubuntuUsb = pxe.kaynak ? pxe.kaynak === 'ubuntu' : bb?.icerik === 'ubuntu';
+  const kaynakAdi = pxe.kaynak ? 'ağdan (PXE)' : 'USB bellekten';
   useEffect(() => {
     if (e === 'kurulum' && ubuntuUsb && !st.ukur) {
       sim.act('kh.ubuntu-basla', {}, (s) => ({ ...s, ukur: initialUbuntuKur({ veri: ubuntuKurulumVeri(s) } as unknown as TaskDef), iz: { ...s.iz, usbAcilis: true } }));
-      setBilgi('Bilgisayar USB bellekten açıldı: Ubuntu 24.04 kurulumu.');
+      setBilgi(`Bilgisayar ${kaynakAdi} açıldı: Ubuntu 24.04 kurulumu.`);
       return;
     }
     if (e === 'kurulum' && !ubuntuUsb && !st.kurulum && gereksinimOk) {
       sim.act('kh.kurulum-basla', {}, (s) => ({ ...s, kurulum: initialWinSetup({ veri: kurulumVeri(s) } as unknown as TaskDef), iz: { ...s.iz, usbAcilis: true } }));
-      setBilgi('Bilgisayar USB bellekten açıldı: Windows 11 Kurulumu.');
+      setBilgi(`Bilgisayar ${kaynakAdi} açıldı: Windows 11 Kurulumu.`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [e, !!st.kurulum, !!st.ukur, gereksinimOk, ubuntuUsb]);
@@ -247,6 +263,7 @@ export default function KumHavuzu() {
     else if (e === 'os' && windowsVar(st)) setBilgi(st.windows === 'eski' ? 'Windows açıldı. Bu bilgisayar çok yavaş ve reklam çıkıyor…' : 'Windows 11 açıldı.');
     if (e === 'setup') setBilgi('BIOS Setup: ← → sekme, ↑ ↓ seçim, Enter değiştir, F10 kaydet ve çık, Esc çık.');
     if (e === 'bootmenu') setBilgi('Önyükleme menüsü: ↑ ↓ ile seç, Enter ile başlat.');
+    if (e === 'pxe') setBilgi('Ağdan önyükleme (PXE): bilgisayar DHCP ile adres alıyor ve sunucudan önyükleme dosyasını indiriyor.');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [e, st.calisan]);
 
@@ -271,6 +288,30 @@ export default function KumHavuzu() {
     return () => window.removeEventListener('keydown', on);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [acilisHatasi]);
+
+  // ---------- PXE: ağdan önyükleme ----------
+  const pxeS = pxeSonuc(st);
+  useEffect(() => {
+    if (e !== 'pxe') return;
+    const p = pxeDurum(st);
+    sim.act('kh.pxe-acilis', { kablo: p.kablo, dhcp: p.dhcp, tftp: p.tftp, hata: pxeS.hata ?? '' }, (s) => {
+      if (!pxeDurum(s).kablo) return s;
+      let n = pxeGunluk(s, `DHCPDISCOVER ${PXE_SUNUCU.mac}`);
+      if (!pxeDurum(s).dhcp) return pxeGunluk(n, 'DHCP hizmeti durdurulmuş: yanıt verilmedi');
+      n = pxeGunluk(n, `DHCPOFFER ${PXE_SUNUCU.istemciIp} → ${PXE_SUNUCU.mac} (066=${PXE_SUNUCU.ip}, 067=${PXE_SUNUCU.dosya})`);
+      return pxeGunluk(n, pxeDurum(s).tftp ? `TFTP ${PXE_SUNUCU.dosya} gönderildi → ${PXE_SUNUCU.istemciIp}` : `TFTP isteği ${PXE_SUNUCU.dosya}: hizmet durdurulmuş`);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [e]);
+  const pxeSec = (h: PxeImaj | 'disk' | 'yeniden') => {
+    if (h === 'yeniden') return reset();
+    if (h === 'disk') return sim.act('kh.pxe-sec', { hedef: 'disk' }, (s) => ({ ...s, bios: { ...s.bios, ekran: 'os' } }));
+    sim.act('kh.pxe-sec', { hedef: h }, (s) => {
+      const n = pxeGunluk(s, `Menü: ${PXE_IMAJ[h].ad} seçildi, kurulum dosyaları gönderiliyor`);
+      return { ...n, pxe: { ...pxeDurum(n), kaynak: h }, bios: { ...n.bios, ekran: 'kurulum' }, iz: { ...n.iz, pxeKurulum: true } };
+    });
+  };
+  const pxeDegistir = (tip: string, veri: Record<string, string | boolean>, fn: (p: PxeState) => PxeState) => sim.act(tip, veri, (s) => pxeGuncelle(s, fn));
 
   // ---------- Alt simülasyonlar ----------
   const biosSim = altSim(sim, (s) => s.bios, (s, b) => ({ ...s, bios: b }));
@@ -316,6 +357,17 @@ export default function KumHavuzu() {
   };
 
   function Ekran() {
+    if (e === 'pxe')
+      return (
+        <PxeEkrani
+          key={nonce}
+          satirlar={pxeS.satirlar}
+          hata={pxeS.hata}
+          imajlar={pxe.imajlar}
+          sec={pxeSec}
+          basarisiz={() => sim.act('kh.pxe-basarisiz', { hata: pxeS.hata ?? 'iptal' }, (s) => ({ ...s, bios: { ...s.bios, ekran: 'bootfail' } }))}
+        />
+      );
     if (e === 'kurulum' && medyaYukleniyor)
       return ubuntuUsb ? (
         <div className="win-boot ubuntu-boot">
@@ -400,7 +452,7 @@ export default function KumHavuzu() {
         : bilgi;
   const islerim = yapilacaklar(st);
   durumRef.current =
-    e === 'kapali' ? 'kapalı' : e === 'post' ? 'açılış' : e === 'setup' ? 'BIOS' : e === 'bootmenu' ? 'önyükleme menüsü' : e === 'kurulum' ? (ubuntuUsb ? 'Ubuntu kurulumu' : 'Windows kurulumu') : e === 'os' ? (grubVar && st.calisan === 'ubuntu' ? 'Ubuntu' : grubVar && !st.calisan ? 'GRUB' : st.windows === 'eski' ? 'eski Windows' : 'Windows 11') : 'açılış hatası';
+    e === 'kapali' ? 'kapalı' : e === 'post' ? 'açılış' : e === 'setup' ? 'BIOS' : e === 'bootmenu' ? 'önyükleme menüsü' : e === 'pxe' ? 'ağdan önyükleme (PXE)' : e === 'kurulum' ? (ubuntuUsb ? 'Ubuntu kurulumu' : 'Windows kurulumu') : e === 'os' ? (grubVar && st.calisan === 'ubuntu' ? 'Ubuntu' : grubVar && !st.calisan ? 'GRUB' : st.windows === 'eski' ? 'eski Windows' : 'Windows 11') : 'açılış hatası';
   const ondrop = (i: number) => (ev: DragEvent) => {
     ev.preventDefault();
     const id = ev.dataTransfer.getData('text/flash') as FlashId;
@@ -468,6 +520,20 @@ export default function KumHavuzu() {
                 </button>
               ))}
             </div>
+            <button
+              className={'kh-lan' + (pxe.kablo ? ' takili' : '')}
+              onClick={(ev) => {
+                blur(ev);
+                sim.act(pxe.kablo ? 'kh.lan-cikar' : 'kh.lan-tak', {}, (s) => pxeGuncelle(s, (p) => ({ ...p, kablo: !p.kablo })));
+                setBilgi(pxe.kablo ? 'Ağ kablosu çıkarıldı.' : 'Ağ kablosu takıldı: bilgisayar okul ağına (ve PXE sunucusuna) bağlandı.');
+              }}
+              title={pxe.kablo ? 'Ağ kablosu takılı — çıkarmak için tıkla' : 'Ağ (LAN) girişi — kablo takmak için tıkla'}
+              aria-label={`Ağ kablosu ${pxe.kablo ? 'takılı' : 'takılı değil'}`}
+            >
+              <span className="kh-rj45" />
+              {pxe.kablo && <span className="kh-kablo" />}
+              <small>LAN</small>
+            </button>
             <div className="kh-flashlar">
               {(['mavi', 'turuncu'] as FlashId[]).map((id) => {
                 const f = st.flash[id];
@@ -523,6 +589,9 @@ export default function KumHavuzu() {
         <div className="kh-durum" role="status">
           <span>{durum}</span>
           <span className="kh-durum-sag">
+            <button className="kh-mini" onClick={(ev) => (blur(ev), setPxePanel(true))}>
+              🖧 PXE sunucusu
+            </button>
             <button className="kh-mini" onClick={(ev) => (blur(ev), setListe((x) => !x))}>
               ☑ Yapılacaklar {islerim.filter((x) => x.tamam).length}/{islerim.length}
             </button>
@@ -540,6 +609,7 @@ export default function KumHavuzu() {
             </button>
           </span>
         </div>
+        {pxePanel && <PxeSunucu pxe={pxe} degistir={pxeDegistir} kapat={() => setPxePanel(false)} />}
         {liste && (
           <section className="kh-liste card">
             <b>Serbest çalışma — önerilen iş sırası</b> <small className="muted">(puan verilmez; istediğin sırayla dene)</small>
