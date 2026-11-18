@@ -14,7 +14,7 @@ export interface Flash {
   ad: string;
   kapasite: string;
   etiket: string;
-  icerik: 'veri' | 'win11' | 'ubuntu';
+  icerik: 'veri' | 'win11' | 'win10' | 'ubuntu';
   bolum?: 'GPT' | 'MBR';
   /** Bellekteki dosyalar (göreli yol → girdi) */
   dosyalar: Record<string, DosyaGirdi>;
@@ -26,6 +26,8 @@ export interface KhState {
   diskler: Disk[];
   /** Diskteki Windows: eski (format öncesi), yeni (temiz kurulum) ya da yok */
   windows: 'eski' | 'yeni' | null;
+  /** Kurulu Windows'un sürümü (eski kayıtlarda yok → 11) */
+  winSurum?: 10 | 11;
   kurulum: WinSetupState | null;
   /** Ubuntu kurulum sihirbazı (USB'den Ubuntu ile açılınca) */
   ukur: UbuntuKurState | null;
@@ -45,7 +47,7 @@ export interface KhState {
   iz: { usbAcilis: boolean; temiz: boolean; kurulumSayisi: number; turuncuSilindi: boolean; grubAcilan: string[]; yazilan?: string[]; pxeKurulum?: boolean };
 }
 
-export type PxeImaj = 'windows' | 'ubuntu';
+export type PxeImaj = 'windows' | 'windows10' | 'ubuntu';
 export interface PxeState {
   /** Kasanın arkasındaki ağ (RJ45) kablosu takılı mı */
   kablo: boolean;
@@ -59,6 +61,7 @@ export interface PxeState {
 export const PXE_SUNUCU = { ad: 'SSEML-SRV01', ip: '192.168.1.10', istemciIp: '192.168.1.57', mac: '3C-7C-3F-1A-22-5E', dosya: 'ipxe.efi' };
 export const PXE_IMAJ: Record<PxeImaj, { ad: string; dosyalar: string; boyut: string }> = {
   windows: { ad: 'Windows 11 Pro 24H2 (WDS)', dosyalar: 'boot.wim + install.wim', boyut: '5,4 GB' },
+  windows10: { ad: 'Windows 10 Pro 22H2 (WDS)', dosyalar: 'boot.wim + install.wim', boyut: '4,6 GB' },
   ubuntu: { ad: 'Ubuntu 24.04.1 LTS Desktop', dosyalar: 'casper/vmlinuz + initrd + ISO (HTTP)', boyut: '5,8 GB' },
 };
 export function pxeDurum(st: KhState): PxeState {
@@ -206,7 +209,9 @@ function silTanimsiz(pc: WinPc): WinPc {
 export function yeniPc(k: WinSetupState, eski: WinPc | null): WinPc {
   const pc = defaultPc();
   const ad = k.oobe.kullanici || 'Ogrenci';
-  pc.cihaz = { ...pc.cihaz, ad: k.oobe.cihazAdi || 'DESKTOP-7Q2K9LM', kullanici: ad, surum: k.surum ?? 'Windows 11 Pro' };
+  const w10 = /Windows 10/.test(k.surum ?? '');
+  pc.cihaz = { ...pc.cihaz, ad: k.oobe.cihazAdi || 'DESKTOP-7Q2K9LM', kullanici: ad, surum: k.surum ?? 'Windows 11 Pro', ...(w10 ? { yapi: '22H2 (İşletim sistemi derlemesi 19045.5131)' } : {}) };
+  if (w10) pc.ekran = { ...pc.ekran, arkaPlan: 'win10' };
   pc.hesaplar = [{ ad, tur: 'yonetici', parola: k.oobe.parola }];
   pc.uygulamalar = pc.uygulamalar.filter((u) => u.id === 'edge');
   pc.baslangic = pc.baslangic.filter((b) => b.id === 'security' || b.id === 'onedrive');
@@ -315,18 +320,25 @@ export function ayir(st: KhState, pcBagli: WinPc): KhState {
   return { ...st, pc: derive(pc), flash };
 }
 
+/** ISO dosya adından işletim sistemi */
+export function isoTuru(iso: string): 'ubuntu' | 'win10' | 'win11' {
+  return /ubuntu/i.test(iso) ? 'ubuntu' : /win(dows)?[ _-]?10/i.test(iso) ? 'win10' : 'win11';
+}
+export const SURUM_AD: Record<'win10' | 'win11', string> = { win10: 'Windows 10 Pro', win11: 'Windows 11 Pro' };
+
 /** Rufus yazdı: bellek biçimlendirilir ve Windows 11 kurulum belleği olur */
 export function rufusYaz(st: KhState, id: FlashId, bolum: string, iso = 'Win11'): KhState {
   const f = st.flash[id];
   const turuncuSilindi = st.iz.turuncuSilindi || (id === 'turuncu' && Object.keys(f.dosyalar).length > 0 && f.icerik === 'veri');
-  const ubuntu = /ubuntu/i.test(iso);
+  const tur = isoTuru(iso);
+  const ubuntu = tur === 'ubuntu';
   return {
     ...st,
     flash: {
       ...st.flash,
-      [id]: { ...f, icerik: ubuntu ? 'ubuntu' : 'win11', bolum: bolum === 'GPT' ? 'GPT' : 'MBR', etiket: ubuntu ? 'Ubuntu 24.04.1 LTS amd64' : 'CCCOMA_X64FRE', dosyalar: { ...(ubuntu ? UBUNTU_USB : WIN11_USB) } },
+      [id]: { ...f, icerik: tur, bolum: bolum === 'GPT' ? 'GPT' : 'MBR', etiket: ubuntu ? 'Ubuntu 24.04.1 LTS amd64' : tur === 'win10' ? 'ESD-USB' : 'CCCOMA_X64FRE', dosyalar: { ...(ubuntu ? UBUNTU_USB : WIN11_USB) } },
     },
-    iz: { ...st.iz, turuncuSilindi, yazilan: [...new Set([...(st.iz.yazilan ?? []), ubuntu ? 'ubuntu' : 'win11'])] },
+    iz: { ...st.iz, turuncuSilindi, yazilan: [...new Set([...(st.iz.yazilan ?? []), tur])] },
   };
 }
 
@@ -355,8 +367,8 @@ export function biosVeri(st: KhState): BiosVeri {
   };
 }
 
-export function kurulumVeri(st: KhState): WinSetupVeri {
-  return { anahtar: URUN_ANAHTARI, surum: 'Windows 11 Pro', diskler: st.diskler, wifi: WIFI };
+export function kurulumVeri(st: KhState, tur: 'win10' | 'win11' = 'win11'): WinSetupVeri {
+  return { anahtar: URUN_ANAHTARI, surum: SURUM_AD[tur], diskler: st.diskler, wifi: WIFI };
 }
 
 /** Kurulum ekranından çıkılınca (kapatma, reset, kurulum bitişi) disk değişiklikleri kalıcı olur */
@@ -371,6 +383,7 @@ export function kurulumuIsle(st: KhState): KhState {
       ...st,
       diskler,
       windows: 'yeni',
+      winSurum: /Windows 10/.test(k.surum ?? '') ? 10 : 11,
       kurulum: null,
       // Windows kurulumu önyükleyiciyi kendine çevirir: GRUB menüsü artık görünmez
       onyukleyici: 'windows',
@@ -472,7 +485,7 @@ export function yapilacaklar(st: KhState): { id: string; metin: string; tamam: b
     { id: 'yedek', metin: "Kullanıcının belgeleri bir flash belleğe yedeklendi", tamam: yedek },
     { id: 'usb', metin: 'Windows 11 kurulum belleği hazırlandı (Rufus)', tamam: !!st.iz.yazilan?.includes('win11') || st.flash.mavi.icerik === 'win11' || st.flash.turuncu.icerik === 'win11' },
     { id: 'acilis', metin: 'Bilgisayar USB bellekten açıldı', tamam: st.iz.usbAcilis },
-    { id: 'kurulum', metin: 'Windows 11 temiz kuruldu (eski bölüm silindi/biçimlendirildi)', tamam: yeni && st.iz.temiz },
+    { id: 'kurulum', metin: 'Windows 11 (ya da 10) temiz kuruldu (eski bölüm silindi/biçimlendirildi)', tamam: yeni && st.iz.temiz },
     { id: 'wifi', metin: 'Kablosuz ağa bağlanıldı (OKUL-LAB)', tamam: yeni && pc.internet },
     { id: 'update', metin: 'Windows Update: sürücüler ve güncelleştirmeler yüklendi', tamam: yeni && pc.sorunluAygitlar.length === 0 && pc.guvenlik.tanimlarGuncel },
     { id: 'chrome', metin: 'Google Chrome resmî siteden kuruldu', tamam: yeni && pc.kurulu.includes('chrome') && !pc.sahteKaynakli.includes('chrome') },

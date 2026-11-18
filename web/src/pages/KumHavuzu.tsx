@@ -218,7 +218,13 @@ export default function KumHavuzu() {
   };
 
   // ---------- Kurulum: USB'den açılınca başlar, bitince bilgisayar yeniden başlar ----------
-  const gereksinimOk = st.bios.cmos.tpm && st.bios.cmos.secureBoot;
+  const bb0 = bootBellegi(st);
+  const pxe0 = pxeDurum(st);
+  /** Kurulacak Windows sürümü: PXE imajı ya da kurulum belleğindeki ISO */
+  const winTur: 'win10' | 'win11' = pxe0.kaynak ? (pxe0.kaynak === 'windows10' ? 'win10' : 'win11') : bb0?.icerik === 'win10' ? 'win10' : 'win11';
+  const winAd = winTur === 'win10' ? 'Windows 10' : 'Windows 11';
+  // Windows 10, TPM 2.0 ve Güvenli Önyükleme istemez
+  const gereksinimOk = winTur === 'win10' || (st.bios.cmos.tpm && st.bios.cmos.secureBoot);
   const bb = bootBellegi(st);
   const pxe = pxeDurum(st);
   // Kurulum kaynağı: PXE menüsünden seçilen imaj ya da takılı kurulum belleği
@@ -231,11 +237,11 @@ export default function KumHavuzu() {
       return;
     }
     if (e === 'kurulum' && !ubuntuUsb && !st.kurulum && gereksinimOk) {
-      sim.act('kh.kurulum-basla', {}, (s) => ({ ...s, kurulum: initialWinSetup({ veri: kurulumVeri(s) } as unknown as TaskDef), iz: { ...s.iz, usbAcilis: true } }));
-      setBilgi(`Bilgisayar ${kaynakAdi} açıldı: Windows 11 Kurulumu.`);
+      sim.act('kh.kurulum-basla', {}, (s) => ({ ...s, kurulum: initialWinSetup({ veri: kurulumVeri(s, winTur) } as unknown as TaskDef), iz: { ...s.iz, usbAcilis: true } }));
+      setBilgi(`Bilgisayar ${kaynakAdi} açıldı: ${winAd} Kurulumu.`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [e, !!st.kurulum, !!st.ukur, gereksinimOk, ubuntuUsb]);
+  }, [e, !!st.kurulum, !!st.ukur, gereksinimOk, ubuntuUsb, winTur]);
   // Ubuntu kurulumu bitti ve "Şimdi yeniden başlat"a basıldı
   useEffect(() => {
     if (st.ukur && st.ukur.kurulum === 'tamam' && ['grub', 'ubuntu', 'windows'].includes(st.ukur.adim)) {
@@ -255,14 +261,14 @@ export default function KumHavuzu() {
         return { ...n, bios: { ...n.bios, ekran: 'post', setup: null } };
       });
       setNonce((n) => n + 1);
-      setBilgi('Windows 11 kuruldu, bilgisayar yeniden başlıyor. USB bellek takılıysa ve önyüklemede öndeyse kurulum yeniden başlar: belleği çıkar!');
+      setBilgi(`${st.kurulum?.surum?.replace(' Pro', '') ?? 'Windows'} kuruldu, bilgisayar yeniden başlıyor. USB bellek takılıysa ve önyüklemede öndeyse kurulum yeniden başlar: belleği çıkar!`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [st.kurulum?.adim]);
   useEffect(() => {
     if (e === 'os' && st.onyukleyici === 'grub' && st.ubuntu && !st.calisan) setBilgi('GRUB önyükleme menüsü: ↑ ↓ ile seç, Enter ile başlat (10 sn sonra Ubuntu açılır).');
     else if (e === 'os' && st.calisan === 'ubuntu') setBilgi('Ubuntu giriş ekranı: parolanı klavyeyle yaz, Enter.');
-    else if (e === 'os' && windowsVar(st)) setBilgi(st.windows === 'eski' ? 'Windows açıldı. Bu bilgisayar çok yavaş ve reklam çıkıyor…' : 'Windows 11 açıldı.');
+    else if (e === 'os' && windowsVar(st)) setBilgi(st.windows === 'eski' ? 'Windows açıldı. Bu bilgisayar çok yavaş ve reklam çıkıyor…' : `Windows ${st.winSurum ?? 11} açıldı.`);
     if (e === 'setup') setBilgi('BIOS Setup: ← → sekme, ↑ ↓ seçim, Enter değiştir, F10 kaydet ve çık, Esc çık.');
     if (e === 'bootmenu') setBilgi('Önyükleme menüsü: ↑ ↓ ile seç, Enter ile başlat.');
     if (e === 'pxe') setBilgi('Ağdan önyükleme (PXE): bilgisayar DHCP ile adres alıyor ve sunucudan önyükleme dosyasını indiriyor.');
@@ -346,7 +352,7 @@ export default function KumHavuzu() {
     uefi: !st.bios.cmos.csm,
     rufusBitti: (y) => {
       sim.act('kh.rufus', { flash: y.aygit, bolum: y.bolum, iso: y.iso }, (s) => rufusYaz(s, y.aygit as FlashId, y.bolum, y.iso));
-      setBilgi(`Rufus bitti: ${st.flash[y.aygit as FlashId]?.ad} artık ${/ubuntu/i.test(y.iso) ? 'Ubuntu' : 'Windows 11'} kurulum belleği (${y.bolum}).`);
+      setBilgi(`Rufus bitti: ${st.flash[y.aygit as FlashId]?.ad} artık ${/ubuntu/i.test(y.iso) ? 'Ubuntu' : /win(dows)?[ _-]?10/i.test(y.iso) ? 'Windows 10' : 'Windows 11'} kurulum belleği (${y.bolum}).`);
     },
     guc: (t) => {
       setKapanis(t);
@@ -383,7 +389,7 @@ export default function KumHavuzu() {
           </span>
         </div>
       ) : (
-        <WindowsLogoEkrani />
+        <WindowsLogoEkrani w10={winTur === 'win10'} />
       );
     if (e === 'kurulum' && ubuntuUsb) {
       if (!st.ukur) return <div className="screen-fill on" />;
@@ -405,7 +411,7 @@ export default function KumHavuzu() {
           </div>
         );
       if (!st.kurulum) return <div className="screen-fill on ws-screen" />;
-      return <WinSetup task={{ veri: kurulumVeri(st) } as unknown as TaskDef} mode="uygula" sim={kurSim} gomulu />;
+      return <WinSetup task={{ veri: kurulumVeri(st, winTur) } as unknown as TaskDef} mode="uygula" sim={kurSim} gomulu />;
     }
     if (e === 'os' && grubVar && st.calisan === null) return <GrubMenu windows={st.ubuntu!.sh.grub.windows} sec={grubSec} log={(t) => sim.act(t, {}, (x) => x)} />;
     if (e === 'os' && grubVar && st.calisan === 'ubuntu')
@@ -433,6 +439,7 @@ export default function KumHavuzu() {
             <DurumEkrani metin={kapanis === 'kapat' ? 'Kapatılıyor' : 'Yeniden başlatılıyor'} />
           ) : (
             <WindowsAcilis
+              w10={st.windows === 'yeni' && st.winSurum === 10}
               kullanici={st.pc.cihaz.kullanici}
               parola={st.windows === 'yeni' ? st.winParola : ''}
               ilk={st.winIlk && st.windows === 'yeni'}
@@ -458,7 +465,7 @@ export default function KumHavuzu() {
         : bilgi;
   const islerim = yapilacaklar(st);
   durumRef.current =
-    e === 'kapali' ? 'kapalı' : e === 'post' ? 'açılış' : e === 'setup' ? 'BIOS' : e === 'bootmenu' ? 'önyükleme menüsü' : e === 'pxe' ? 'ağdan önyükleme (PXE)' : e === 'kurulum' ? (ubuntuUsb ? 'Ubuntu kurulumu' : 'Windows kurulumu') : e === 'os' ? (grubVar && st.calisan === 'ubuntu' ? 'Ubuntu' : grubVar && !st.calisan ? 'GRUB' : st.windows === 'eski' ? 'eski Windows' : 'Windows 11') : 'açılış hatası';
+    e === 'kapali' ? 'kapalı' : e === 'post' ? 'açılış' : e === 'setup' ? 'BIOS' : e === 'bootmenu' ? 'önyükleme menüsü' : e === 'pxe' ? 'ağdan önyükleme (PXE)' : e === 'kurulum' ? (ubuntuUsb ? 'Ubuntu kurulumu' : 'Windows kurulumu') : e === 'os' ? (grubVar && st.calisan === 'ubuntu' ? 'Ubuntu' : grubVar && !st.calisan ? 'GRUB' : st.windows === 'eski' ? 'eski Windows' : `Windows ${st.winSurum ?? 11}`) : 'açılış hatası';
   const ondrop = (i: number) => (ev: DragEvent) => {
     ev.preventDefault();
     const id = ev.dataTransfer.getData('text/flash') as FlashId;
@@ -551,7 +558,7 @@ export default function KumHavuzu() {
                     draggable
                     onDragStart={(ev) => ev.dataTransfer.setData('text/flash', id)}
                     onClick={(ev) => (blur(ev), takili ? cikar(id) : tak(id))}
-                    title={`${f.ad} ${f.kapasite} — ${f.icerik === 'win11' ? 'Windows 11 kurulum belleği' : Object.keys(f.dosyalar).length ? 'içinde dosyalar var' : 'boş'}. Takmak/çıkarmak için tıkla ya da sürükle.`}
+                    title={`${f.ad} ${f.kapasite} — ${f.icerik === 'win11' ? 'Windows 11 kurulum belleği' : f.icerik === 'win10' ? 'Windows 10 kurulum belleği' : f.icerik === 'ubuntu' ? 'Ubuntu kurulum belleği' : Object.keys(f.dosyalar).length ? 'içinde dosyalar var' : 'boş'}. Takmak/çıkarmak için tıkla ya da sürükle.`}
                     aria-label={`${id === 'mavi' ? 'Mavi' : 'Turuncu'} flash bellek ${takili ? '(takılı)' : ''}`}
                   >
                     <Photo
@@ -571,7 +578,7 @@ export default function KumHavuzu() {
                     />
                     <small>
                       {f.kapasite}
-                      {f.icerik === 'win11' ? ' · W11' : ''}
+                      {f.icerik === 'win11' ? ' · W11' : f.icerik === 'win10' ? ' · W10' : f.icerik === 'ubuntu' ? ' · Ubuntu' : ''}
                     </small>
                   </button>
                 );
@@ -634,7 +641,7 @@ export default function KumHavuzu() {
           <section className="kh-liste card">
             <b>Serbest çalışma — önerilen iş sırası</b> <small className="muted">(puan verilmez; istediğin sırayla dene)</small>
             <p className="small">
-              Bu bilgisayar çok yavaşlamış ve virüslü. Kullanıcının belgelerini kaybetmeden Windows 11'i temiz kur, internete bağla, Office ve diğer programları yükle. Sonra Ubuntu'yu Windows'un yanına kur (çift önyükleme).
+              Bu bilgisayar çok yavaşlamış ve virüslü. Kullanıcının belgelerini kaybetmeden Windows 11'i (ya da Windows 10'u) temiz kur, internete bağla, Office ve diğer programları yükle. Sonra Ubuntu'yu Windows'un yanına kur (çift önyükleme).
             </p>
             <ol>
               {islerim.map((x) => (

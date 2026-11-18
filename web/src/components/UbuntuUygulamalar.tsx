@@ -637,6 +637,12 @@ const LINUX_SAYFA: Record<string, LinuxSayfa> = {
     metin: 'Linux kullandığınız için doğrudan ISO indirme seçeneği gösteriliyor. USB belleğe yazmak için Ubuntu\'da "Başlangıç Diski Oluşturucu" ya da Windows\'ta Rufus kullanılır.',
     indir: [{ dosya: 'Win11_24H2_Turkish_x64.iso', boyut: '5,4 GB', etiket: '64-bit İndir' }],
   },
+  'www.microsoft.com/tr-tr/software-download/windows10': {
+    baslik: 'Windows 10 Disk Görüntüsü (ISO) indir',
+    logo: 'windows10',
+    metin: "Windows 10 desteği 14 Ekim 2025'te sona erdi. Linux kullandığınız için doğrudan ISO indirme seçeneği gösteriliyor. Windows 10, TPM 2.0 ve Güvenli Önyükleme gerektirmez.",
+    indir: [{ dosya: 'Win10_22H2_Turkish_x64.iso', boyut: '5,7 GB', etiket: '64-bit İndir' }],
+  },
   'rufus.ie/tr': {
     baslik: 'Rufus',
     logo: 'rufus',

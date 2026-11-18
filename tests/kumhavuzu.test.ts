@@ -80,3 +80,18 @@ describe('eski kayıtların tamamlanması', () => {
     expect(t.ag).toEqual({ kablo: true, wifi: '' });
   });
 });
+
+describe('Windows 10', () => {
+  it('ISO türü, Rufus belleği ve kurulum sürümü', async () => {
+    const { isoTuru, rufusYaz, ilkDurum, kurulumVeri, bootBellegi } = await import('../web/src/core/kumhavuzu');
+    expect(isoTuru('Win10_22H2_Turkish_x64.iso')).toBe('win10');
+    expect(isoTuru('Win11_24H2_Turkish_x64.iso')).toBe('win11');
+    expect(isoTuru('ubuntu-24.04.1-desktop-amd64.iso')).toBe('ubuntu');
+    let st = ilkDurum();
+    st = rufusYaz(st, 'mavi', 'GPT', 'Win10_22H2_Turkish_x64.iso');
+    st = { ...st, portlar: ['mavi', null, null] };
+    expect(bootBellegi(st)?.icerik).toBe('win10');
+    expect(kurulumVeri(st, 'win10').surum).toBe('Windows 10 Pro');
+    expect(kurulumVeri(st).surum).toBe('Windows 11 Pro');
+  });
+});

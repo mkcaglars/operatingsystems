@@ -5273,3 +5273,39 @@ select.mini {
 /* Simülasyondaki parola kutuları: gerçek tarayıcının parola yöneticisi bunları giriş formu sanmasın
    (type=text + yazılanlar nokta olarak görünür) */
 input[data-sim-parola] { -webkit-text-security: disc; text-security: disc; font-family: inherit; }
+.br-uyari { background: #fff4ce; border: 1px solid #f2d677; border-radius: 6px; padding: 0.5em 0.8em; }
+
+/* ---------- Windows 10 görünümü (kurulu sürüm Windows 10 ise) ---------- */
+.w10 { font-family: 'Segoe UI', system-ui, sans-serif; }
+.w10 .w11-taskbar { justify-content: flex-start; gap: 0; height: 3em; background: rgba(16, 16, 20, 0.94); backdrop-filter: none; border-top: 0; color: #fff; padding-left: 0; }
+.w10 .tb-start, .w10 .tb-app { width: 3em; height: 3em; border-radius: 0; }
+.w10 .tb-start:hover, .w10 .tb-app:hover, .w10 .tb-app.on { background: rgba(255, 255, 255, 0.12); }
+.w10 .tb-start svg, .w10 .tb-start img { filter: brightness(0) invert(1); }
+.w10 .tb-app.open::after { bottom: 0; width: 100%; height: 0.15em; border-radius: 0; background: #76b9ed; left: 0; }
+.w10 .tb-app.on::after { width: 100%; background: #9fd0f5; }
+.w10 .tb-gorev { color: #fff; font-size: 1.1em; }
+.tb-ara { display: flex; align-items: center; gap: 0.5em; height: 3em; width: 21em; max-width: 30%; background: #f3f3f3; color: #333; padding: 0 0.8em; margin-right: 0.2em; cursor: text; }
+.tb-ara input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 0.85em; padding: 0; border-radius: 0; }
+.w10 .tb-tray { color: #fff; }
+.w10 .tb-tray button { color: #fff; }
+.w10 .w11-win { border-radius: 0; border: 1px solid #1a73c8; box-shadow: 0 0.6em 2em rgba(0, 0, 0, 0.45); inset: 3% 4% calc(3em + 2%) 4%; }
+.w10 .w11-titlebar { background: #fff; }
+.w10 .w11-win:not(.on) .w11-titlebar { color: #999; }
+.w10-start { left: 0; bottom: 3em; transform: none; width: 40em; max-width: 96%; height: 30em; max-height: 82%; border-radius: 0; padding: 0; background: rgba(31, 31, 34, 0.97); color: #fff; display: grid; grid-template-columns: 3em 13em 1fr; gap: 0; box-shadow: 0 0 2em rgba(0, 0, 0, 0.5); }
+.w10-serit { display: flex; flex-direction: column; align-items: stretch; background: rgba(0, 0, 0, 0.25); }
+.w10-serit > button, .w10-serit .rel > button { width: 3em; height: 3em; border: 0; background: transparent; color: #fff; font-size: 1.05em; cursor: pointer; }
+.w10-serit > button:hover, .w10-serit .rel > button:hover { background: rgba(255, 255, 255, 0.12); }
+.w10-serit-bosluk { flex: 1; }
+.w10-serit .w11-power-menu.w10 { left: 3em; bottom: 0; top: auto; background: #2b2b2b; color: #fff; }
+.w10-serit .w11-power-menu.w10 button { color: #fff; }
+.w10-liste.w11-start-tum { display: flex; flex-direction: column; grid-template-columns: none; max-height: none; overflow: auto; padding: 0.5em 0.3em; gap: 0; margin: 0; }
+.w10-liste-oge { display: flex; flex-direction: column; }
+.w10-harf { font-size: 0.82em; padding: 0.5em 0.6em 0.2em; color: #ddd; }
+.w10-liste.w11-start-tum button { color: #fff; border-radius: 0; font-size: 0.82em; }
+.w10-liste.w11-start-tum button:hover { background: rgba(255, 255, 255, 0.12); }
+.w10-karolar { padding: 0.8em 1em; overflow: auto; }
+.w10-karolar .w11-start-h { color: #fff; font-weight: 400; font-size: 0.85em; margin-bottom: 0.5em; }
+.w10-karolar .w11-start-grid { grid-template-columns: repeat(3, 1fr); gap: 0.3em; }
+.w10-karolar .w11-start-grid button.w10-karo { background: #0063b1; color: #fff; border-radius: 0; aspect-ratio: 1; justify-content: center; font-size: 0.72em; padding: 0.4em; border: 2px solid transparent; }
+.w10-karolar .w11-start-grid button.w10-karo:hover { border-color: rgba(255, 255, 255, 0.5); background: #0063b1; }
+.win-kilit.w10:not([style]) { background: radial-gradient(ellipse at 66% 48%, #3fb4ff 0%, #0a6fd6 16%, #063b8c 38%, #021338 70%, #010616 100%); }

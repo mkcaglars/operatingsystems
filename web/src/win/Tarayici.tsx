@@ -28,6 +28,7 @@ const SAHTE: Record<string, { baslik: string; dosya: string; kurulum: string; sl
   'winrar-full-crack-indir.net': { baslik: 'WinRAR Full Crack İndir', dosya: 'WinRAR_Full_Crack_2026.exe', kurulum: 'kms', slogan: 'WinRAR 7 Full Lisanslı — Ömür Boyu Ücretsiz!' },
   'photoshop-crack-2025.net': { baslik: 'Photoshop 2025 Crack Full', dosya: 'Photoshop_2025_Crack_Patch.exe', kurulum: 'kms', slogan: 'Adobe Photoshop 2025 Full Crack — Lisans gerekmez!' },
   'windows11-full-etkinlestirilmis-indir.net': { baslik: 'Windows 11 Pro Full Etkinleştirilmiş', dosya: 'Win11_Pro_Activator_Full.exe', kurulum: 'kms', slogan: 'Windows 11 Pro + Etkinleştirici — Ömür boyu lisans!' },
+  'windows10-pro-full-crack-indir.net': { baslik: 'Windows 10 Pro Full Crack', dosya: 'Win10_Pro_Crack_Activator.exe', kurulum: 'kms', slogan: 'Windows 10 Pro + Crack — Ömür boyu etkin!' },
   'office-2024-crack-kms-indir.net': { baslik: 'Office 2024 KMS Etkinleştirici', dosya: 'KMSPico_Office2024.exe', kurulum: 'kms', slogan: 'Office 2024 Full + KMS — Ürün anahtarı gerekmez!' },
   'pdf-reader-hizli-indir.com': { baslik: 'PDF Reader Hızlı İndir', dosya: 'PDFReader_Setup(2).exe', kurulum: 'chrome-sahte', slogan: 'En iyi PDF okuyucu — tek tık kurulum!' },
 };
@@ -38,6 +39,7 @@ export const SITELER: { url: string; ad: string; anahtar: string[] }[] = [
   { url: 'www.microsoft.com/tr-tr/microsoft-365/office-2024', ad: 'Microsoft Office 2024 indir', anahtar: ['office', 'word', 'excel', 'powerpoint', 'microsoft'] },
   { url: 'www.win-rar.com/turkce', ad: 'WinRAR Türkçe indir', anahtar: ['winrar', 'rar', 'zip', 'arsiv'] },
   { url: 'www.microsoft.com/tr-tr/software-download/windows11', ad: 'Windows 11 indir (ISO)', anahtar: ['windows', 'win11', 'iso', 'microsoft'] },
+  { url: 'www.microsoft.com/tr-tr/software-download/windows10', ad: 'Windows 10 indir (ISO)', anahtar: ['win10', 'windows10'] },
   { url: 'rufus.ie/tr', ad: 'Rufus — önyüklenebilir USB', anahtar: ['rufus', 'usb', 'bootable'] },
   { url: 'ubuntu.com/download/desktop', ad: 'Ubuntu Desktop indir', anahtar: ['ubuntu', 'linux'] },
   { url: 'get.adobe.com/tr/reader', ad: 'Adobe Acrobat Reader indir', anahtar: ['acrobat', 'reader', 'pdf', 'adobe'] },
@@ -149,9 +151,16 @@ export function sonuclar(q: string): Sonuc[] {
       { url: 'ubuntu.com/download/desktop', baslik: 'Ubuntu Desktop indir | Ubuntu', ozet: 'Ubuntu 24.04.1 LTS: 5 yıl güvenlik desteği. 64 bit ISO kalıbını indirin.' },
       { url: 'tr.wikipedia.org/wiki/Ubuntu', baslik: 'Ubuntu - Vikipedi', ozet: 'Ubuntu, Canonical tarafından geliştirilen Debian tabanlı bir Linux dağıtımıdır.' },
     ];
+  if (/(windows|win) ?10/.test(s))
+    return [
+      { url: 'www.microsoft.com/tr-tr/software-download/windows10', baslik: "Windows 10'u İndirin - Microsoft", ozet: 'Windows 10 kurulum medyası oluşturma aracı ve Windows 10 Disk Görüntüsü (ISO) indirme. Windows 10 desteği 14 Ekim 2025\'te sona erdi.' },
+      { url: 'www.microsoft.com/tr-tr/software-download/windows11', baslik: "Windows 11'i İndirin - Microsoft", ozet: 'Windows 11 Kurulum Yardımcısı, kurulum medyası ve ISO.' },
+      { url: 'windows10-pro-full-crack-indir.net', baslik: 'Windows 10 Pro Full Crack İndir — Etkinleştirilmiş', ozet: 'Lisans gerektirmez! Tek link.', reklam: true },
+    ];
   if (/windows|win ?11|iso|kurulum medya/.test(s))
     return [
       { url: 'www.microsoft.com/tr-tr/software-download/windows11', baslik: "Windows 11'i İndirin - Microsoft", ozet: 'Windows 11 Kurulum Yardımcısı, kurulum medyası oluşturma ve x64 cihazlar için Windows 11 Disk Görüntüsü (ISO) indirme.' },
+      { url: 'www.microsoft.com/tr-tr/software-download/windows10', baslik: "Windows 10'u İndirin - Microsoft", ozet: 'Windows 10 Disk Görüntüsü (ISO) indirme.' },
       { url: 'windows11-full-etkinlestirilmis-indir.net', baslik: 'Windows 11 Pro Full Etkinleştirilmiş ISO İndir', ozet: 'Lisans gerektirmez! Crack dahil tek link.', reklam: true },
     ];
   if (/rufus|usb|önyükle|bootable/.test(s))
@@ -422,27 +431,37 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
           <p className="small">WinRAR bir paylaşımlı yazılımdır: 40 günlük ücretsiz deneme süresinden sonra lisans satın alınmalıdır.</p>
         </div>
       );
-    if (url === 'www.microsoft.com/tr-tr/software-download/windows11')
+    if (url === 'www.microsoft.com/tr-tr/software-download/windows11' || url === 'www.microsoft.com/tr-tr/software-download/windows10') {
+      const on = url.endsWith('windows10');
+      const ad = on ? 'Windows 10' : 'Windows 11';
+      const ek = on ? "'u" : "'i";
       return (
         <div className="br-page ms">
           <div className="br-ms">
             <Logo id="microsoft" size="1.4em" /> Microsoft
           </div>
-          <h1>Windows 11'i İndirin</h1>
+          <h1>
+            {ad}
+            {ek} İndirin
+          </h1>
+          {on && <p className="br-uyari small">⚠ Windows 10 desteği 14 Ekim 2025'te sona erdi: artık güvenlik güncelleştirmesi almaz. Donanımınız uygunsa Windows 11'e geçmeniz önerilir. (Windows 10, TPM 2.0 ve Güvenli Önyükleme gerektirmez.)</p>}
           <section className="br-ms-sec">
-            <h3>Windows 11 Kurulum Medyası Oluşturma</h3>
-            <p className="small">Windows 11'i yeniden yüklemek ya da temiz yükleme yapmak istiyorsanız önyüklenebilir USB ya da DVD oluşturmak için bu aracı kullanın.</p>
-            <button className="br-blue" onClick={() => indirBaslat({ dosya: 'mediacreationtool.exe', boyut: '9,8 MB', kurulum: '', kaynak: 'resmi' })}>
-              Şimdi indirin
+            <h3>{ad} Kurulum Medyası Oluşturma</h3>
+            <p className="small">
+              {ad}
+              {ek} yeniden yüklemek ya da temiz yükleme yapmak istiyorsanız önyüklenebilir USB ya da DVD oluşturmak için bu aracı kullanın.
+            </p>
+            <button className="br-blue" onClick={() => indirBaslat({ dosya: on ? 'MediaCreationTool22H2.exe' : 'mediacreationtool.exe', boyut: on ? '18,5 MB' : '9,8 MB', kurulum: '', kaynak: 'resmi' })}>
+              Aracı şimdi indirin
             </button>
             <p className="small muted">Bu simülasyonda kurulum belleği Rufus ile hazırlanır: aşağıdan ISO dosyasını indirip Rufus'la USB belleğe yazın.</p>
           </section>
           <section className="br-ms-sec">
-            <h3>x64 cihazlar için Windows 11 Disk Görüntüsü (ISO) indirin</h3>
+            <h3>{on ? 'Windows 10 Disk Görüntüsü (ISO) indirin' : 'x64 cihazlar için Windows 11 Disk Görüntüsü (ISO) indirin'}</h3>
             <label className="small">
               Sürüm seçin{' '}
-              <select aria-label="ISO sürümü" defaultValue="w11">
-                <option value="w11">Windows 11 (multi-edition ISO for x64 devices)</option>
+              <select aria-label="ISO sürümü" defaultValue="w">
+                <option value="w">{on ? 'Windows 10 (multi-edition ISO)' : 'Windows 11 (multi-edition ISO for x64 devices)'}</option>
               </select>
             </label>
             <label className="small">
@@ -452,13 +471,14 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
                 <option value="en">English International</option>
               </select>
             </label>
-            <button className="br-blue" onClick={() => indirBaslat({ dosya: 'Win11_24H2_Turkish_x64.iso', boyut: '5,8 GB', kurulum: '', kaynak: 'resmi' })}>
+            <button className="br-blue" onClick={() => indirBaslat({ dosya: on ? 'Win10_22H2_Turkish_x64.iso' : 'Win11_24H2_Turkish_x64.iso', boyut: on ? '5,7 GB' : '5,8 GB', kurulum: '', kaynak: 'resmi' })}>
               64 bit İndir
             </button>
             <p className="small muted">Bağlantı 24 saat geçerlidir. SHA256 doğrulama değerleri sayfanın altında listelenir.</p>
           </section>
         </div>
       );
+    }
     if (url === 'www.microsoft.com/tr-tr/microsoft-365/office-2024')
       return (
         <div className="br-page ms">

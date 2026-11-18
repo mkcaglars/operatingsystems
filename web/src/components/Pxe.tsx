@@ -11,7 +11,7 @@ export function PxeEkrani(props: { satirlar: string[]; hata: string | null; imaj
   const [i, setI] = useState(0);
   const menu = n >= satirlar.length + 2 && !hata;
   const secenekler: { ad: string; h: PxeImaj | 'disk' | 'yeniden' | null }[] = [
-    ...(imajlar.length ? imajlar.map((x) => ({ ad: `${x === 'windows' ? 'Windows 11 Pro kurulumu' : 'Ubuntu 24.04.1 LTS kurulumu'}  (${PXE_IMAJ[x].dosyalar})`, h: x as PxeImaj })) : [{ ad: '(Sunucuda önyükleme imajı yok)', h: null }]),
+    ...(imajlar.length ? imajlar.map((x) => ({ ad: `${x === 'windows' ? 'Windows 11 Pro kurulumu' : x === 'windows10' ? 'Windows 10 Pro kurulumu' : 'Ubuntu 24.04.1 LTS kurulumu'}  (${PXE_IMAJ[x].dosyalar})`, h: x as PxeImaj })) : [{ ad: '(Sunucuda önyükleme imajı yok)', h: null }]),
     { ad: 'Yerel diskten başlat', h: 'disk' },
     { ad: 'Yeniden başlat', h: 'yeniden' },
   ];
@@ -123,7 +123,7 @@ export function PxeSunucu({ pxe, degistir, kapat }: { pxe: PxeState; degistir: (
             </button>
           </div>
           <h4>2. Önyükleme imajları</h4>
-          {(['windows', 'ubuntu'] as PxeImaj[]).map((im) => {
+          {(['windows', 'windows10', 'ubuntu'] as PxeImaj[]).map((im) => {
             const var_ = pxe.imajlar.includes(im);
             return (
               <div key={im} className="pxs-hizmet">
