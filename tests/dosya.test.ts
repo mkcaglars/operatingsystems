@@ -48,3 +48,30 @@ describe('Dosya Gezgini işlemleri', () => {
     expect(acicilar(derive(pc), `${B}/b.xlsx`)[0].id).toBe('excel');
   });
 });
+
+describe('sistem dosyası koruması ve NVIDIA sürücüsü', () => {
+  it('Windows, Program Files ve profil silinemez/taşınamaz', async () => {
+    const { korumali, sil, tasi } = await import('../web/src/core/dosyaIslem');
+    const pc = defaultPc();
+    pc.fs['C:/Windows'] = { tur: 'klasor' };
+    pc.fs['C:/Windows/System32'] = { tur: 'klasor' };
+    pc.fs['C:/Program Files'] = { tur: 'klasor' };
+    pc.fs['C:/Windows.old'] = { tur: 'klasor' };
+    expect(korumali('C:/Windows/System32')).toContain('TrustedInstaller');
+    expect(korumali(KULLANICI)).toContain('kullanımda');
+    expect(korumali('C:/Windows.old')).toBeNull();
+    sil(pc, ['C:/Windows', 'C:/Program Files', 'C:/Windows.old', KULLANICI]);
+    expect(pc.fs['C:/Windows/System32']).toBeDefined();
+    expect(pc.fs['C:/Program Files']).toBeDefined();
+    expect(pc.fs['C:/Windows.old']).toBeUndefined();
+    expect(tasi(pc, ['C:/Windows'], `${B}/Proje`).hata).toContain('TrustedInstaller');
+  });
+  it('NVIDIA kurulumu ekran kartını çalıştırır', async () => {
+    const { kur } = await import('../web/src/core/katalog');
+    const pc = defaultPc();
+    pc.aygitlar.push({ id: 'gpu', kategori: 'Görüntü bağdaştırıcıları', ad: 'NVIDIA GeForce GTX 1650', durum: 'surucu-yok', surucu: 'vga' });
+    const sonra = kur(derive(pc), 'nvidia', { bilesenler: ['surucu'] }, 'resmi');
+    expect(sonra.aygitlar.find((a) => a.id === 'gpu')?.durum).toBe('ok');
+    expect(sonra.cihaz.ekranKarti).toBe('NVIDIA GeForce GTX 1650');
+  });
+});

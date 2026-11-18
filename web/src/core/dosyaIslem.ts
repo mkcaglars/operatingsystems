@@ -1,5 +1,5 @@
 // Dosya Gezgini işlemleri (saf fonksiyonlar): kopyala, taşı, sil ve dosya ilişkilendirmeleri (hangi uygulamayla açılır).
-import { adOf, parentOf, type WinPc } from './winpc';
+import { adOf, KULLANICI, parentOf, type WinPc } from './winpc';
 
 const surucu = (p: string) => p.slice(0, 2);
 const altinda = (k: string, p: string) => k === p || k.startsWith(p + '/');
@@ -14,10 +14,21 @@ function hedefYol(pc: WinPc, kaynak: string, klasor: string): string {
 
 export type IslemSonucu = { tamam: string[]; hata?: string };
 
+const KORUMALI_KOK = ['C:/Windows', 'C:/Program Files', 'C:/Program Files (x86)', 'C:/ProgramData'];
+/** Silinemeyen, taşınamayan ve yeniden adlandırılamayan sistem öğeleri (Windows'ta TrustedInstaller korur) */
+export function korumali(yol: string): string | null {
+  if (/^[A-Z]:$/.test(yol)) return 'Sürücünün kendisi silinemez ya da taşınamaz. Bir USB belleği temizlemek için Bu bilgisayar › sağ tık › Biçimlendir kullanın.';
+  if (KORUMALI_KOK.some((k) => altinda(yol, k)))
+    return `Klasöre erişim engellendi: "${adOf(yol)}". Bu değişikliği yapmak için TrustedInstaller'dan izin almanız gerekiyor. Windows ve program dosyaları silinirse bilgisayar açılmaz ya da programlar çalışmaz.`;
+  if (yol === 'C:/Kullanıcılar' || yol === KULLANICI) return `"${adOf(yol)}" klasörü kullanımda: oturum açmış kullanıcının profil klasörü silinemez.`;
+  return null;
+}
+
 /** Windows kuralı: başka sürücüye sürükleme kopyalar, aynı sürücüde taşır */
 export const varsayilanIslem = (kaynaklar: string[], klasor: string): 'kopyala' | 'tasi' => (kaynaklar.every((k) => surucu(k) === surucu(klasor)) ? 'tasi' : 'kopyala');
 
-export function islemDenetle(pc: WinPc, kaynaklar: string[], klasor: string): string | undefined {
+export function islemDenetle(pc: WinPc, kaynaklar: string[], klasor: string, tasima = false): string | undefined {
+  if (tasima) for (const k of kaynaklar) if (korumali(k)) return korumali(k)!;
   if (!pc.fs[klasor] || (pc.fs[klasor].tur !== 'klasor' && !/^[A-Z]:$/.test(klasor))) return 'Hedef bir klasör değil.';
   if (kaynaklar.some((k) => altinda(klasor, k))) return 'Hedef klasör, kaynak klasörün bir alt klasörü.';
   if (/\.(zip|rar)(\/|$)/i.test(klasor)) return 'Arşivin içine dosya eklemek için WinRAR (Ekle) kullanın.';
@@ -38,7 +49,7 @@ export function kopyala(pc: WinPc, kaynaklar: string[], klasor: string): IslemSo
 }
 
 export function tasi(pc: WinPc, kaynaklar: string[], klasor: string): IslemSonucu {
-  const hata = islemDenetle(pc, kaynaklar, klasor);
+  const hata = islemDenetle(pc, kaynaklar, klasor, true);
   if (hata) return { tamam: [], hata };
   const tamam: string[] = [];
   for (const kaynak of kaynaklar) {
@@ -59,7 +70,10 @@ export function tasi(pc: WinPc, kaynaklar: string[], klasor: string): IslemSonuc
 }
 
 export function sil(pc: WinPc, yollar: string[]): void {
-  for (const y of yollar) for (const k of Object.keys(pc.fs)) if (altinda(k, y)) delete pc.fs[k];
+  for (const y of yollar) {
+    if (korumali(y)) continue;
+    for (const k of Object.keys(pc.fs)) if (altinda(k, y)) delete pc.fs[k];
+  }
 }
 
 // ---------- Dosya ilişkilendirmeleri ----------

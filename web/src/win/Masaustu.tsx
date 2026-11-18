@@ -18,7 +18,7 @@ import { duvarArkaPlan } from '../components/Photo';
 import { WindowsSaat } from '../components/Saat';
 import Ayarlar from './Ayarlar';
 import GorevYoneticisi from './GorevYoneticisi';
-import DosyaGezgini from './DosyaGezgini';
+import DosyaGezgini, { BU_PC } from './DosyaGezgini';
 import AygitYoneticisi from './AygitYoneticisi';
 import Guvenlik from './Guvenlik';
 import Tarayici from './Tarayici';
@@ -49,6 +49,8 @@ export interface Kopru {
   uefi: boolean;
   rufusBitti: (y: { aygit: string; iso: string; bolum: string; hedef: string }) => void;
   guc: (t: 'kapat' | 'yeniden') => void;
+  /** USB bellek Windows'ta biçimlendirildi: kurulum belleği olma özelliği gider */
+  bicimlendir?: (id: string, etiket: string) => void;
 }
 
 export interface AppCtx {
@@ -241,6 +243,8 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         const ad = b === 'word' ? 'Word' : (PROGRAM_AD[b] ?? b);
         kisayollar.push({ anahtar: b, ad, logo: logoVar(b) ? b : 'office', ac: () => (b === 'word' ? open('word') : open('program', b)), masaustu: ['word', 'excel', 'powerpoint'].includes(b) });
       }
+    } else if (u.id === 'nvidia') {
+      if (u.bilesenler?.includes('app')) kisayollar.push({ anahtar: 'nvidia', ad: 'NVIDIA App', logo: 'nvidia', ac: () => open('program', 'nvidia'), masaustu: true });
     } else kisayollar.push({ anahtar: u.id, ad: PROGRAM_AD[u.id] ?? u.ad, logo: uygulamaLogo(u.id), ac: () => open('program', u.id), masaustu: u.id !== 'teams' && u.id !== 'onedrive' });
   }
   kisayollar.sort((a, b) => a.ad.localeCompare(b.ad, 'tr'));
@@ -376,6 +380,10 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
         <span className="w11-icon">
           <Logo id="geridonusum" size="2.4em" />
           Geri Dönüşüm Kutusu
+        </span>
+        <span className="w11-icon" onDoubleClick={() => open('dosya', BU_PC)} aria-label="Masaüstü: Bu bilgisayar">
+          <i className="w11-icon-pc">🖥</i>
+          Bu bilgisayar
         </span>
         {pinned
           .filter((a) => a !== 'chrome' && a !== 'word')

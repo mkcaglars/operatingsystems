@@ -91,7 +91,15 @@ export default function Kurulum(ctx: AppCtx) {
     setI((x) => x + 1);
   };
 
-  const req: [string, string, string, boolean][] = [
+  const gpu = pc.aygitlar.find((a) => a.id === 'gpu');
+  const nvidiaReq: [string, string, string, boolean][] = t.aygitSurucu
+    ? [
+        ['Grafik donanımı', t.uyumsuz === 'donanim' ? 'GeForce 16 Serisi (Dizüstü) / RTX' : 'GeForce GTX 1650 dahil desteklenen GPU', gpu ? gpu.ad : 'bulunamadı', t.uyumsuz !== 'donanim' && !!gpu],
+        ['İşletim sistemi', t.uyumsuz === 'isletim' ? 'Windows 7 / 8.1 (64 bit)' : 'Windows 10 / 11 (64 bit)', `${pc.cihaz.surum} (64 bit)`, t.uyumsuz !== 'isletim'],
+      ]
+    : [];
+  const reqOk = nvidiaReq.every((r) => r[3]);
+  const req: [string, string, string, boolean][] = t.aygitSurucu ? nvidiaReq : [
     ['İşlemci', '64 bit, SSE 4.2, 2 GHz+', pc.cihaz.islemci, true],
     ['İşletim sistemi', 'Windows 10 22H2 / Windows 11 (64 bit)', `${pc.cihaz.surum} ${pc.cihaz.yapi.split(' ')[0]}`, true],
     ['RAM', '8 GB (16 GB önerilir)', pc.cihaz.ram, !/^[1-7],/.test(pc.cihaz.ram)],
@@ -170,7 +178,7 @@ export default function Kurulum(ctx: AppCtx) {
         )}
         {adim === 'gereksinim' && (
           <>
-            <b>Sistem gereksinimleri denetleniyor</b>
+            <b>{t.aygitSurucu ? 'Sistem uyumluluğu denetleniyor' : 'Sistem gereksinimleri denetleniyor'}</b>
             <table className="inst-req">
               <thead>
                 <tr>
@@ -191,6 +199,13 @@ export default function Kurulum(ctx: AppCtx) {
                 ))}
               </tbody>
             </table>
+            {!reqOk && (
+              <p className="err-text small">
+                {t.uyumsuz === 'isletim'
+                  ? 'NVIDIA Yükleyici devam edemez. Bu grafik sürücüsü Windows\'un bu sürümüyle uyumlu değil. NVIDIA sürücü sayfasında doğru işletim sistemini seçip yeniden indirin.'
+                  : 'NVIDIA Yükleyici devam edemez. Bu grafik sürücüsü uyumlu grafik donanımı bulamadı. NVIDIA sürücü sayfasında ekran kartınızı (Aygıt Yöneticisi\'ne bakın) doğru seçip yeniden indirin.'}
+              </p>
+            )}
           </>
         )}
         {adim === 'hesap' && (
@@ -227,7 +242,7 @@ export default function Kurulum(ctx: AppCtx) {
                 <button className="ws-btn" onClick={() => (ctx.log('kurulum.iptal', { tanim: t.id }), ctx.close('kurulum'))}>
                   İptal
                 </button>
-                <button className="ws-btn primary" onClick={ileri}>
+                <button className="ws-btn primary" onClick={ileri} disabled={adim === 'gereksinim' && !reqOk}>
                   {adim === 'teklif' ? 'Kabul Et' : adim === 'klasor' ? 'Yükle' : adim === 'hesap' ? 'Oturum aç' : 'İleri'}
                 </button>
               </>

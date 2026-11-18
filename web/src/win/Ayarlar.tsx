@@ -440,15 +440,18 @@ export default function Ayarlar(ctx: AppCtx) {
                   return;
                 }
                 // Windows Update, internet varsa eksik aygıt sürücülerini de yükler
-                const surucu = pc.aygitlar.filter((a) => a.durum === 'surucu-yok' && a.surucu);
+                // Ekran kartı (NVIDIA) sürücüsü Windows Update'ten gelmez: üreticinin sitesinden indirilir
+                const surucu = pc.aygitlar.filter((a) => a.durum === 'surucu-yok' && a.surucu && a.surucu !== 'vga');
+                const gpuEksik = pc.aygitlar.some((a) => a.durum === 'surucu-yok' && a.surucu === 'vga');
                 act('update.denetle', { surucu: surucu.map((a) => a.id) }, (p) => {
                   p.guvenlik.tanimlarGuncel = true;
-                  for (const a of p.aygitlar) if (a.durum === 'surucu-yok' && a.surucu) a.durum = 'ok';
+                  for (const a of p.aygitlar) if (a.durum === 'surucu-yok' && a.surucu && a.surucu !== 'vga') a.durum = 'ok';
                   return p;
                 });
                 setMesaj(
                   'Güncelleştirmeler yüklendi: Microsoft Defender Antivirus için güvenlik bilgileri güncelleştirmesi' +
-                    (surucu.length ? ' · Sürücüler: ' + surucu.map((a) => a.ad).join(', ') : ''),
+                    (surucu.length ? ' · Sürücüler: ' + surucu.map((a) => a.ad).join(', ') : '') +
+                    (gpuEksik ? ' · Ekran kartı için Windows Update\'te sürücü yok: güncel sürücüyü üreticinin (NVIDIA) web sitesinden indirip yükleyin.' : ''),
                 );
               }}
             >

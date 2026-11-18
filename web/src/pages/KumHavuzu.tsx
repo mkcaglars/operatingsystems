@@ -355,6 +355,15 @@ export default function KumHavuzu() {
       sim.act('kh.rufus', { flash: y.aygit, bolum: y.bolum, iso: y.iso }, (s) => rufusYaz(s, y.aygit as FlashId, y.bolum, y.iso));
       setBilgi(`Rufus bitti: ${st.flash[y.aygit as FlashId]?.ad} artık ${/ubuntu/i.test(y.iso) ? 'Ubuntu' : /win(dows)?[ _-]?10/i.test(y.iso) ? 'Windows 10' : 'Windows 11'} kurulum belleği (${y.bolum}).`);
     },
+    bicimlendir: (id, etiket) => {
+      sim.act('kh.usb-bicimlendir', { flash: id, etiket }, (s) => {
+        const f = s.flash[id as FlashId];
+        if (!f) return s;
+        const turuncuSilindi = s.iz.turuncuSilindi || (id === 'turuncu' && f.icerik === 'veri' && Object.keys(f.dosyalar).length > 0);
+        return { ...s, flash: { ...s.flash, [id]: { ...f, icerik: 'veri', bolum: undefined, etiket, dosyalar: {} } }, iz: { ...s.iz, turuncuSilindi } };
+      });
+      setBilgi(`${st.flash[id as FlashId]?.ad} biçimlendirildi: içindeki tüm dosyalar silindi.`);
+    },
     guc: (t) => {
       setKapanis(t);
       setTimeout(() => {

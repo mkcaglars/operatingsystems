@@ -28,6 +28,7 @@ const SAHTE: Record<string, { baslik: string; dosya: string; kurulum: string; sl
   'winrar-full-crack-indir.net': { baslik: 'WinRAR Full Crack İndir', dosya: 'WinRAR_Full_Crack_2026.exe', kurulum: 'kms', slogan: 'WinRAR 7 Full Lisanslı — Ömür Boyu Ücretsiz!' },
   'photoshop-crack-2025.net': { baslik: 'Photoshop 2025 Crack Full', dosya: 'Photoshop_2025_Crack_Patch.exe', kurulum: 'kms', slogan: 'Adobe Photoshop 2025 Full Crack — Lisans gerekmez!' },
   'windows11-full-etkinlestirilmis-indir.net': { baslik: 'Windows 11 Pro Full Etkinleştirilmiş', dosya: 'Win11_Pro_Activator_Full.exe', kurulum: 'kms', slogan: 'Windows 11 Pro + Etkinleştirici — Ömür boyu lisans!' },
+  'driver-booster-ucretsiz-indir.net': { baslik: 'Driver Booster PRO Ücretsiz', dosya: 'DriverBooster_Setup_Free.exe', kurulum: 'chrome-sahte', slogan: 'Tüm sürücüleri tek tıkla güncelle — ücretsiz!' },
   'windows10-pro-full-crack-indir.net': { baslik: 'Windows 10 Pro Full Crack', dosya: 'Win10_Pro_Crack_Activator.exe', kurulum: 'kms', slogan: 'Windows 10 Pro + Crack — Ömür boyu etkin!' },
   'office-2024-crack-kms-indir.net': { baslik: 'Office 2024 KMS Etkinleştirici', dosya: 'KMSPico_Office2024.exe', kurulum: 'kms', slogan: 'Office 2024 Full + KMS — Ürün anahtarı gerekmez!' },
   'pdf-reader-hizli-indir.com': { baslik: 'PDF Reader Hızlı İndir', dosya: 'PDFReader_Setup(2).exe', kurulum: 'chrome-sahte', slogan: 'En iyi PDF okuyucu — tek tık kurulum!' },
@@ -40,6 +41,7 @@ export const SITELER: { url: string; ad: string; anahtar: string[] }[] = [
   { url: 'www.win-rar.com/turkce', ad: 'WinRAR Türkçe indir', anahtar: ['winrar', 'rar', 'zip', 'arsiv'] },
   { url: 'www.microsoft.com/tr-tr/software-download/windows11', ad: 'Windows 11 indir (ISO)', anahtar: ['windows', 'win11', 'iso', 'microsoft'] },
   { url: 'www.microsoft.com/tr-tr/software-download/windows10', ad: 'Windows 10 indir (ISO)', anahtar: ['win10', 'windows10'] },
+  { url: 'www.nvidia.com/tr-tr/drivers', ad: 'NVIDIA sürücü indirmeleri (ekran kartı)', anahtar: ['nvidia', 'geforce', 'gtx', 'ekran', 'driver', 'surucu'] },
   { url: 'rufus.ie/tr', ad: 'Rufus — önyüklenebilir USB', anahtar: ['rufus', 'usb', 'bootable'] },
   { url: 'ubuntu.com/download/desktop', ad: 'Ubuntu Desktop indir', anahtar: ['ubuntu', 'linux'] },
   { url: 'get.adobe.com/tr/reader', ad: 'Adobe Acrobat Reader indir', anahtar: ['acrobat', 'reader', 'pdf', 'adobe'] },
@@ -55,7 +57,7 @@ export const KISA: Record<string, string> = {
   'rufus.ie': 'rufus.ie/tr', 'www.rufus.ie': 'rufus.ie/tr', 'ubuntu.com': 'ubuntu.com/download/desktop', 'www.ubuntu.com': 'ubuntu.com/download/desktop',
   'office.com': 'www.microsoft.com/tr-tr/microsoft-365/office-2024', 'www.office.com': 'www.microsoft.com/tr-tr/microsoft-365/office-2024',
   'microsoft.com': 'www.microsoft.com/tr-tr/software-download/windows11', 'www.microsoft.com': 'www.microsoft.com/tr-tr/software-download/windows11',
-  'www.mkcaglar.com': 'mkcaglar.com', 'adobe.com': 'get.adobe.com/tr/reader',
+  'www.mkcaglar.com': 'mkcaglar.com', 'nvidia.com': 'www.nvidia.com/tr-tr/drivers', 'www.nvidia.com': 'www.nvidia.com/tr-tr/drivers', 'nvidia.com/drivers': 'www.nvidia.com/tr-tr/drivers', 'www.nvidia.com/drivers': 'www.nvidia.com/tr-tr/drivers', 'adobe.com': 'get.adobe.com/tr/reader',
 };
 function benzerlik(a: string, b: string): number {
   // Levenshtein uzaklığı
@@ -162,6 +164,12 @@ export function sonuclar(q: string): Sonuc[] {
       { url: 'www.microsoft.com/tr-tr/software-download/windows11', baslik: "Windows 11'i İndirin - Microsoft", ozet: 'Windows 11 Kurulum Yardımcısı, kurulum medyası oluşturma ve x64 cihazlar için Windows 11 Disk Görüntüsü (ISO) indirme.' },
       { url: 'www.microsoft.com/tr-tr/software-download/windows10', baslik: "Windows 10'u İndirin - Microsoft", ozet: 'Windows 10 Disk Görüntüsü (ISO) indirme.' },
       { url: 'windows11-full-etkinlestirilmis-indir.net', baslik: 'Windows 11 Pro Full Etkinleştirilmiş ISO İndir', ozet: 'Lisans gerektirmez! Crack dahil tek link.', reklam: true },
+    ];
+  if (/nvidia|geforce|gtx|rtx|ekran kart|grafik kart|sürücü|surucu|driver/.test(s))
+    return [
+      { url: 'driver-booster-ucretsiz-indir.net', baslik: 'Tüm Sürücüleri Tek Tıkla Güncelle — Driver Booster Ücretsiz', ozet: 'Eksik sürücüleri otomatik bul ve yükle! %100 ücretsiz.', reklam: true },
+      { url: 'www.nvidia.com/tr-tr/drivers', baslik: 'Resmi GeForce Sürücüleri | NVIDIA', ozet: 'NVIDIA ekran kartınız için en güncel Game Ready ve Studio sürücülerini indirin. Ürün tipini, serisini ve işletim sistemini seçin.' },
+      { url: 'tr.wikipedia.org/wiki/GeForce', baslik: 'GeForce - Vikipedi', ozet: 'GeForce, NVIDIA tarafından tasarlanan grafik işlem birimleri markasıdır.' },
     ];
   if (/rufus|usb|önyükle|bootable/.test(s))
     return [
@@ -479,6 +487,7 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
         </div>
       );
     }
+    if (url === 'www.nvidia.com/tr-tr/drivers') return <NvidiaSayfa indir={indirBaslat} log={ctx.log} />;
     if (url === 'www.microsoft.com/tr-tr/microsoft-365/office-2024')
       return (
         <div className="br-page ms">
@@ -674,6 +683,112 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
               Yine de tut
             </button>
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** NVIDIA sürücü indirme sayfası: ürün ve işletim sistemi seçimine göre doğru/uyumsuz paket */
+function NvidiaSayfa({ indir, log }: { indir: (d: Indirme) => void; log: AppCtx['log'] }) {
+  const [tip, setTip] = useState('GeForce');
+  const [seri, setSeri] = useState('GeForce 16 Series');
+  const [urun, setUrun] = useState('GeForce GTX 1650');
+  const [os, setOs] = useState('Windows 11');
+  const [tur, setTur] = useState('Game Ready Sürücüsü (GRD)');
+  const [sonuc, setSonuc] = useState(false);
+  const SERILER: Record<string, Record<string, string[]>> = {
+    GeForce: {
+      'GeForce RTX 40 Series': ['GeForce RTX 4090', 'GeForce RTX 4070', 'GeForce RTX 4060'],
+      'GeForce 16 Series': ['GeForce GTX 1660 SUPER', 'GeForce GTX 1660', 'GeForce GTX 1650 SUPER', 'GeForce GTX 1650'],
+      'GeForce 16 Series (Notebooks)': ['GeForce GTX 1660 Ti', 'GeForce GTX 1650 Ti', 'GeForce GTX 1650'],
+      'GeForce 700 Series': ['GeForce GT 730', 'GeForce GT 710'],
+    },
+    'NVIDIA RTX / Quadro': { 'NVIDIA RTX Series': ['NVIDIA RTX A4000', 'NVIDIA RTX A2000'] },
+  };
+  const OSLAR = ['Windows 11', 'Windows 10 64-bit', 'Windows 7 64-bit', 'Linux 64-bit'];
+  const seriler = Object.keys(SERILER[tip]);
+  const urunler = SERILER[tip][seri] ?? [];
+  const linux = os.startsWith('Linux');
+  const eskiOs = os.startsWith('Windows 7');
+  const eskiKart = seri === 'GeForce 700 Series';
+  const surum = eskiOs || eskiKart ? '474.89' : linux ? '580.95.05' : '581.80';
+  const dosya = linux
+    ? `NVIDIA-Linux-x86_64-${surum}.run`
+    : eskiOs
+      ? `${surum}-desktop-win8-win7-64bit-international-whql.exe`
+      : seri.includes('Notebooks')
+        ? `${surum}-notebook-win10-win11-64bit-international-dch-whql.exe`
+        : tip !== 'GeForce'
+          ? `${surum}-quadro-rtx-desktop-notebook-win10-win11-64bit-international-dch-whql.exe`
+          : `${surum}-desktop-win10-win11-64bit-international-dch-whql.exe`;
+  // RTX 40 masaüstü paketi GTX 1650'yi de destekler (aynı birleşik sürücü); dizüstü ve Quadro paketleri desteklemez
+  const kurulum = linux ? '' : eskiOs ? 'nvidia-eski' : seri.includes('Notebooks') || tip !== 'GeForce' || eskiKart ? 'nvidia-uyumsuz' : 'nvidia';
+  const sec = (setter: (v: string) => void) => (e: { target: { value: string } }) => (setter(e.target.value), setSonuc(false));
+  return (
+    <div className="br-page nv">
+      <div className="nv-bas">
+        <span className="nv-logo">
+          <Logo id="nvidia" size="1.4em" /> NVIDIA
+        </span>
+        <span className="small">Sürücüler · GeForce · Destek</span>
+      </div>
+      <h1>NVIDIA Sürücü İndirmeleri</h1>
+      <p className="small">Ekran kartınızı ve işletim sisteminizi seçin. Ekran kartınızın tam adını Aygıt Yöneticisi › Görüntü bağdaştırıcıları ya da kutusundan öğrenebilirsiniz.</p>
+      <div className="nv-form">
+        <label>
+          Ürün Tipi
+          <select value={tip} onChange={(e) => { const t = e.target.value; setTip(t); const ss = Object.keys(SERILER[t]); setSeri(ss[0]); setUrun(SERILER[t][ss[0]][0]); setSonuc(false); }} aria-label="Ürün Tipi">
+            {Object.keys(SERILER).map((x) => <option key={x}>{x}</option>)}
+          </select>
+        </label>
+        <label>
+          Ürün Serisi
+          <select value={seri} onChange={(e) => { const v = e.target.value; setSeri(v); setUrun(SERILER[tip][v][0]); setSonuc(false); }} aria-label="Ürün Serisi">
+            {seriler.map((x) => <option key={x}>{x}</option>)}
+          </select>
+        </label>
+        <label>
+          Ürün
+          <select value={urun} onChange={sec(setUrun)} aria-label="Ürün">
+            {urunler.map((x) => <option key={x}>{x}</option>)}
+          </select>
+        </label>
+        <label>
+          İşletim Sistemi
+          <select value={os} onChange={sec(setOs)} aria-label="İşletim Sistemi">
+            {OSLAR.map((x) => <option key={x}>{x}</option>)}
+          </select>
+        </label>
+        <label>
+          İndirme Türü
+          <select value={tur} onChange={sec(setTur)} aria-label="İndirme Türü">
+            <option>Game Ready Sürücüsü (GRD)</option>
+            <option>Studio Sürücüsü (SD)</option>
+          </select>
+        </label>
+        <button className="nv-btn" onClick={() => (setSonuc(true), log('nvidia.ara', { tip, seri, urun, os, tur }))}>
+          Ara
+        </button>
+      </div>
+      {sonuc && (
+        <div className="nv-sonuc">
+          <b>
+            {tur.startsWith('Studio') ? 'NVIDIA Studio Sürücüsü' : 'GeForce Game Ready Sürücüsü'} — {surum}
+          </b>
+          <small>
+            {urun} · {os} · Yayın tarihi: 18.11.2026 · Dosya boyutu: {linux ? '380 MB' : '860 MB'}
+          </small>
+          <small className="muted">{dosya}</small>
+          <button
+            className="nv-btn"
+            onClick={() => {
+              log('nvidia.indir', { dosya, uyumlu: kurulum === 'nvidia' });
+              indir({ dosya, boyut: linux ? '380 MB' : '860 MB', kurulum, kaynak: 'resmi' });
+            }}
+          >
+            İndir
+          </button>
         </div>
       )}
     </div>

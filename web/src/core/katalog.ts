@@ -16,9 +16,34 @@ export interface KurulumTanim {
   bittiNot?: string;
   /** Kurulum bilgisayara zarar verir (crack, sahte yükleyici) */
   zararli?: string;
+  /** Bu sürücüyü bekleyen aygıtlar kurulunca çalışır (ör. 'vga' → NVIDIA ekran kartı) */
+  aygitSurucu?: string;
+  /** Sürücü paketi bu donanıma/işletim sistemine uygun değil: gereksinim denetiminde durur */
+  uyumsuz?: 'donanim' | 'isletim';
 }
 
+const NVIDIA_LISANS = 'NVIDIA YAZILIM LİSANS SÖZLEŞMESİ — Bu yazılımı yükleyerek veya kullanarak bu sözleşmenin koşullarını kabul etmiş olursunuz. Yazılım yalnızca NVIDIA GPU ürünleriyle birlikte kullanılmak üzere lisanslanmıştır…';
+const nvidia = (id: string, surum: string, uyumsuz?: 'donanim' | 'isletim'): KurulumTanim => ({
+  id,
+  baslik: 'NVIDIA Yükleyici',
+  renk: '#76b900',
+  adimlar: ['gereksinim', 'lisans', 'bilesen', 'kur', 'bitti'],
+  uygulama: { id: 'nvidia', ad: `NVIDIA Grafik Sürücüsü ${surum}`, yayinci: 'NVIDIA Corporation', surum, boyutMB: 860, kaynak: 'resmi' },
+  bilesenler: [
+    { id: 'surucu', ad: 'NVIDIA Grafik Sürücüsü' },
+    { id: 'app', ad: 'NVIDIA App' },
+    { id: 'physx', ad: 'PhysX Sistem Yazılımı' },
+  ],
+  lisansMetni: NVIDIA_LISANS,
+  bittiNot: 'NVIDIA grafik sürücüsü yüklendi. Aygıt Yöneticisi › Görüntü bağdaştırıcıları altında ekran kartı artık "NVIDIA GeForce GTX 1650" olarak görünür.',
+  aygitSurucu: 'vga',
+  uyumsuz,
+});
+
 export const KATALOG: Record<string, KurulumTanim> = {
+  nvidia: nvidia('nvidia', '581.80'),
+  'nvidia-uyumsuz': nvidia('nvidia-uyumsuz', '581.80', 'donanim'),
+  'nvidia-eski': nvidia('nvidia-eski', '474.89', 'isletim'),
   chrome: {
     id: 'chrome',
     baslik: 'Google Chrome',
@@ -111,6 +136,11 @@ export function kur(pc0: WinPc, tanimId: string, secim: KurulumSecim, kaynak?: '
   const uyg: Uygulama = { ...t.uygulama, ...(kaynak ? { kaynak } : {}) };
   if (secim.bilesenler && t.bilesenler) uyg.bilesenler = [...secim.bilesenler];
   if (tanimId === 'office' || tanimId === 'photoshop') uyg.etkin = tanimId === 'photoshop';
+  if (t.aygitSurucu) {
+    for (const a of pc.aygitlar) if (a.surucu === t.aygitSurucu && a.durum === 'surucu-yok') a.durum = 'ok';
+    const gpu = pc.aygitlar.find((a) => a.surucu === t.aygitSurucu);
+    if (gpu) pc.cihaz.ekranKarti = gpu.ad;
+  }
   pc.uygulamalar = pc.uygulamalar.filter((u) => u.id !== uyg.id);
   if (tanimId !== 'kms') {
     pc.uygulamalar.push(uyg);
