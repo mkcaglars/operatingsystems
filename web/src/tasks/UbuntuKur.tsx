@@ -329,7 +329,7 @@ export default function UbuntuKur({ task, mode, sim, gomulu }: TaskUIProps & { g
                 ))}
                 {(() => {
                   const w = veri.wifi.find((x) => 'wifi:' + x.ssid === s.ayar.ag);
-                  return w?.sifre ? <input type="password" value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Parola" aria-label="Wi-Fi parolası" autoFocus /> : null;
+                  return w?.sifre ? <input type="text" data-sim-parola autoComplete="off" spellCheck={false} value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Parola" aria-label="Wi-Fi parolası" autoFocus /> : null;
                 })()}
               </>
             ) : (
@@ -508,8 +508,8 @@ export default function UbuntuKur({ task, mode, sim, gomulu }: TaskUIProps & { g
               <input placeholder="Adınız" value={h.ad} onChange={(e) => setH({ ...h, ad: e.target.value })} aria-label="Adınız" />
               <input placeholder="Bilgisayarınızın adı" value={h.bilgisayar} onChange={(e) => setH({ ...h, bilgisayar: e.target.value })} aria-label="Bilgisayarın adı" />
               <input placeholder="Kullanıcı adınız" value={h.kullanici} onChange={(e) => setH({ ...h, kullanici: e.target.value })} aria-label="Kullanıcı adı" autoCapitalize="none" />
-              <input type="password" placeholder="Parola" value={h.p1} onChange={(e) => setH({ ...h, p1: e.target.value })} aria-label="Parola" />
-              <input type="password" placeholder="Parolayı onaylayın" value={h.p2} onChange={(e) => setH({ ...h, p2: e.target.value })} aria-label="Parola onay" />
+              <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parola" value={h.p1} onChange={(e) => setH({ ...h, p1: e.target.value })} aria-label="Parola" />
+              <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parolayı onaylayın" value={h.p2} onChange={(e) => setH({ ...h, p2: e.target.value })} aria-label="Parola onay" />
               <label className="ui-check">
                 <input type="checkbox" defaultChecked /> <span>Oturum açmak için parolamı iste</span>
               </label>

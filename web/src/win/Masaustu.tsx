@@ -211,6 +211,16 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
     else if (uz === 'pdf') open('edge', 'get.adobe.com/tr/reader');
     else setMesajDlg({ baslik: 'Microsoft Store', metin: `".${uz}" dosyaları için uygun bir uygulama bulunamadı.` });
   };
+  const w10 = /^Windows 10/.test(pc.cihaz.surum);
+  const baslatAra = (e: { key: string; currentTarget: HTMLInputElement }) => {
+    if (e.key !== 'Enter') return;
+    const q = e.currentTarget.value.trim().toLocaleLowerCase('tr');
+    const hedef: AppId | null = /^(cmd|komut)/.test(q) ? 'cmd' : /^(powershell|terminal|ps)/.test(q) ? 'powershell' : /^(not|notepad)/.test(q) ? 'notdefteri' : /^(dosya|explorer|gezgin)/.test(q) ? 'dosya' : /^(ayar)/.test(q) ? 'ayarlar' : /^(görev|gorev|taskmgr)/.test(q) ? 'gorev' : null;
+    if (hedef) {
+      open(hedef);
+      e.currentTarget.value = '';
+    }
+  };
   const ben = pc.hesaplar.find((h) => h.ad === pc.cihaz.kullanici);
   const standart = ben?.tur === 'standart';
 
@@ -234,6 +244,14 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
     } else kisayollar.push({ anahtar: u.id, ad: PROGRAM_AD[u.id] ?? u.ad, logo: uygulamaLogo(u.id), ac: () => open('program', u.id), masaustu: u.id !== 'teams' && u.id !== 'onedrive' });
   }
   kisayollar.sort((a, b) => a.ad.localeCompare(b.ad, 'tr'));
+  const sabitler = izinli
+    .filter((a) => a !== 'kurulum' && a !== 'sistemkoruma' && a !== 'rufus' && (a !== 'word' || pc.kurulu.includes('office')))
+    .concat(pc.kurulu.includes('chrome') && !izinli.includes('chrome') ? (['chrome'] as AppId[]) : []);
+  const tumUygulamalar: Kisayol[] = [...kisayollar, { anahtar: 'cmd', ad: 'Komut İstemi', logo: 'cmd', ac: () => open('cmd'), masaustu: false }, { anahtar: 'powershell', ad: 'Windows PowerShell', logo: 'powershell', ac: () => open('powershell'), masaustu: false }];
+  if (w10) {
+    for (const a of sabitler) if (!tumUygulamalar.some((k) => k.anahtar === a)) tumUygulamalar.push({ anahtar: a, ad: APP_INFO[a].ad, logo: logoVar(a) ? a : 'windows10', ac: () => open(a), masaustu: false });
+    tumUygulamalar.sort((x, y) => x.ad.localeCompare(y.ad, 'tr'));
+  }
 
   const MASA = `${KULLANICI}/Masaüstü`;
   const masaDosyalari = children(pc, MASA).filter((p) => pc.explorer.gizli || !pc.fs[p].gizli);
@@ -344,7 +362,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
 
   const dark = pc.ekran.tema === 'koyu';
   return (
-    <div ref={kok} onContextMenu={(e) => (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('w11-icons')) && masaustuMenu(e)} onMouseDown={(e) => (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('w11-icons')) && setMasaSec(null)} className={'w11' + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : duvarArkaPlan(pc.ekran.arkaPlan), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
+    <div ref={kok} onContextMenu={(e) => (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('w11-icons')) && masaustuMenu(e)} onMouseDown={(e) => (e.target === e.currentTarget || (e.target as HTMLElement).classList.contains('w11-icons')) && setMasaSec(null)} className={'w11' + (w10 ? ' w10' : '') + (dark ? ' dark' : '') + (pc.ekran.kontrast ? ' contrast' : '') + (guvenli ? ' safe' : '')} style={{ background: guvenli ? '#000' : duvarArkaPlan(pc.ekran.arkaPlan), ['--olcek' as string]: String((pc.ekran.olcek / 100) * (pc.ekran.metin / 100)) }}>
       {guvenli && (
         <>
           <span className="safe-c sc-tl">Güvenli Mod</span>
@@ -438,43 +456,27 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
           <div className="w11-winbody">{renderApp(w)}</div>
         </div>
       ))}
-      {start && (
+      {start && !w10 && (
         <div className="w11-start">
-          <input
-            placeholder="Uygulama, ayar ve belge arayın"
-            aria-label="Başlat araması"
-            onKeyDown={(e) => {
-              if (e.key !== 'Enter') return;
-              const q = e.currentTarget.value.trim().toLocaleLowerCase('tr');
-              const hedef: AppId | null = /^(cmd|komut)/.test(q) ? 'cmd' : /^(powershell|terminal|ps)/.test(q) ? 'powershell' : /^(not|notepad)/.test(q) ? 'notdefteri' : /^(dosya|explorer|gezgin)/.test(q) ? 'dosya' : /^(ayar)/.test(q) ? 'ayarlar' : /^(görev|gorev|taskmgr)/.test(q) ? 'gorev' : null;
-              if (hedef) open(hedef);
-            }}
-          />
+          <input placeholder="Uygulama, ayar ve belge arayın" aria-label="Başlat araması" onKeyDown={baslatAra} />
           <div className="w11-start-h">Sabitlenmiş</div>
           <div className="w11-start-grid">
-            {izinli
-              .filter((a) => a !== 'kurulum' && a !== 'sistemkoruma' && a !== 'rufus' && (a !== 'word' || pc.kurulu.includes('office')))
-              .concat(pc.kurulu.includes('chrome') && !izinli.includes('chrome') ? (['chrome'] as AppId[]) : [])
-              .map((a) => (
-                <button key={a} onClick={() => open(a)}>
-                  <AppIkon id={a} size="2em" />
-                  {APP_INFO[a].ad}
-                </button>
-              ))}
+            {sabitler.map((a) => (
+              <button key={a} onClick={() => open(a)}>
+                <AppIkon id={a} size="2em" />
+                {APP_INFO[a].ad}
+              </button>
+            ))}
           </div>
-          {(
-            <>
-              <div className="w11-start-h">Tüm uygulamalar</div>
-              <div className="w11-start-tum">
-                {[...kisayollar, { anahtar: 'cmd', ad: 'Komut İstemi', logo: 'cmd', ac: () => open('cmd'), masaustu: false }, { anahtar: 'powershell', ad: 'Windows PowerShell', logo: 'powershell', ac: () => open('powershell'), masaustu: false }].map((k) => (
-                  <button key={k.anahtar} onClick={k.ac}>
-                    <Logo id={k.logo} size="1.5em" />
-                    {k.ad}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
+          <div className="w11-start-h">Tüm uygulamalar</div>
+          <div className="w11-start-tum">
+            {tumUygulamalar.map((k) => (
+              <button key={k.anahtar} onClick={k.ac}>
+                <Logo id={k.logo} size="1.5em" />
+                {k.ad}
+              </button>
+            ))}
+          </div>
           <div className="w11-start-foot">
             <span>👤 {pc.cihaz.kullanici}</span>
             <span className="rel">
@@ -491,10 +493,66 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
           </div>
         </div>
       )}
+      {start && w10 && (
+        <div className="w11-start w10-start">
+          <div className="w10-serit">
+            <button title="Genişlet" aria-label="Menüyü genişlet">☰</button>
+            <span className="w10-serit-bosluk" />
+            <button title={pc.cihaz.kullanici} aria-label="Hesap">👤</button>
+            <button title="Belgeler" aria-label="Belgeler" onClick={() => open('dosya', `${KULLANICI}/Belgeler`)}>📄</button>
+            <button title="Resimler" aria-label="Resimler" onClick={() => open('dosya', `${KULLANICI}/Resimler`)}>🖼</button>
+            <button title="Ayarlar" aria-label="Ayarlar" onClick={() => open('ayarlar')}>⚙</button>
+            <span className="rel">
+              <button className="w11-power" onClick={() => setGuc((g) => !g)} aria-label="Güç" title="Güç">
+                ⏻
+              </button>
+              {guc && (
+                <span className="w11-power-menu w10">
+                  <button onClick={() => yeniden()}>↻ Yeniden başlat</button>
+                  <button onClick={() => yeniden('normal', true)}>⏻ Bilgisayarı kapat</button>
+                </span>
+              )}
+            </span>
+          </div>
+          <div className="w10-liste w11-start-tum">
+            {tumUygulamalar.map((k, i) => (
+              <span key={k.anahtar} className="w10-liste-oge">
+                {(i === 0 || k.ad[0].toLocaleUpperCase('tr') !== tumUygulamalar[i - 1].ad[0].toLocaleUpperCase('tr')) && <b className="w10-harf">{k.ad[0].toLocaleUpperCase('tr')}</b>}
+                <button onClick={k.ac}>
+                  <Logo id={k.logo} size="1.4em" />
+                  {k.ad}
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="w10-karolar">
+            <div className="w11-start-h">Üretkenlik</div>
+            <div className="w11-start-grid">
+              {sabitler.map((a) => (
+                <button key={a} onClick={() => open(a)} className="w10-karo">
+                  <AppIkon id={a} size="2em" />
+                  {APP_INFO[a].ad}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       <div className="w11-taskbar">
         <button className="tb-start" onClick={() => setStart((x) => !x)} aria-label="Başlat">
-          <Logo id="windows" size="1.5em" />
+          <Logo id={w10 ? 'windows10' : 'windows'} size="1.5em" />
         </button>
+        {w10 && (
+          <label className="tb-ara">
+            <span aria-hidden>🔍</span>
+            <input placeholder="Aramak için buraya yazın" aria-label="Başlat araması" onKeyDown={baslatAra} onFocus={() => setStart(false)} />
+          </label>
+        )}
+        {w10 && (
+          <button className="tb-app tb-gorev" title="Görev görünümü" aria-label="Görev görünümü">
+            ⧉
+          </button>
+        )}
         {pinned.map((a) => (
           <button key={a} className={'tb-app' + (wins.some((w) => w.id === a) ? ' open' : '') + (aktif === a ? ' on' : '')} title={APP_INFO[a].ad} onClick={() => (wins.some((w) => w.id === a) ? setAktif(aktif === a ? null : a) : open(a))}>
             <AppIkon id={a} />
@@ -562,7 +620,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
                             setWifiSec(null);
                           }}
                         >
-                          {w.sifre && <input type="password" autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
+                          {w.sifre && <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
                           <button className="ws-btn primary">Bağlan</button>
                           {wifiHata && <small className="err-text">{wifiHata}</small>}
                         </form>
@@ -632,7 +690,7 @@ export default function Masaustu({ sim, veri, learn, kopru }: { sim: Sim<{ pc: W
               <>
                 <p className="small">Devam etmek için bir yönetici kullanıcı adı ve parolası girin.</p>
                 <div className="uac-user">👤 {veri.yonetici?.ad ?? 'Yönetici'}</div>
-                <input type="password" placeholder="Parola" value={uacPw} onChange={(e) => setUacPw(e.target.value)} aria-label="Yönetici parolası" />
+                <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parola" value={uacPw} onChange={(e) => setUacPw(e.target.value)} aria-label="Yönetici parolası" />
                 {uacErr && <small className="err-text">{uacErr}</small>}
               </>
             ) : null}

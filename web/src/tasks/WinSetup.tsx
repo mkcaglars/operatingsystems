@@ -104,6 +104,8 @@ function birlestir(b: Bolum[]): Bolum[] {
 
 export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { gomulu?: boolean }) {
   const veri = task.veri as unknown as Veri;
+  /** "Windows 11" ya da "Windows 10" (veri.surum'dan) */
+  const winAd = veri.surum?.match(/Windows \d+/)?.[0] ?? 'Windows 11';
   const s = sim.state as State;
   const learn = mode === 'ogren';
   const [sec, setSec] = useState<{ disk: string; bolum: string } | null>(null);
@@ -252,7 +254,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
           <div className="ws-dlg">
             <div className="ws-h">Kurulum seçeneğini belirleyin</div>
             {[
-              ['yukle', "Windows 11'i yükle"],
+              ['yukle', `${winAd}'${winAd.endsWith('10') ? 'u' : 'i'} yükle`],
               ['onar', 'Bilgisayarımı onar'],
             ].map(([k, l]) => (
               <label key={k} className="ws-radio">
@@ -303,7 +305,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
         return (
           <div className="ws-dlg">
             <div className="ws-h">Yüklemek istediğiniz sürümü seçin</div>
-            {['Windows 11 Home', 'Windows 11 Pro', 'Windows 11 Education'].map((o) => (
+            {[`${winAd} Home`, `${winAd} Pro`, `${winAd} Education`].map((o) => (
               <label key={o} className="ws-radio">
                 <input type="radio" checked={s.surum === o} onChange={() => sim.act('surum', { deger: o }, (x: State) => ({ ...x, surum: o }))} /> {o}
               </label>
@@ -337,7 +339,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
       case 'disk':
         return (
           <div className="ws-dlg wide">
-            <div className="ws-h">Windows 11'i yükleyeceğiniz konumu seçin</div>
+            <div className="ws-h">{winAd}'{winAd.endsWith('10') ? 'u' : 'i'} yükleyeceğiniz konumu seçin</div>
             <table className="ws-disks">
               <thead>
                 <tr>
@@ -395,7 +397,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
       case 'yukleniyor':
         return (
           <div className="ws-dlg">
-            <div className="ws-h">Windows 11 yükleniyor</div>
+            <div className="ws-h">{winAd} yükleniyor</div>
             {['Windows dosyaları kopyalanıyor', 'Yükleme için dosyalar hazırlanıyor', 'Özellikler yükleniyor', 'Güncelleştirmeler yükleniyor', 'Bitiriliyor'].map((t, i) => (
               <div key={t} className={'ws-step' + (pct >= (i + 1) * 20 ? ' done' : pct >= i * 20 ? ' cur' : '')}>
                 {pct >= (i + 1) * 20 ? '✔' : '•'} {t}
@@ -485,7 +487,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
                           setO({ ag: 'wifi:' + w.ssid }, 'oobe.ag', 'ad');
                         }}
                       >
-                        {w.sifre && <input type="password" autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
+                        {w.sifre && <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={wifiPw} onChange={(e) => setWifiPw(e.target.value)} placeholder="Ağ güvenlik anahtarını girin" aria-label="Wi-Fi şifresi" />}
                         <button className="ws-btn primary">Bağlan</button>
                       </form>
                     )}
@@ -533,8 +535,8 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
             <h2>Bu cihazı kim kullanacak?</h2>
             <p className="small">Yerel (çevrimdışı) hesap oluşturuluyor.</p>
             <input placeholder="Ad" value={form.kullanici} onChange={(e) => setForm({ ...form, kullanici: e.target.value })} aria-label="Kullanıcı adı" />
-            <input type="password" placeholder="Parola" value={form.p1} onChange={(e) => setForm({ ...form, p1: e.target.value })} aria-label="Parola" />
-            <input type="password" placeholder="Parolanızı onaylayın" value={form.p2} onChange={(e) => setForm({ ...form, p2: e.target.value })} aria-label="Parola onay" />
+            <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parola" value={form.p1} onChange={(e) => setForm({ ...form, p1: e.target.value })} aria-label="Parola" />
+            <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parolanızı onaylayın" value={form.p2} onChange={(e) => setForm({ ...form, p2: e.target.value })} aria-label="Parola onay" />
             <p className="small">Parolanızı unutursanız diye üç güvenlik sorusu yanıtlayın:</p>
             {['İlk evcil hayvanınızın adı neydi?', 'Doğduğunuz şehrin adı nedir?', 'Çocukluk takma adınız neydi?'].map((q, i) => (
               <input key={q} placeholder={q} value={guv[i]} onChange={(e) => setGuv(guv.map((g, j) => (j === i ? e.target.value : g)))} aria-label={`Güvenlik sorusu ${i + 1}`} />

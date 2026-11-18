@@ -47,6 +47,8 @@ export function coz(pc: WinPc, cwd: string, girdi: string): string {
   return yol;
 }
 
+/** Derleme numarası (Windows 11: 26100, Windows 10: 19045) */
+export const yapiNo = (pc: WinPc) => pc.cihaz.yapi.match(/(\d{5})/)?.[1] ?? '26100';
 const bayt = (f: { boyut?: string }) => Math.round(boyutKB(f.boyut) * 1024);
 const sayi = (n: number) => n.toLocaleString('tr-TR');
 const TARIH = '02.03.2026  09:41';
@@ -214,7 +216,7 @@ export function calistir(pc: WinPc, cwd: string, satir: string, k: Kabuk): Sonuc
     case 'exit':
       return { cikti: '', cwd, ozel: 'cikis' };
     case 'ver':
-      return { cikti: `\nMicrosoft Windows [Version 10.0.${pc.cihaz.yapi.match(/(\d{5})/)?.[1] ?? '26100'}.2314]`, cwd };
+      return { cikti: `\nMicrosoft Windows [Version 10.0.${yapiNo(pc)}.${yapiNo(pc) === '19045' ? '5131' : '2314'}]`, cwd };
     case 'whoami':
       return { cikti: `${pc.cihaz.ad.toLowerCase()}\\${pc.cihaz.kullanici.toLowerCase()}`, cwd };
     case 'hostname':
@@ -368,7 +370,7 @@ export function calistir(pc: WinPc, cwd: string, satir: string, k: Kabuk): Sonuc
           '',
           `Ana Bilgisayar Adı:            ${pc.cihaz.ad}`,
           `İşletim Sistemi Adı:           Microsoft ${pc.cihaz.surum}`,
-          `İşletim Sistemi Sürümü:        10.0.26100 Yapı 26100`,
+          `İşletim Sistemi Sürümü:        10.0.${yapiNo(pc)} Yapı ${yapiNo(pc)}`,
           `Kayıtlı Sahip:                 ${pc.cihaz.kullanici}`,
           `Sistem Türü:                   x64-based PC`,
           `İşlemci(ler):                  ${pc.cihaz.islemci}`,

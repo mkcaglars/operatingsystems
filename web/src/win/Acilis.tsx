@@ -15,10 +15,10 @@ export function Spinner({ beyaz = true }: { beyaz?: boolean }) {
 }
 
 /** Siyah ekranda Windows logosu ve dönen noktalar (açılış, kurulum medyası) */
-export function WindowsLogoEkrani({ metin }: { metin?: string }) {
+export function WindowsLogoEkrani({ metin, w10 }: { metin?: string; w10?: boolean }) {
   return (
     <div className="win-boot">
-      <Logo id="windows" size="5.5em" />
+      <Logo id={w10 ? 'windows10' : 'windows'} size="5.5em" />
       <Spinner />
       {metin && <p>{metin}</p>}
     </div>
@@ -46,6 +46,8 @@ interface Props {
   onIlkBitti: () => void;
   log: (type: string) => void;
   children: ReactNode;
+  /** Windows 10 açılış logosu ve kilit ekranı */
+  w10?: boolean;
 }
 
 const simdi = () => {
@@ -53,7 +55,7 @@ const simdi = () => {
   return { saat: d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }), tarih: d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' }) };
 };
 
-export default function WindowsAcilis({ kullanici, parola, ilk, onIlkBitti, log, children }: Props) {
+export default function WindowsAcilis({ kullanici, parola, ilk, onIlkBitti, log, children, w10 }: Props) {
   const [asama, setAsama] = useState<Asama>('logo');
   const [pw, setPw] = useState('');
   const [hata, setHata] = useState(false);
@@ -106,15 +108,15 @@ export default function WindowsAcilis({ kullanici, parola, ilk, onIlkBitti, log,
   };
 
   if (asama === 'masaustu') return <>{children}</>;
-  if (asama === 'logo') return <WindowsLogoEkrani />;
+  if (asama === 'logo') return <WindowsLogoEkrani w10={w10} />;
   if (asama === 'ilk1') return <div className="win-ilk">Merhaba</div>;
   if (asama === 'ilk2') return <DurumEkrani metin="Bazı şeyleri sizin için hazırlıyoruz" alt="Bu işlem birkaç dakika sürebilir" />;
   if (asama === 'ilk3') return <DurumEkrani metin="Bilgisayarınızı kapatmayın" alt="Neredeyse hazır" />;
   if (asama === 'hosgeldin') return <DurumEkrani metin="Hoş geldiniz" />;
 
-  const kilitArka = photoUrl('os-win11-kilit') ?? photoUrl('os-win11-duvar');
+  const kilitArka = w10 ? (photoUrl('os-win10-kilit') ?? photoUrl('os-win10-duvar')) : (photoUrl('os-win11-kilit') ?? photoUrl('os-win11-duvar'));
   return (
-    <div className={'win-kilit' + (asama === 'giris' ? ' giris' : '')} style={kilitArka ? { backgroundImage: `url(${kilitArka})` } : undefined} onClick={() => asama === 'kilit' && setAsama('giris')}>
+    <div className={'win-kilit' + (asama === 'giris' ? ' giris' : '') + (w10 ? ' w10' : '')} style={kilitArka ? { backgroundImage: `url(${kilitArka})` } : undefined} onClick={() => asama === 'kilit' && setAsama('giris')}>
       {asama === 'kilit' ? (
         <div className="win-kilit-saat">
           <b>{zaman.saat}</b>
@@ -134,7 +136,7 @@ export default function WindowsAcilis({ kullanici, parola, ilk, onIlkBitti, log,
             </>
           ) : parola ? (
             <div className="win-parola">
-              <input type="password" autoFocus value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Parola" aria-label="Windows parolası" />
+              <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Parola" aria-label="Windows parolası" />
               <button aria-label="Oturum aç">→</button>
             </div>
           ) : (

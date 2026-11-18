@@ -4,6 +4,11 @@ import { photoUrl } from './Photo';
 import { MARKA_LOGOLARI } from './markaLogolari';
 
 const L: Record<string, (u: string) => ReactElement> = {
+  windows10: () => (
+    <svg viewBox="0 0 48 48">
+      <path d="M4 9.5l16.5-2.3v16H4zM22.5 6.9L44 4v19.2H22.5zM4 25h16.5v16L4 38.7zM22.5 25H44v19l-21.5-3z" fill="#0078d6" />
+    </svg>
+  ),
   windows: (u) => (
     <svg viewBox="0 0 24 24">
       <defs>

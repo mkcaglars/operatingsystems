@@ -637,6 +637,12 @@ const LINUX_SAYFA: Record<string, LinuxSayfa> = {
     metin: 'Linux kullandığınız için doğrudan ISO indirme seçeneği gösteriliyor. USB belleğe yazmak için Ubuntu\'da "Başlangıç Diski Oluşturucu" ya da Windows\'ta Rufus kullanılır.',
     indir: [{ dosya: 'Win11_24H2_Turkish_x64.iso', boyut: '5,4 GB', etiket: '64-bit İndir' }],
   },
+  'www.microsoft.com/tr-tr/software-download/windows10': {
+    baslik: 'Windows 10 Disk Görüntüsü (ISO) indir',
+    logo: 'windows10',
+    metin: "Windows 10 desteği 14 Ekim 2025'te sona erdi. Linux kullandığınız için doğrudan ISO indirme seçeneği gösteriliyor. Windows 10, TPM 2.0 ve Güvenli Önyükleme gerektirmez.",
+    indir: [{ dosya: 'Win10_22H2_Turkish_x64.iso', boyut: '5,7 GB', etiket: '64-bit İndir' }],
+  },
   'rufus.ie/tr': {
     baslik: 'Rufus',
     logo: 'rufus',
@@ -990,7 +996,7 @@ export function UbuntuAyarlar(ctx: UbCtx) {
                 }}
               >
                 <label className="small">"{sifre.ag}" için parola</label>
-                <input type="password" autoFocus value={sifre.deger} onChange={(e) => setSifre({ ...sifre, deger: e.target.value, hata: undefined })} aria-label="Wi-Fi parolası" />
+                <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={sifre.deger} onChange={(e) => setSifre({ ...sifre, deger: e.target.value, hata: undefined })} aria-label="Wi-Fi parolası" />
                 {sifre.hata && <small className="ubf-hata">{sifre.hata}</small>}
                 <button type="submit">Bağlan</button>
               </form>
@@ -1259,7 +1265,7 @@ export function BaslangicDiski(ctx: UbCtx) {
             <b>🔒 Kimlik Doğrulaması Gerekli</b>
             <p className="small">Bir aygıtı biçimlendirmek için kimlik doğrulaması gerekir.</p>
             <label className="small">{sh.user} için parola</label>
-            <input type="password" autoFocus value={pw} onChange={(e) => (setPw(e.target.value), setHata(''))} aria-label="Kimlik doğrulama parolası" />
+            <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={pw} onChange={(e) => (setPw(e.target.value), setHata(''))} aria-label="Kimlik doğrulama parolası" />
             {hata && <small className="ubf-hata">{hata}</small>}
             <div className="ubf-dlg-btn">
               <button type="button" onClick={() => (setAdim('sec'), setHata(''))}>

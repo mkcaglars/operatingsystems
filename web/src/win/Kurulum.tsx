@@ -197,7 +197,7 @@ export default function Kurulum(ctx: AppCtx) {
           <>
             <b>Adobe hesabınızla oturum açın</b>
             <input placeholder="E-posta adresi" value={hesap.e} onChange={(e) => setHesap({ ...hesap, e: e.target.value })} aria-label="E-posta" />
-            <input type="password" placeholder="Parola" value={hesap.p} onChange={(e) => setHesap({ ...hesap, p: e.target.value })} aria-label="Hesap parolası" />
+            <input type="text" data-sim-parola autoComplete="off" spellCheck={false} placeholder="Parola" value={hesap.p} onChange={(e) => setHesap({ ...hesap, p: e.target.value })} aria-label="Hesap parolası" />
           </>
         )}
         {adim === 'kur' && (

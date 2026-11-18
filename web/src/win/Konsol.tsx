@@ -1,11 +1,11 @@
 // Komut İstemi (cmd) ve Windows PowerShell penceresi: komutlar core/winkabuk.ts ile sanal bilgisayarda çalışır.
 import { useEffect, useRef, useState } from 'react';
-import { calistir, istem, tamamla, type Kabuk } from '../core/winkabuk';
+import { calistir, istem, tamamla, yapiNo, type Kabuk } from '../core/winkabuk';
 import { KULLANICI } from '../core/winpc';
 import type { AppCtx, AppId } from './Masaustu';
 
 const BASLIK: Record<Kabuk, string> = {
-  cmd: 'Microsoft Windows [Version 10.0.26100.2314]\n(c) Microsoft Corporation. Tüm hakları saklıdır.\n',
+  cmd: 'Microsoft Windows [Version 10.0.SURUM]\n(c) Microsoft Corporation. Tüm hakları saklıdır.\n',
   ps: 'Windows PowerShell\nTelif Hakkı (C) Microsoft Corporation. Tüm hakları saklıdır.\n\nYeni özellikler ve iyileştirmeler için en son PowerShell\'i yükleyin! https://aka.ms/PSWindows\n',
 };
 
@@ -14,7 +14,7 @@ type Satir = { t: string; hata?: boolean };
 export default function Konsol({ ctx, kabuk }: { ctx: AppCtx; kabuk: Kabuk }) {
   const { pc } = ctx;
   const [cwd, setCwd] = useState(() => (ctx.arg && pc.fs[ctx.arg]?.tur === 'klasor' ? ctx.arg : KULLANICI));
-  const [satirlar, setSatirlar] = useState<Satir[]>([{ t: BASLIK[kabuk] + '\n' + (kabuk === 'cmd' ? 'Komutların listesi için help yazın.\n' : 'Komutların listesi için help yazın.\n') }]);
+  const [satirlar, setSatirlar] = useState<Satir[]>([{ t: BASLIK[kabuk].replace('SURUM', yapiNo(pc) === '19045' ? '19045.5131' : '26100.2314') + '\n' + (kabuk === 'cmd' ? 'Komutların listesi için help yazın.\n' : 'Komutların listesi için help yazın.\n') }]);
   const [girdi, setGirdi] = useState('');
   const [gecmis, setGecmis] = useState<string[]>([]);
   const [gi, setGi] = useState(-1);

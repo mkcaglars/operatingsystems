@@ -56,7 +56,7 @@ export function UbuntuMasaustu(props: Props) {
         <form className="ubx-login-box" onSubmit={giris}>
           <div className="ubx-avatar">{(hesap.ad || hesap.kullanici).slice(0, 1).toUpperCase()}</div>
           <b>{hesap.ad || hesap.kullanici}</b>
-          <input type="password" autoFocus value={pw} onChange={(e) => (setPw(e.target.value), setHata(''))} placeholder="Parola" aria-label="Ubuntu parolası" />
+          <input type="text" data-sim-parola autoComplete="off" spellCheck={false} autoFocus value={pw} onChange={(e) => (setPw(e.target.value), setHata(''))} placeholder="Parola" aria-label="Ubuntu parolası" />
           {hata && <small className="ubx-err">{hata}</small>}
         </form>
         <div className="ubx-logo">
