@@ -202,6 +202,7 @@ export default function Tarayici(ctx: AppCtx & { chrome?: boolean }) {
 
   const goster = (u: string) => {
     setUrl(u);
+    setPanel(false);
     setAdres(u.startsWith('ara:') || u === 'yeni' ? '' : u);
     setQ(u.startsWith('ara:') ? u.slice(4) : '');
     setModal(false);
