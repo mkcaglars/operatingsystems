@@ -5377,3 +5377,34 @@ input[data-sim-parola] { -webkit-text-security: disc; text-security: disc; font-
 .fe.w10 .fe-toolbar .ws-link:hover:not(:disabled) { background: #cde8ff; }
 .fe.w10 .fe-addr { border-radius: 0; }
 .w10 .ctx-menu, .w10 .w11-agmenu, .w10 .w11-bildirim { border-radius: 0; }
+
+/* NVIDIA sürücü sayfası */
+.br-page.nv { background: #fff; }
+.nv-bas { display: flex; justify-content: space-between; align-items: center; background: #000; color: #fff; margin: -1em -1.4em 1em; padding: 0.6em 1.4em; }
+.nv-logo { display: flex; align-items: center; gap: 0.4em; font-weight: 800; letter-spacing: 0.08em; color: #76b900; }
+.nv-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(12em, 1fr)); gap: 0.6em 1em; align-items: end; background: #f2f2f2; padding: 1em; }
+.nv-form label { display: flex; flex-direction: column; gap: 0.2em; font-size: 0.85em; font-weight: 600; }
+.nv-form select { font: inherit; font-weight: 400; padding: 0.35em; }
+.nv-btn { background: #76b900; color: #000; font: inherit; font-weight: 700; border: 0; padding: 0.5em 1.6em; cursor: pointer; justify-self: start; }
+.nv-btn:hover { background: #8cd400; }
+.nv-sonuc { display: flex; flex-direction: column; gap: 0.3em; border: 1px solid #ddd; border-left: 4px solid #76b900; padding: 0.8em 1em; margin-top: 1em; align-items: flex-start; }
+
+/* Dosya Gezgini: Bu bilgisayar ve Biçimlendir */
+button.fe-nav-h { background: none; border: 0; font: inherit; font-weight: 600; text-align: left; cursor: pointer; padding: 0.3em 0.5em; border-radius: 4px; width: 100%; }
+button.fe-nav-h.on, button.fe-nav-h:hover { background: #0000000f; }
+.fe-pc { padding: 0.6em 0.8em; }
+.fe-pc-h { display: block; font-size: 0.9em; margin-bottom: 0.6em; color: #333; }
+.fe-pc-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(15em, 1fr)); gap: 0.6em; }
+.fe-surucu { display: flex; gap: 0.6em; align-items: center; background: none; border: 1px solid transparent; border-radius: 4px; padding: 0.5em; font: inherit; text-align: left; cursor: default; }
+.fe-surucu:hover, .fe-surucu:focus { background: #e5f3ff; border-color: #cce8ff; outline: 0; }
+.fe-surucu-ik { font-size: 2em; }
+.fe-surucu-b { display: flex; flex-direction: column; gap: 0.2em; flex: 1; min-width: 0; }
+.fe-surucu-b b { font-weight: 400; font-size: 0.92em; }
+.fe-doluluk { display: block; height: 0.75em; background: #e6e6e6; border: 1px solid #bcbcbc; }
+.fe-doluluk i { display: block; height: 100%; background: #26a0da; }
+.fe-doluluk.dolu i { background: #da2626; }
+.fe-surucu-b small { color: #6d6d6d; font-size: 0.8em; }
+.fe-bicim label { display: flex; flex-direction: column; gap: 0.15em; font-size: 0.9em; }
+.ws-bar-anim { width: 40% !important; animation: ws-bar-kay 1s linear infinite; }
+@keyframes ws-bar-kay { from { margin-left: -40%; } to { margin-left: 100%; } }
+.w11-icon-pc { font-style: normal; font-size: 2em; line-height: 1.2; background: none !important; }

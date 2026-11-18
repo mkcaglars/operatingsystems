@@ -10,6 +10,7 @@ import Excel from './Excel';
 
 export const PROGRAM_AD: Record<string, string> = {
   winrar: 'WinRAR',
+  nvidia: 'NVIDIA App',
   excel: 'Excel',
   powerpoint: 'PowerPoint',
   outlook: 'Outlook',

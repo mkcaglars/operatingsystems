@@ -139,7 +139,19 @@ export default function AygitYoneticisi(ctx: AppCtx) {
             {sihirbaz === 'secim' && (
               <>
                 <p>Sürücüleri nasıl aramak istiyorsunuz?</p>
-                <button className="dm-choice" onClick={() => kur(lanOk, 'otomatik')}>
+                <button
+                  className="dm-choice"
+                  onClick={() => {
+                    // Kum havuzunda ekran kartı sürücüsü otomatik bulunmaz: NVIDIA'nın sitesinden indirilir
+                    if (ctx.kopru && ay?.surucu === 'vga' && lanOk) {
+                      ctx.log('surucu.bulunamadi', { aygit: ay.id, kaynak: 'otomatik' });
+                      setSonuc({ ok: false, metin: 'Aygıtınız için en iyi sürücüler zaten yüklü: Microsoft Temel Görüntü Bağdaştırıcısı. Daha iyi sürücüler üreticinin web sitesinde olabilir (ör. NVIDIA sürücü indirme sayfası).' });
+                      setSihirbaz('sonuc');
+                      return;
+                    }
+                    kur(lanOk, 'otomatik');
+                  }}
+                >
                   → <b>Sürücüleri otomatik olarak ara</b>
                   <small>Windows, bilgisayarınızda ve internette en iyi sürücüyü arar.</small>
                 </button>

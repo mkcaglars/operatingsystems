@@ -2,7 +2,7 @@
 // Saf fonksiyon: çıktı mevcut duruma göre hesaplanır; değişiklik gerekiyorsa "degis" işlevi döner (act ile uygulanır).
 import { adOf, children, parentOf, type WinPc } from './winpc';
 import { boyutKB } from './arsiv';
-import { kopyala, sil, tasi } from './dosyaIslem';
+import { kopyala, korumali, sil, tasi } from './dosyaIslem';
 import { AGLAR, type IpSonuc } from './ag';
 
 export type Kabuk = 'cmd' | 'ps';
@@ -288,7 +288,7 @@ export function calistir(pc: WinPc, cwd: string, satir: string, k: Kabuk): Sonuc
       const klasor = pc.fs[y].tur === 'klasor';
       if ((komut === 'del' || komut === 'erase') && k === 'cmd' && klasor) return { cikti: `${goster(y)}\\*, Emin misiniz (E/H)? E`, cwd, degis: (p) => sil(p, children(p, y).filter((c) => p.fs[c].tur === 'dosya')) };
       if ((komut === 'rd' || komut === 'rmdir') && klasor && children(pc, y).length && !arg.some((a) => /^\/s$/i.test(a))) return { cikti: 'Dizin boş değil.', hata: true, cwd };
-      if (y.split('/').length <= 2 || /^C:\/(Windows|Program Files)/.test(y)) return { cikti: 'Erişim engellendi.', hata: true, cwd };
+      if (korumali(y)) return { cikti: 'Erişim engellendi.', hata: true, cwd };
       return { cikti: '', cwd, degis: (p) => sil(p, [y]) };
     }
     case 'type':
@@ -311,6 +311,7 @@ export function calistir(pc: WinPc, cwd: string, satir: string, k: Kabuk): Sonuc
       const hedef0 = coz(pc, cwd, parametresiz[1]);
       if (!pc.fs[kaynak]) return { cikti: 'Sistem belirtilen dosyayı bulamıyor.', hata: true, cwd };
       const tasima = /^(move|mv|move-item)$/.test(komut);
+      if (tasima && korumali(kaynak)) return { cikti: 'Erişim engellendi.', hata: true, cwd };
       const klasoreMi = pc.fs[hedef0]?.tur === 'klasor' || /^[A-Z]:$/.test(hedef0);
       return {
         cikti: k === 'cmd' ? `        1 dosya ${tasima ? 'taşındı' : 'kopyalandı'}.` : '',
@@ -330,6 +331,7 @@ export function calistir(pc: WinPc, cwd: string, satir: string, k: Kabuk): Sonuc
       if (parametresiz.length < 2) return { cikti: 'Komutun sözdizimi yanlış.', hata: true, cwd };
       const eski = coz(pc, cwd, parametresiz[0]);
       if (!pc.fs[eski]) return { cikti: 'Sistem belirtilen dosyayı bulamıyor.', hata: true, cwd };
+      if (korumali(eski)) return { cikti: 'Erişim engellendi.', hata: true, cwd };
       const yeni = `${parentOf(eski)}/${parametresiz[1]}`;
       return {
         cikti: '',

@@ -4,6 +4,13 @@ import { photoUrl } from './Photo';
 import { MARKA_LOGOLARI } from './markaLogolari';
 
 const L: Record<string, (u: string) => ReactElement> = {
+  nvidia: () => (
+    <svg viewBox="0 0 48 48">
+      <rect x="2" y="6" width="44" height="36" rx="4" fill="#76b900" />
+      <path d="M17 17c6-4 15-3 21 4-6 7-15 8-21 4v-3c4 3 10 3 15-1-4-4-10-5-15-2v-2zm0 4c2-1 5-1 7 1-2 2-5 2-7 1z" fill="#fff" />
+      <path d="M10 15h7v18h-7z" fill="#fff" opacity="0.9" />
+    </svg>
+  ),
   windows10: () => (
     <svg viewBox="0 0 48 48">
       <path d="M4 9.5l16.5-2.3v16H4zM22.5 6.9L44 4v19.2H22.5zM4 25h16.5v16L4 38.7zM22.5 25H44v19l-21.5-3z" fill="#0078d6" />

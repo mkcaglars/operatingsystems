@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { adOf, children, gorunenAd, KULLANICI, parentOf } from '../core/winpc';
 import { arsivAdi, arsivKoku, arsivle, cikart } from '../core/arsiv';
-import { kopyala, sil as silYollar, tasi, uzanti, varsayilanIslem } from '../core/dosyaIslem';
+import { kopyala, korumali, sil as silYollar, tasi, uzanti, varsayilanIslem } from '../core/dosyaIslem';
 import type { MenuOge } from './BaglamMenu';
 import type { AppCtx } from './Masaustu';
 
@@ -40,9 +40,12 @@ const ikon = (tur: 'klasor' | 'dosya', yol: string) => {
   return uz === 'exe' ? '⚙' : uz === 'docx' ? '📘' : uz === 'xlsx' ? '📗' : uz === 'zip' || uz === 'rar' ? '🗜' : uz === 'txt' ? '📝' : uz === 'jpg' || uz === 'png' ? '🖼' : '📄';
 };
 
+/** "Bu bilgisayar" görünümü (sürücüler) için yol */
+export const BU_PC = 'Bu bilgisayar';
+
 export default function DosyaGezgini(ctx: AppCtx) {
   const { pc, act } = ctx;
-  const [yol, setYol] = useState(ctx.arg && pc.fs[ctx.arg] ? (pc.fs[ctx.arg].tur === 'klasor' || arsivKoku(pc, ctx.arg) ? ctx.arg : parentOf(ctx.arg)) : `${KULLANICI}/Belgeler`);
+  const [yol, setYol] = useState(ctx.arg === BU_PC ? BU_PC : ctx.arg && pc.fs[ctx.arg] ? (pc.fs[ctx.arg].tur === 'klasor' || arsivKoku(pc, ctx.arg) ? ctx.arg : parentOf(ctx.arg)) : `${KULLANICI}/Belgeler`);
   const [sec, setSec] = useState<string[]>([]);
   const [capa, setCapa] = useState<string | null>(null);
   const [ad, setAd] = useState<{ path: string; value: string } | null>(null);
@@ -53,6 +56,8 @@ export default function DosyaGezgini(ctx: AppCtx) {
   const [kutu, setKutu] = useState<{ x0: number; y0: number; x1: number; y1: number; ek: string[] } | null>(null);
   const [hedefVurgu, setHedefVurgu] = useState<string | null>(null);
   const [ozellik, setOzellik] = useState<string | null>(null);
+  const [korumaDlg, setKorumaDlg] = useState<string | null>(null);
+  const [bicim, setBicim] = useState<{ surucu: string; etiket: string; fs: string; hizli: boolean; adim: 'form' | 'onay' | 'calisiyor' | 'bitti' } | null>(null);
   const liste = useRef<HTMLDivElement>(null);
   const surucler = Object.keys(pc.fs).filter((p) => /^[A-Z]:$/.test(p));
   const ogeler = children(pc, yol).filter((p) => pc.explorer.gizli || !pc.fs[p].gizli);
@@ -167,7 +172,19 @@ export default function DosyaGezgini(ctx: AppCtx) {
   };
   const silSecili = (yollar = sec) => {
     if (!yollar.length) return;
-    const s = [...yollar];
+    const engelli = yollar.filter((y) => korumali(y));
+    const engel =
+      engelli.length > 1
+        ? `${engelli.length} öğe silinemedi: ${engelli.map((y) => adOf(y) || y).join(', ')}. Windows ve program dosyalarına erişim engellendi (TrustedInstaller'dan izin gerekir); kullanıcı profili de kullanımda olduğu için silinemez. Bunlar silinirse bilgisayar açılmaz ya da programlar çalışmaz.`
+        : engelli.length
+          ? korumali(engelli[0])
+          : null;
+    const s = yollar.filter((y) => !korumali(y));
+    if (engel) {
+      ctx.log('dosya.sil-engellendi', { yol: yollar.filter((y) => korumali(y)).join(', ') });
+      setKorumaDlg(engel);
+    }
+    if (!s.length) return;
     act('dosya.sil', { yol: s.join(', '), adet: s.length }, (p) => (silYollar(p, s), p));
     setSec([]);
   };
@@ -197,6 +214,11 @@ export default function DosyaGezgini(ctx: AppCtx) {
     // Uzantılar gizliyken dosya yeniden adlandırılırsa Windows eski uzantıyı korur
     const eskiUz = f?.tur === 'dosya' && !pc.explorer.uzanti ? (adOf(ad.path).match(/\.[^.]+$/)?.[0] ?? '') : '';
     const yeni = `${parentOf(ad.path)}/${v}${eskiUz}`;
+    if (yeni !== ad.path && korumali(ad.path)) {
+      setKorumaDlg(korumali(ad.path));
+      setAd(null);
+      return;
+    }
     if (yeni !== ad.path && pc.fs[yeni]) {
       setHata('Bu konumda aynı adlı bir dosya ya da klasör zaten var.');
       return;
@@ -322,7 +344,59 @@ export default function DosyaGezgini(ctx: AppCtx) {
   };
 
   const surucuAdi = (d: string) => (d === 'C:' ? 'Yerel Disk (C:)' : d === 'D:' ? 'Veri (D:)' : `${pc.fs[d]?.boyut ?? 'USB Sürücü'} (${d})`);
-  const yolGoster = yol.startsWith(KULLANICI) ? yol.replace(KULLANICI, 'Ogrenci').replace(/\//g, ' › ') : 'Bu bilgisayar › ' + surucuAdi(yol.slice(0, 2)) + yol.slice(2).replace(/\//g, ' › ');
+  /** Sürücü kapasitesi: C: sabit, USB belleklerde kasadaki kapasite ve içindekilerin boyutu */
+  function kapasite(d: string): { toplam: number; bos: number; oran: number } {
+    if (d === 'C:') return { toplam: 476, bos: 371, oran: 105 / 476 };
+    const usb = ctx.kopru?.usbler.find((u) => u.harf === d);
+    const toplam = Math.round(Number((usb?.kapasite ?? '32 GB').replace(/[^\d]/g, '')) * 0.93 * 10) / 10;
+    const kb = Object.keys(pc.fs)
+      .filter((k) => k.startsWith(d + '/') && pc.fs[k].tur === 'dosya')
+      .reduce((t, k) => {
+        const b = pc.fs[k].boyut ?? '';
+        const n = Number(b.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+        return t + (/GB/.test(b) ? n * 1048576 : /MB/.test(b) ? n * 1024 : n);
+      }, 0);
+    const kullanilan = Math.round((kb / 1048576) * 10) / 10;
+    return { toplam, bos: Math.max(0, Math.round((toplam - kullanilan) * 10) / 10), oran: Math.min(1, kullanilan / toplam) };
+  }
+  const surucuMenusu = (e: MouseEvent, d: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    ctx.menu(e, [
+      { ad: 'Aç', kalin: true, ikon: '📂', onClick: () => git(d) },
+      { ayrac: true },
+      { ad: 'Biçimlendir…', ikon: '🧹', onClick: () => bicimBasla(d) },
+      ...(d !== 'C:' ? [{ ad: 'Çıkar', ikon: '⏏', onClick: () => setBilgi('USB belleği çıkarmak için kasadaki bellek simgesine tıklayın.') }] : []),
+      { ayrac: true },
+      { ad: 'Özellikler', ikon: 'ⓘ', onClick: () => setOzellik(d) },
+    ]);
+  };
+  const bicimBasla = (d: string) => {
+    ctx.log('surucu.bicimlendir-ac', { surucu: d });
+    if (d === 'C:') {
+      setKorumaDlg('Bu birimi biçimlendiremezsiniz. Kullandığınız Windows sürümünü içeriyor. Bu birimi biçimlendirmek bilgisayarın çalışmasını durdurur. (C: sürücüsünü yalnızca Windows kurulumundaki disk ekranından biçimlendirebilirsiniz.)');
+      return;
+    }
+    setBicim({ surucu: d, etiket: pc.fs[d]?.boyut && pc.fs[d].boyut !== 'USB Sürücü' ? pc.fs[d].boyut! : '', fs: 'FAT32', hizli: true, adim: 'form' });
+  };
+  const bicimUygula = () => {
+    if (!bicim) return;
+    const { surucu: d, etiket, fs } = bicim;
+    const usb = ctx.kopru?.usbler.find((u) => u.harf === d);
+    setBicim({ ...bicim, adim: 'calisiyor' });
+    setTimeout(() => {
+      // Önce bellek durumu (kurulum belleği özelliği, silinen yedek) güncellenir, sonra Windows'taki dosyalar silinir
+      if (usb) ctx.kopru?.bicimlendir?.(usb.id, etiket.trim() || 'USB Sürücü');
+      act('surucu.bicimlendir', { surucu: d, etiket, dosyaSistemi: fs, hizli: bicim.hizli }, (p) => {
+        for (const k of Object.keys(p.fs)) if (k.startsWith(d + '/')) delete p.fs[k];
+        p.fs[d] = { ...p.fs[d], tur: 'klasor', boyut: etiket.trim() || 'USB Sürücü' };
+        return p;
+      });
+      setBicim((b) => (b ? { ...b, adim: 'bitti' } : b));
+      if (yol.startsWith(d)) setSec([]);
+    }, 1500);
+  };
+  const yolGoster = yol === BU_PC ? 'Bu bilgisayar' : yol.startsWith(KULLANICI) ? yol.replace(KULLANICI, 'Ogrenci').replace(/\//g, ' › ') : 'Bu bilgisayar › ' + surucuAdi(yol.slice(0, 2)) + yol.slice(2).replace(/\//g, ' › ');
   const oz = ozellik ? pc.fs[ozellik] : null;
   const w10 = /^Windows 10/.test(pc.cihaz.surum);
   return (
@@ -383,7 +457,7 @@ export default function DosyaGezgini(ctx: AppCtx) {
         </span>
       </div>
       <div className="fe-addr">
-        <button className="ws-link" disabled={!parentOf(yol)} onClick={() => parentOf(yol) && git(parentOf(yol))} aria-label="Yukarı">
+        <button className="ws-link" disabled={yol === BU_PC} onClick={() => git(parentOf(yol) || BU_PC)} aria-label="Yukarı">
           ↑
         </button>
         <span>{yolGoster}</span>
@@ -395,9 +469,11 @@ export default function DosyaGezgini(ctx: AppCtx) {
               {i} {n}
             </button>
           ))}
-          <div className="fe-nav-h">Bu bilgisayar</div>
+          <button className={'fe-nav-h' + (yol === BU_PC ? ' on' : '')} onClick={() => git(BU_PC)}>
+            🖥 Bu bilgisayar
+          </button>
           {surucler.map((d) => (
-            <button key={d} className={(yol === d ? 'on' : '') + (hedefVurgu === d ? ' birak' : '')} onClick={() => git(d)} {...birakmaHedefi(d)}>
+            <button key={d} className={(yol === d ? 'on' : '') + (hedefVurgu === d ? ' birak' : '')} onClick={() => git(d)} onContextMenu={(e) => surucuMenusu(e, d)} {...birakmaHedefi(d)}>
               {d === 'C:' ? '💽 Yerel Disk (C:)' : d === 'D:' ? '💽 Veri (D:)' : `🔌 ${pc.fs[d]?.boyut ?? 'USB Sürücü'} (${d})`}
             </button>
           ))}
@@ -411,12 +487,39 @@ export default function DosyaGezgini(ctx: AppCtx) {
           onContextMenu={(e) => e.target === e.currentTarget && bosMenu(e)}
           {...birakmaHedefi(yol)}
         >
+          {yol === BU_PC && (
+            <div className="fe-pc">
+              <b className="fe-pc-h">Aygıtlar ve sürücüler ({surucler.length})</b>
+              <div className="fe-pc-izgara">
+                {surucler.map((d) => {
+                  const k = kapasite(d);
+                  return (
+                    <button key={d} className="fe-surucu" aria-label={surucuAdi(d)} onDoubleClick={() => git(d)} onClick={(e) => e.currentTarget.focus()} onContextMenu={(e) => surucuMenusu(e, d)} {...birakmaHedefi(d)}>
+                      <span className="fe-surucu-ik">{d === 'C:' ? '💽' : '🔌'}</span>
+                      <span className="fe-surucu-b">
+                        <b>{surucuAdi(d)}</b>
+                        <span className={'fe-doluluk' + (k.oran > 0.9 ? ' dolu' : '')}>
+                          <i style={{ width: `${Math.max(2, k.oran * 100)}%` }} />
+                        </span>
+                        <small>
+                          {k.toplam} GB'nin {k.bos} GB'ı boş
+                        </small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="small muted">Bir USB belleği silmek için sürücüye sağ tıklayıp Biçimlendir'i seçin.</p>
+            </div>
+          )}
+          {yol !== BU_PC && (
           <div className="fe-row fe-head">
             <span>Ad</span>
             <span>Tür</span>
             <span>Boyut</span>
           </div>
-          {ogeler.length === 0 && <p className="small muted">Bu klasör boş.</p>}
+          )}
+          {yol !== BU_PC && ogeler.length === 0 && <p className="small muted">Bu klasör boş.</p>}
           {ogeler.map((p) => {
             const f = pc.fs[p];
             const klasorHedef = f.tur === 'klasor' || /^[A-Z]:$/.test(p);
@@ -464,11 +567,106 @@ export default function DosyaGezgini(ctx: AppCtx) {
         </div>
       </div>
       <div className="fe-status">
-        {ogeler.length} öğe{sec.length ? ` · ${sec.length} öğe seçildi` : ''}
+        {yol === BU_PC ? surucler.length : ogeler.length} öğe{sec.length ? ` · ${sec.length} öğe seçildi` : ''}
         {bilgi ? <span className="fe-clip">{bilgi}</span> : <span className="fe-clip">çift tıkla: aç · sağ tık: menü · sürükle: taşı/kopyala</span>}
         {yol === 'C:' && <span className="fe-clip">Yerel Disk (C:) · 476 GB'nin 371 GB'ı boş</span>}
         {pano && <span className="fe-clip">Panoda: {pano.yollar.length === 1 ? adOf(pano.yollar[0]) : `${pano.yollar.length} öğe`}</span>}
       </div>
+      {korumaDlg && (
+        <div className="ws-modal">
+          <div className="ws-dlg" role="alertdialog" aria-label="Erişim engellendi">
+            <div className="ws-h">⛔ Erişim engellendi</div>
+            <p>{korumaDlg}</p>
+            <div className="ws-foot">
+              <button className="ws-btn primary" autoFocus onClick={() => setKorumaDlg(null)}>
+                Tamam
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {bicim && (
+        <div className="ws-modal">
+          <div className="ws-dlg fe-bicim" role="dialog" aria-label={`Biçimlendir ${surucuAdi(bicim.surucu)}`}>
+            <div className="ws-h">Biçimlendir {surucuAdi(bicim.surucu)}</div>
+            {bicim.adim === 'form' && (
+              <>
+                <label>
+                  Kapasite:
+                  <select disabled>
+                    <option>{kapasite(bicim.surucu).toplam} GB</option>
+                  </select>
+                </label>
+                <label>
+                  Dosya sistemi
+                  <select value={bicim.fs} onChange={(e) => setBicim({ ...bicim, fs: e.target.value })} aria-label="Dosya sistemi">
+                    <option value="FAT32">FAT32 (Varsayılan)</option>
+                    <option value="NTFS">NTFS</option>
+                    <option value="exFAT">exFAT</option>
+                  </select>
+                </label>
+                <label>
+                  Ayırma birimi boyutu
+                  <select defaultValue="v">
+                    <option value="v">Varsayılan ayırma boyutu</option>
+                    <option>4096 bayt</option>
+                    <option>32 kilobayt</option>
+                  </select>
+                </label>
+                <label>
+                  Birim etiketi
+                  <input value={bicim.etiket} maxLength={bicim.fs === 'NTFS' ? 32 : 11} onChange={(e) => setBicim({ ...bicim, etiket: bicim.fs === 'NTFS' ? e.target.value : e.target.value.toUpperCase() })} aria-label="Birim etiketi" />
+                </label>
+                <label className="ws-radio">
+                  <input type="checkbox" checked={bicim.hizli} onChange={(e) => setBicim({ ...bicim, hizli: e.target.checked })} /> Hızlı Biçimlendir
+                </label>
+                <p className="small muted">FAT32: her yerde okunur ama 4 GB'tan büyük dosya alamaz. NTFS: Windows için, büyük dosyalar. exFAT: büyük dosyalar, Windows/macOS/Linux.</p>
+                <div className="ws-foot">
+                  <button className="ws-btn primary" onClick={() => setBicim({ ...bicim, adim: 'onay' })}>
+                    Başlat
+                  </button>
+                  <button className="ws-btn" onClick={() => setBicim(null)}>
+                    Kapat
+                  </button>
+                </div>
+              </>
+            )}
+            {bicim.adim === 'onay' && (
+              <>
+                <p>
+                  <b>⚠ UYARI:</b> Biçimlendirme bu diskteki TÜM verileri silecek. Diski biçimlendirmek için Tamam'ı, çıkmak için İptal'i tıklatın.
+                </p>
+                <div className="ws-foot">
+                  <button className="ws-btn primary" onClick={bicimUygula}>
+                    Tamam
+                  </button>
+                  <button className="ws-btn" onClick={() => setBicim({ ...bicim, adim: 'form' })}>
+                    İptal
+                  </button>
+                </div>
+              </>
+            )}
+            {bicim.adim === 'calisiyor' && (
+              <>
+                <p>Biçimlendiriliyor…</p>
+                <div className="ws-bar">
+                  <i className="ws-bar-anim" />
+                </div>
+              </>
+            )}
+            {bicim.adim === 'bitti' && (
+              <>
+                <p>✔ Biçimlendirme Tamamlandı.</p>
+                <div className="ws-foot">
+                  <button className="ws-btn primary" autoFocus onClick={() => setBicim(null)}>
+                    Tamam
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
       {oz && ozellik && (
         <div className="ws-modal">
           <div className="ws-dlg fe-oz" role="dialog" aria-label="Özellikler">
