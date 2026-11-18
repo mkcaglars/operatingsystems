@@ -30,6 +30,8 @@ type Adim = 'dil' | 'secenek' | 'anahtar' | 'surum' | 'lisans' | 'disk' | 'yukle
 export interface WinSetupVeri {
   baslangic?: Adim;
   anahtar: string;
+  /** Başka bir sürümün anahtarı girilirse gösterilecek ipucu (kum havuzu: Windows 10 / 11 etiketleri) */
+  baskaAnahtar?: { anahtar: string; mesaj: string };
   surum: string;
   diskler: Disk[];
   diskNotu?: { disk: string; metin: string }[];
@@ -293,7 +295,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
                   const ok = norm(anahtar) === norm(veri.anahtar);
                   const bicim = /^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$/.test(anahtar.trim());
                   sim.act('anahtar.gir', { dogru: ok }, (x: State) => (ok ? { ...x, anahtar: { deger: anahtar, durum: 'gecerli' }, surum: veri.surum, adim: 'lisans' } : x));
-                  if (!ok) setHata(bicim ? 'Bu ürün anahtarı çalışmadı. Lütfen denetleyip yeniden deneyin.' : 'Ürün anahtarı 25 karakterdir: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
+                  if (!ok) setHata(veri.baskaAnahtar && norm(anahtar) === norm(veri.baskaAnahtar.anahtar) ? veri.baskaAnahtar.mesaj : bicim ? 'Bu ürün anahtarı çalışmadı. Lütfen denetleyip yeniden deneyin.' : 'Ürün anahtarı 25 karakterdir: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
                 }}
               >
                 İleri

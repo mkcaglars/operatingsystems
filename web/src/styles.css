@@ -5309,3 +5309,4 @@ input[data-sim-parola] { -webkit-text-security: disc; text-security: disc; font-
 .w10-karolar .w11-start-grid button.w10-karo { background: #0063b1; color: #fff; border-radius: 0; aspect-ratio: 1; justify-content: center; font-size: 0.72em; padding: 0.4em; border: 2px solid transparent; }
 .w10-karolar .w11-start-grid button.w10-karo:hover { border-color: rgba(255, 255, 255, 0.5); background: #0063b1; }
 .win-kilit.w10:not([style]) { background: radial-gradient(ellipse at 66% 48%, #3fb4ff 0%, #0a6fd6 16%, #063b8c 38%, #021338 70%, #010616 100%); }
+.kh-etiket.w10 b { color: #0078d6; }
