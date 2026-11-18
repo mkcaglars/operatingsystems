@@ -19,6 +19,7 @@ import {
   ubuntuKurulumuIsle,
   ubuntuKurulumVeri,
   URUN_ANAHTARI,
+  WIN10_ANAHTARI,
   WIFI,
   windowsVar,
   yapilacaklar,
@@ -410,7 +411,7 @@ export default function KumHavuzu() {
             </div>
           </div>
         );
-      if (!st.kurulum) return <div className="screen-fill on ws-screen" />;
+      if (!st.kurulum) return <div className={'screen-fill on ws-screen' + (winTur === 'win10' ? ' w10' : '')} />;
       return <WinSetup task={{ veri: kurulumVeri(st, winTur) } as unknown as TaskDef} mode="uygula" sim={kurSim} gomulu />;
     }
     if (e === 'os' && grubVar && st.calisan === null) return <GrubMenu windows={st.ubuntu!.sh.grub.windows} sec={grubSec} log={(t) => sim.act(t, {}, (x) => x)} />;
@@ -587,6 +588,10 @@ export default function KumHavuzu() {
             <div className={'kh-etiket' + (photoUrl('lisans-etiketi') ? ' foto' : '')} title="Kasanın yanındaki lisans etiketi" style={arkaPlan('lisans-etiketi')}>
               <b>Windows 11 Pro</b>
               <code>{URUN_ANAHTARI}</code>
+            </div>
+            <div className={'kh-etiket w10' + (photoUrl('lisans-etiketi') ? ' foto' : '')} title="Windows 10 lisans etiketi" style={arkaPlan('lisans-etiketi')}>
+              <b>Windows 10 Pro</b>
+              <code>{WIN10_ANAHTARI}</code>
             </div>
             <div className={'kh-etiket office' + (photoUrl('lisans-etiketi') ? ' foto' : '')} title="Office lisans kartı" style={arkaPlan('lisans-etiketi')}>
               <b>Office Professional Plus 2024</b>

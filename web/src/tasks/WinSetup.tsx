@@ -2,6 +2,7 @@
 // Disk adımında bölüm silme/biçimlendirme/oluşturma gerçekçi sonuç doğurur; veri içeren bölümlere dikkat edilmelidir.
 import { useEffect, useState } from 'react';
 import Photo from '../components/Photo';
+import Logo from '../components/Logo';
 import Sorular, { type Soru } from '../components/Sorular';
 import type { TaskDef } from '../core/types';
 import type { TaskUIProps } from './registry';
@@ -30,6 +31,8 @@ type Adim = 'dil' | 'secenek' | 'anahtar' | 'surum' | 'lisans' | 'disk' | 'yukle
 export interface WinSetupVeri {
   baslangic?: Adim;
   anahtar: string;
+  /** Başka bir sürümün anahtarı girilirse gösterilecek ipucu (kum havuzu: Windows 10 / 11 etiketleri) */
+  baskaAnahtar?: { anahtar: string; mesaj: string };
   surum: string;
   diskler: Disk[];
   diskNotu?: { disk: string; metin: string }[];
@@ -106,6 +109,8 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
   const veri = task.veri as unknown as Veri;
   /** "Windows 11" ya da "Windows 10" (veri.surum'dan) */
   const winAd = veri.surum?.match(/Windows \d+/)?.[0] ?? 'Windows 11';
+  /** Windows 10 kurulumu: klasik "Windows Kurulumu" penceresi ve mavi OOBE */
+  const w10 = winAd === 'Windows 10';
   const s = sim.state as State;
   const learn = mode === 'ogren';
   const [sec, setSec] = useState<{ disk: string; bolum: string } | null>(null);
@@ -219,7 +224,13 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
       case 'dil':
         return (
           <div className="ws-dlg">
-            <div className="ws-h">Dil ayarlarını seçin</div>
+            {w10 ? (
+              <div className="ws-w10-logo">
+                <Logo id="windows10" size="2.2em" /> Windows
+              </div>
+            ) : (
+              <div className="ws-h">Dil ayarlarını seçin</div>
+            )}
             <label>
               Yüklenecek dil
               <select value={s.dil.dil} onChange={(e) => sim.act('dil.set', { alan: 'dil', deger: e.target.value }, (x: State) => ({ ...x, dil: { ...x.dil, dil: e.target.value } }))}>
@@ -250,6 +261,28 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
           </div>
         );
       case 'secenek':
+        if (w10)
+          return (
+            <div className="ws-dlg ws-w10-simdi">
+              <div className="ws-w10-logo">
+                <Logo id="windows10" size="2.2em" /> Windows
+              </div>
+              <button
+                className="ws-w10-yukle"
+                onClick={() => {
+                  sim.act('secenek', { deger: 'yukle' }, (x: State) => ({ ...x, secenek: 'yukle' }));
+                  go('anahtar');
+                }}
+              >
+                Şimdi yükle
+              </button>
+              <button className="ws-link small" onClick={() => sim.act('secenek', { deger: 'onar' }, (x: State) => ({ ...x, secenek: 'onar' }))}>
+                Bilgisayarınızı onarın
+              </button>
+              {s.secenek === 'onar' && <p className="small">Onarım seçenekleri bu görevde kullanılmıyor.</p>}
+              <small className="muted">© Microsoft Corporation. Tüm hakları saklıdır.</small>
+            </div>
+          );
         return (
           <div className="ws-dlg">
             <div className="ws-h">Kurulum seçeneğini belirleyin</div>
@@ -293,7 +326,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
                   const ok = norm(anahtar) === norm(veri.anahtar);
                   const bicim = /^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$/.test(anahtar.trim());
                   sim.act('anahtar.gir', { dogru: ok }, (x: State) => (ok ? { ...x, anahtar: { deger: anahtar, durum: 'gecerli' }, surum: veri.surum, adim: 'lisans' } : x));
-                  if (!ok) setHata(bicim ? 'Bu ürün anahtarı çalışmadı. Lütfen denetleyip yeniden deneyin.' : 'Ürün anahtarı 25 karakterdir: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
+                  if (!ok) setHata(veri.baskaAnahtar && norm(anahtar) === norm(veri.baskaAnahtar.anahtar) ? veri.baskaAnahtar.mesaj : bicim ? 'Bu ürün anahtarı çalışmadı. Lütfen denetleyip yeniden deneyin.' : 'Ürün anahtarı 25 karakterdir: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
                 }}
               >
                 İleri
@@ -593,7 +626,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
     return (
       <div className="oobe">
         <div className="oobe-art" aria-hidden>
-          <span className="win-logo big" />
+          {w10 ? <span className="oobe-w10-halka" /> : <span className="win-logo big" />}
         </div>
         <div className="oobe-panel">{body}</div>
       </div>
@@ -616,7 +649,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
   );
   if (gomulu)
     return (
-      <div className="screen-fill on ws-screen">
+      <div className={'screen-fill on ws-screen' + (w10 ? ' w10' : '')}>
         {hazirlik ? <DurumEkrani metin="Hazırlanıyor" alt="Bilgisayarınız birkaç kez yeniden başlatılacak" /> : Ekran()}
         {modal}
       </div>
@@ -627,7 +660,7 @@ export default function WinSetup({ task, mode, sim, gomulu }: TaskUIProps & { go
     <div className="ws">
       <div className="ws-main">
         <div className="monitor-css">
-          <div className="screen on ws-screen">
+          <div className={'screen on ws-screen' + (w10 ? ' w10' : '')}>
             {hazirlik ? <DurumEkrani metin="Hazırlanıyor" alt="Bilgisayarınız birkaç kez yeniden başlatılacak" /> : Ekran()}
             {dlg && (
               <div className="ws-modal">

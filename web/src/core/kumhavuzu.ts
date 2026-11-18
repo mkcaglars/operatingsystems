@@ -123,6 +123,8 @@ export const OKU_BENI = [
 ].join('\r\n');
 
 export const URUN_ANAHTARI = 'VK7JG-NPHTM-C97JM-9MPGT-3V66T';
+/** Windows 10 Pro lisans etiketi (simülasyona özel, gerçek bir anahtar değildir) */
+export const WIN10_ANAHTARI = 'KH8D2-PW7NR-Q3XTM-G6VJ4-B9C2Y';
 export const WIFI = [
   { ssid: 'OKUL-LAB', sifre: 'Kibris2026', guc: 4 },
   { ssid: 'OKUL-MISAFIR', sifre: '', guc: 2 },
@@ -368,7 +370,14 @@ export function biosVeri(st: KhState): BiosVeri {
 }
 
 export function kurulumVeri(st: KhState, tur: 'win10' | 'win11' = 'win11'): WinSetupVeri {
-  return { anahtar: URUN_ANAHTARI, surum: SURUM_AD[tur], diskler: st.diskler, wifi: WIFI };
+  const w10 = tur === 'win10';
+  return {
+    anahtar: w10 ? WIN10_ANAHTARI : URUN_ANAHTARI,
+    surum: SURUM_AD[tur],
+    diskler: st.diskler,
+    wifi: WIFI,
+    baskaAnahtar: { anahtar: w10 ? URUN_ANAHTARI : WIN10_ANAHTARI, mesaj: w10 ? 'Bu anahtar Windows 11 Pro içindir. Windows 10 Pro kurulumunda kasadaki Windows 10 lisans etiketindeki anahtarı girin.' : 'Bu anahtar Windows 10 Pro içindir. Windows 11 Pro kurulumunda kasadaki Windows 11 lisans etiketindeki anahtarı girin.' },
+  };
 }
 
 /** Kurulum ekranından çıkılınca (kapatma, reset, kurulum bitişi) disk değişiklikleri kalıcı olur */
