@@ -5310,3 +5310,70 @@ input[data-sim-parola] { -webkit-text-security: disc; text-security: disc; font-
 .w10-karolar .w11-start-grid button.w10-karo:hover { border-color: rgba(255, 255, 255, 0.5); background: #0063b1; }
 .win-kilit.w10:not([style]) { background: radial-gradient(ellipse at 66% 48%, #3fb4ff 0%, #0a6fd6 16%, #063b8c 38%, #021338 70%, #010616 100%); }
 .kh-etiket.w10 b { color: #0078d6; }
+
+/* ---------- Windows 10 kurulumu: klasik "Windows Kurulumu" penceresi ve mavi OOBE ---------- */
+.ws-screen.w10 { background: radial-gradient(ellipse at 50% 40%, #2e5fa8 0%, #19417e 45%, #0d2552 100%) !important; font-family: 'Segoe UI', system-ui, sans-serif; }
+.ws-screen.w10 > .ws-dlg { background: #fff; border-radius: 0; border: 1px solid #6b7c96; box-shadow: 0 0.6em 2em rgba(0, 0, 0, 0.5); padding: 2.6em 1.8em 1.2em; }
+.ws-screen.w10 > .ws-dlg::before { content: 'Windows Kurulumu'; position: absolute; left: 0; right: 0; top: 0; height: 1.9em; line-height: 1.9em; padding-left: 2.2em; font-size: 0.85em; background: #fff linear-gradient(#fff, #f2f2f2); border-bottom: 1px solid #ddd; color: #222; }
+.ws-screen.w10 > .ws-dlg::after { content: '✕'; position: absolute; right: 0.9em; top: 0.35em; font-size: 0.8em; color: #555; }
+.ws-screen.w10 .ws-h { font-weight: 400; color: #003399; font-size: 1.3em; }
+.ws-screen.w10 .ws-btn { border-radius: 0; background: #e1e1e1; border: 1px solid #adadad; color: #000; min-width: 6em; }
+.ws-screen.w10 .ws-btn.primary { background: #e1e1e1; border-color: #0078d7; color: #000; box-shadow: inset 0 0 0 1px #0078d7; }
+.ws-screen.w10 .ws-btn:hover { background: #e5f1fb; border-color: #0078d7; }
+.ws-screen.w10 .ws-dlg select, .ws-screen.w10 .ws-dlg input { border-radius: 0; border: 1px solid #7a7a7a; }
+.ws-w10-logo { display: flex; align-items: center; justify-content: center; gap: 0.4em; font-size: 2.2em; font-weight: 300; color: #0078d7; margin: 0.2em 0 0.6em; }
+.ws-w10-simdi { align-items: center; text-align: center; gap: 1em !important; }
+.ws-w10-yukle { font: inherit; font-size: 1.15em; padding: 0.6em 2em; background: #fff; border: 1px solid #adadad; cursor: pointer; }
+.ws-w10-yukle:hover { background: #e5f1fb; border-color: #0078d7; }
+.ws-screen.w10 .oobe { inset: 0; border-radius: 0; background: linear-gradient(160deg, #0d3a75 0%, #0a2c5c 60%, #071f44 100%); color: #fff; box-shadow: none; }
+.ws-screen.w10 .oobe-art { background: transparent; }
+.oobe-w10-halka { width: 7em; height: 7em; border-radius: 50%; border: 0.35em solid #5bb7ff; box-shadow: 0 0 2em #2b8fffaa, inset 0 0 1.5em #2b8fff88; }
+.ws-screen.w10 .oobe-panel h2 { font-weight: 300; font-size: 1.8em; color: #fff; }
+.ws-screen.w10 .oobe-list { border: 0; border-radius: 0; gap: 2px; }
+.ws-screen.w10 .oobe-item { background: rgba(255, 255, 255, 0.08); color: #fff; border: 0; }
+.ws-screen.w10 .oobe-item:hover { background: rgba(255, 255, 255, 0.18); }
+.ws-screen.w10 .oobe-item.wifi.on { outline: 2px solid #5bb7ff; }
+.ws-screen.w10 .oobe-wifi { color: #fff; }
+.ws-screen.w10 .oobe-panel input { border-radius: 0; border: 2px solid #fff; background: #fff; color: #000; }
+.ws-screen.w10 .oobe-panel .ws-btn { border-radius: 0; background: #0078d7; color: #fff; border: 0; min-width: 6em; }
+.ws-screen.w10 .oobe-panel .ws-btn:not(.primary) { background: rgba(255, 255, 255, 0.15); }
+.ws-screen.w10 .oobe-toggle { background: rgba(255, 255, 255, 0.08); border-radius: 0; color: #fff; }
+.ws-screen.w10 .oobe-panel p, .ws-screen.w10 .oobe-panel label, .ws-screen.w10 .oobe-panel small { color: #e6eefc; }
+.ws-screen.w10 .err-text { color: #ffb4a8; }
+
+/* ---------- Windows 10 Ayarlar ---------- */
+.settings-app.w10 { background: #fff; font-family: 'Segoe UI', system-ui, sans-serif; }
+.settings-app.w10 .s-nav { background: #f2f2f2; padding-top: 0.6em; }
+.settings-app.w10 .s-user { display: none; }
+.settings-app.w10 .s-nav button { border-radius: 0; border-left: 4px solid transparent; }
+.settings-app.w10 .s-nav button.on { background: #e5e5e5; border-left-color: #0078d7; font-weight: 400; }
+.settings-app.w10 .s-nav button.on::before { display: none; }
+.settings-app.w10 .s-main { background: #fff; }
+.settings-app.w10 .s-main h2 { font-weight: 300; font-size: 1.9em; }
+.settings-app.w10 .s-row, .settings-app.w10 .s-card { background: transparent; border-radius: 0; box-shadow: none; border: 0; padding-left: 0; }
+.settings-app.w10 .s-row.link b { color: #0067b8; font-weight: 400; }
+.settings-app.w10 .s-row.link:hover { background: transparent; text-decoration: underline; }
+.settings-app.w10 .s-row .s-ctl { color: transparent; }
+.settings-app.w10 .ws-btn { border-radius: 0; }
+.settings-app.w10 .ws-btn.primary { background: #0078d7; }
+.settings-app.w10 .ag-kart, .settings-app.w10 .ag-ozellik { background: transparent; }
+.s-w10-ara { display: block; margin: 0 auto 1.4em; width: min(26em, 90%); font: inherit; padding: 0.45em 0.7em; border: 1px solid #999; border-radius: 0; }
+.s-w10-izgara { display: grid; grid-template-columns: repeat(auto-fill, minmax(13em, 1fr)); gap: 0.4em 1em; }
+.s-w10-izgara button { display: flex; gap: 0.8em; align-items: flex-start; text-align: left; background: none; border: 2px solid transparent; padding: 0.8em 0.6em; font: inherit; cursor: pointer; }
+.s-w10-izgara button:hover { border-color: #ccc; background: #f7f7f7; }
+.s-w10-izgara i { font-style: normal; font-size: 1.7em; color: #0078d7; width: 1.3em; filter: saturate(0.3); }
+.s-w10-izgara span { display: flex; flex-direction: column; gap: 0.15em; }
+.s-w10-izgara b { font-weight: 400; }
+.s-w10-izgara small { color: #666; font-size: 0.82em; }
+.s-w10-ek { margin-top: 1.2em; border-top: 1px solid #e5e5e5; padding-top: 0.6em; }
+
+/* ---------- Windows 10 Dosya Gezgini: şerit (ribbon) ---------- */
+.fe-sekmeler { display: flex; gap: 0; background: #fff; border-bottom: 1px solid #dadbdc; font-size: 0.82em; }
+.fe-sekmeler span { padding: 0.35em 1em; }
+.fe-sekmeler span.dosya { background: #1979ca; color: #fff; }
+.fe-sekmeler span.on { border: 1px solid #dadbdc; border-bottom-color: #f5f6f7; margin-bottom: -1px; background: #f5f6f7; }
+.fe.w10 .fe-toolbar { background: #f5f6f7; border-bottom: 1px solid #dadbdc; padding: 0.4em 0.5em; gap: 0.15em; }
+.fe.w10 .fe-toolbar .ws-link { border-radius: 0; color: #222; font-size: 0.82em; padding: 0.3em 0.45em; }
+.fe.w10 .fe-toolbar .ws-link:hover:not(:disabled) { background: #cde8ff; }
+.fe.w10 .fe-addr { border-radius: 0; }
+.w10 .ctx-menu, .w10 .w11-agmenu, .w10 .w11-bildirim { border-radius: 0; }

@@ -411,7 +411,7 @@ export default function KumHavuzu() {
             </div>
           </div>
         );
-      if (!st.kurulum) return <div className="screen-fill on ws-screen" />;
+      if (!st.kurulum) return <div className={'screen-fill on ws-screen' + (winTur === 'win10' ? ' w10' : '')} />;
       return <WinSetup task={{ veri: kurulumVeri(st, winTur) } as unknown as TaskDef} mode="uygula" sim={kurSim} gomulu />;
     }
     if (e === 'os' && grubVar && st.calisan === null) return <GrubMenu windows={st.ubuntu!.sh.grub.windows} sec={grubSec} log={(t) => sim.act(t, {}, (x) => x)} />;

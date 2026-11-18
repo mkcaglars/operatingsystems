@@ -14,7 +14,8 @@ type Sayfa =
   | 'hesaplar' | 'digerleri'
   | 'erisim' | 'metin' | 'isaretci' | 'kontrast'
   | 'gizlilik' | 'update'
-  | 'ag' | 'ag-ethernet' | 'ag-wifi';
+  | 'ag' | 'ag-ethernet' | 'ag-wifi'
+  | 'giris';
 
 const NAV: [Sayfa, string, string][] = [
   ['sistem', 'Sistem', '🖥'],
@@ -37,7 +38,21 @@ const KOK: Record<Sayfa, Sayfa> = {
   erisim: 'erisim', metin: 'erisim', isaretci: 'erisim', kontrast: 'erisim',
   gizlilik: 'gizlilik', update: 'update',
   ag: 'ag', 'ag-ethernet': 'ag', 'ag-wifi': 'ag',
+  giris: 'giris',
 };
+
+/** Windows 10 Ayarlar: ana sayfa kutucukları ve kategori adları */
+const W10_KATEGORI: [Sayfa, string, string, string][] = [
+  ['sistem', 'Sistem', '🖥', 'Ekran, ses, bildirimler, güç'],
+  ['cihazlar', 'Cihazlar', '🖱', 'Bluetooth, yazıcılar, fare'],
+  ['ag', 'Ağ ve İnternet', '🌐', 'Wi-Fi, uçak modu, VPN'],
+  ['kisisel', 'Kişiselleştirme', '🖌', 'Arka plan, kilit ekranı, renkler'],
+  ['uygulamalar', 'Uygulamalar', '▦', 'Kaldır, varsayılanlar, isteğe bağlı özellikler'],
+  ['hesaplar', 'Hesaplar', '👤', 'Hesaplarınız, e-posta, eşitleme, iş, aile'],
+  ['erisim', 'Erişim Kolaylığı', '♿', 'Ekran okuyucusu, büyüteç, yüksek karşıtlık'],
+  ['gizlilik', 'Gizlilik', '🔒', 'Konum, kamera, mikrofon'],
+  ['update', 'Güncelleştirme ve Güvenlik', '⟳', 'Windows Update, kurtarma, yedekleme'],
+];
 
 const SURE = [
   [1, '1 dakika'], [3, '3 dakika'], [5, '5 dakika'], [10, '10 dakika'], [15, '15 dakika'], [30, '30 dakika'], [60, '1 saat'], [0, 'Hiçbir zaman'],
@@ -57,7 +72,8 @@ function Row({ t, d, children, onClick }: { t: string; d?: string; children?: Re
 
 export default function Ayarlar(ctx: AppCtx) {
   const { pc, act } = ctx;
-  const [sayfa, setSayfa] = useState<Sayfa>((ctx.arg as Sayfa) || 'sistem');
+  const w10 = /^Windows 10/.test(pc.cihaz.surum);
+  const [sayfa, setSayfa] = useState<Sayfa>((ctx.arg as Sayfa) || (w10 ? 'giris' : 'sistem'));
   const [vApp, setVApp] = useState<string | null>(null);
   const [menu, setMenu] = useState<string | null>(null);
   const [dlg, setDlg] = useState<{ t: 'tur' | 'kaldir' | 'onar'; id: string } | null>(null);
@@ -78,6 +94,7 @@ export default function Ayarlar(ctx: AppCtx) {
     hesaplar: 'Hesaplar', digerleri: 'Hesaplar  ›  Diğer kullanıcılar',
     erisim: 'Erişilebilirlik', metin: 'Erişilebilirlik  ›  Metin boyutu', isaretci: 'Erişilebilirlik  ›  Fare işaretçisi ve dokunma', kontrast: 'Erişilebilirlik  ›  Kontrast temaları',
     gizlilik: 'Gizlilik ve güvenlik', update: 'Windows Update',
+    giris: 'Windows Ayarları',
     ag: 'Ağ ve İnternet', 'ag-ethernet': 'Ağ ve İnternet  ›  Ethernet', 'ag-wifi': `Ağ ve İnternet  ›  Wi-Fi${pc.ag?.wifi ? '  ›  ' + pc.ag.wifi : ''}`,
   };
 
@@ -386,6 +403,23 @@ export default function Ayarlar(ctx: AppCtx) {
             </Row>
           </>
         );
+      case 'giris':
+        return (
+          <>
+            <input className="s-w10-ara" placeholder="Bir ayar bulun" aria-label="Bir ayar bulun" />
+            <div className="s-w10-izgara">
+              {W10_KATEGORI.map(([id, ad, ik, d]) => (
+                <button key={id} onClick={() => git(id)}>
+                  <i>{ik}</i>
+                  <span>
+                    <b>{ad}</b>
+                    <small>{d}</small>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </>
+        );
       case 'ag':
       case 'ag-ethernet':
       case 'ag-wifi':
@@ -420,6 +454,13 @@ export default function Ayarlar(ctx: AppCtx) {
             >
               Güncelleştirmeleri denetle
             </button>
+            {w10 && (
+              <div className="s-w10-ek">
+                <Row t="Windows Güvenliği" d="Virüs ve tehdit koruması, güvenlik duvarı" onClick={() => ctx.open('guvenlik')} />
+                <Row t="Kurtarma" d="Bu bilgisayarı sıfırla, gelişmiş başlangıç" onClick={() => git('kurtarma')} />
+                <Row t="Etkinleştirme" d={`${pc.cihaz.surum} · Windows, dijital lisansla etkinleştirildi`} />
+              </div>
+            )}
           </div>
         );
     }
@@ -427,7 +468,7 @@ export default function Ayarlar(ctx: AppCtx) {
 
   const dlgUyg = dlg ? pc.uygulamalar.find((u) => u.id === dlg.id) : null;
   return (
-    <div className="settings-app">
+    <div className={'settings-app' + (w10 ? ' w10' : '')}>
       <nav className="s-nav">
         <div className="s-user">
           <span>👤</span>
@@ -436,8 +477,8 @@ export default function Ayarlar(ctx: AppCtx) {
             <small>Yerel hesap</small>
           </div>
         </div>
-        {NAV.map(([id, ad, ik]) => (
-          <button key={id} className={KOK[sayfa] === id ? 'on' : ''} onClick={() => git(id)}>
+        {(w10 ? ([['giris', 'Giriş', '⌂'], ...W10_KATEGORI.map(([id, ad, ik]) => [id, ad, ik])] as [Sayfa, string, string][]) : NAV).map(([id, ad, ik]) => (
+          <button key={id} className={(w10 && sayfa === 'kurtarma' ? 'update' : KOK[sayfa]) === id ? 'on' : ''} onClick={() => git(id)}>
             <i>{ik}</i>
             {ad}
           </button>
